@@ -9,7 +9,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.24 2001-06-12 15:05:00 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.25 2001-06-12 15:14:25 swprakt Exp $
  *
  */
 
@@ -129,33 +129,35 @@ public class Snotcheck{
 	}
 
 
-	/*Sap sap1;
+	
+	LinkedList stmtList;
 	Stmt stmt1;
 	Class class1;
 	String class1Name;
-
-
-
-
+	Assign ass;
+	
+	
+	
 	//nun muessen nur noch die einzelnen sap`s ueberprueft werden:
 	for (int i=0; i < actionList.size(); i++){
 	    action = (Action)actionList.get(i);
-	    sap1 = action.sap;                           //auslesen der i-ten sap
-	    for (int j=0; j < sap1.size(); j++){
-		stmt1 = (Stmt)sap1.get(j);               //auslesen des j-ten Statements aus der sap
-		class1 = stmt.getClass();
+	    stmtList = action.sap;                           //auslesen der i-ten sap
+	    for (int j=0; j < stmtList.size(); j++){
+		stmt1 = (Stmt)stmtList.get(j);               //auslesen des j-ten Statements aus der sap
+		class1 = stmt1.getClass();
 		class1Name = class1.getName();
 		if (class1Name == "Assign" || class1Name == "Skip"){
 		    if (class1Name == "Assign"){
+			ass = (Assign)stmt1;
 			//pruefen, ob var und val vernuenftig sind
-			if (stmt1.var == null){throw new ActionFailure(action, "This statement has no var.");}
-			if (stmt1.val == null){throw new ActionFailure(action, "This statement has no val.");}
+			if (ass.var == null){throw new ActionFailure(action, "This statement has no var.");}
+			if (ass.val == null){throw new ActionFailure(action, "This statement has no val.");}
 		    }
 		} else {throw new ActionFailure(null, "Error, that can`t be solved.");}
 	    }
 
 
-	}*/
+	}
 
 	return true;
     }
@@ -273,7 +275,7 @@ public class Snotcheck{
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.24 2001-06-12 15:05:00 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.25 2001-06-12 15:14:25 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
 //	Revision 1.23  2001/06/12 14:55:02  swprakt
