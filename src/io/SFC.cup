@@ -4,7 +4,7 @@
  * Offers the methods  parseFile and parseExpression 
  *
  * @author Karsten Stahl, Martin Steffen
- * @version $Id: SFC.cup,v 1.6 2001-07-01 06:24:52 swprakt Exp $
+ * @version $Id: SFC.cup,v 1.7 2001-07-01 06:51:24 swprakt Exp $
  *
  * The grammar definition contains 4 parts:
  *    -  initialization declarations and how to generate the parser
@@ -141,7 +141,8 @@ non terminal    var_dec, assignment;
 non terminal    absynt.SFC        sfc;
 non terminal    absynt.SFC        program;
 non terminal	absynt.Step	  istep;
-non terminal	LinkedList	  steps;
+non terminal	LinkedList	  steps, steplist;
+non terminal    absynt.Step       step;
 non terminal	LinkedList	  transitions;
 non terminal	LinkedList	  actions;
 non terminal	LinkedList	  declist;
@@ -149,6 +150,9 @@ non terminal    absynt.Type       type;
 non terminal    absynt.Constval   c_val;
 non terminal    LinkedList        declarations;
 non terminal    Declaration       declaration;
+non terminal    LinkedList        stepactionlist;
+non terminal    absynt.StepAction stepaction;
+non terminal    absynt.ActionQualifier  qualifier;
 
 non terminal    absynt.Expr       expr;
 non terminal    Integer           op;
@@ -180,7 +184,8 @@ sfc          ::= program:p {: RESULT=p; :}
 
 program      ::= BEGIN 
                  declist SEM
-	         istep
+	         istep SEM
+	         steps
                  END;
 
 /** program      ::= BEGIN
@@ -220,6 +225,37 @@ istep	     ::= INIT EQ IDENT:stepname // init = s1
 		  RESULT = new absynt.Step(stepname);  // no actions yet int concrete syntax!
                  :} 
 ;
+
+steps       ::=  STEPS EQ 
+                 LBRACKET
+                 steplist
+                 RBRACKET
+  ;
+
+steplist    ::=  step
+             |   step SEM steplist
+  ;
+
+step        ::=  LPAREN 
+                 IDENT:s COMMA 
+                 LBRACKET
+                 stepactionlist
+                 RBRACKET
+                 RPAREN
+  ;
+
+
+stepactionlist   ::= stepaction
+                   |  stepaction SEM stepactionlist
+  ;
+
+stepaction      ::= LPAREN
+                      qualifier COMMA IDENT:a
+                      RPAREN
+  ;
+
+qualifier       ::= IDENT:q       // not as reserved word
+  ;
 
 
 

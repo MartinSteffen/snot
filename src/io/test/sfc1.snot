@@ -10,7 +10,10 @@ begin
 
   ];
 
-  init = s1
+  init = s1;
+  steps = [ (s1,[(N,act1)]);
+	    (s2,[(N,act2)])
+          ]
 end
 
 
