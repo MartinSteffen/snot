@@ -1,5 +1,5 @@
 
-\newif\ifweb\webfalse  %%%%%% htmlonly geht irgendwie nicht
+\newif\ifweb\webfalse   %%%%%% htmlonly geht irgendwie nicht
 \newif\ifsolution\solutionfalse
 
 \documentclass[11pt]{article}
@@ -19,10 +19,13 @@
 %%----------
 \fi
 
+
+%\begin{htmlonly}
 \ifweb
 \htmlfoot{\copyright Public License}
 \renewcommand{\@bodyargs}{bgcolor="white" alink="red" vlink="\#407999"  link="\#7070ff"}    
-\title{Pflichtenheft(0):  \Snot}
+\title{Pflichtenheft (1):  \Snot}
+%\end{htmlonly}
 \else
 \fi
 
