@@ -9,7 +9,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.31 2001-06-27 11:33:22 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.32 2001-06-27 13:08:18 swprakt Exp $
  *
  */
 
@@ -263,6 +263,7 @@ public class Snotcheck{
 	Assign ass;
 
 
+	boolean eee;
 
 	//nun muessen nur noch die einzelnen sap`s ueberprueft werden:
 	for (int i=0; i < actionList.size(); i++){
@@ -270,7 +271,15 @@ public class Snotcheck{
 	    stmtList = action.sap;                           //auslesen der i-ten sap
 	    for (int j=0; j < stmtList.size(); j++){
 		stmt1 = (Stmt)stmtList.get(j);               //auslesen des j-ten Statements aus der sap
+
+		//Einschub fuer Bier
 		class1 = stmt1.getClass();
+		eee = class1.isInstance(new Assign(null,null));
+
+
+
+
+		//	class1 = stmt1.getClass();
 		class1Name = class1.getName();
 		System.out.println(class1Name);
 		//	if (stmt1 == null){throw new ActionFailure(action, "neuer fehler.");}
@@ -333,9 +342,11 @@ public class Snotcheck{
 private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 
     LinkedList stepList = aSFCObject.steps;
+    LinkedList actionList;
     int stepListSize = stepList.size();
     String stepName;
     Step aStep, bStep;
+    Action anAction, bAction;
 
     if (stepList != null){
 
@@ -344,9 +355,17 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 	    aStep = (Step)stepList.get(i);
 	    if (aStep.name == null){throw new StepFailure(aStep, "Stepname not found!");}
 	    if (aStep.actions == null){throw new StepFailure(aStep, "No actions in step!");}
+	    actionList = aStep.actions;
+	    for (int j=0; j < actionList.size(); j++){
+		anAction = (Action)actionList.get(j);
+		for (int k=(j+1); k < actionList.size(); k++){
+		    bAction = (Action)actionList.get(k);
+		    if (anAction.a_name == bAction.a_name){throw new StepFailure(aStep,"The Actionname in Step is not unique!");}
+		}
+	    }
 	}
 
-	//Pruefung auf Doppeltvorkommene Namen
+	//Pruefung auf Doppeltvorkommene Namen von Steps
 	for (int i=0; i < stepListSize; i++){
 	    aStep = (Step)stepList.get(i);
 	    
@@ -464,9 +483,12 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.31 2001-06-27 11:33:22 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.32 2001-06-27 13:08:18 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.31  2001/06/27 11:33:22  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.30  2001/06/19 15:04:39  swprakt
 //	*** empty log message ***
 //	
