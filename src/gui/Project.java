@@ -18,17 +18,17 @@ import editor.Editor;
  *  It also keeps the name and status flags of the SFC.
  *
  * @author  Hans Theman and Ingo Schiller
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class Project extends java.lang.Object implements Serializable {
 
     /** variable declarations */
     private SFC sfc = null;
-    private Editor editor = null;
+    private transient Editor editor = null;
     private String name;
 
     private boolean is_checked;   // indicates if it is checked
-    private boolean is_well_defined;  
+    private boolean is_well_defined;  // ?????????????????????????
     private boolean is_active;    // indicates whether the Project is opened in the Editor
     
     /** The standard constructor.
@@ -99,18 +99,7 @@ public class Project extends java.lang.Object implements Serializable {
         is_active = status;
     }
     
-    /**
-     *  Sets the name of the project.
-     *  So far a editor is present in the project, the name is also set in the editor.
-     *  @param _name    The desired name of the project.
-     */
-    public void setName(String _name) {
-        name = _name;
-        if (editor != null)
-            editor.setFilename(name);
-//          editor.setName(name);
-    }
-    
+   
     /** Retruns the project name.
      *  @return name    The name of the project.
      */
@@ -118,15 +107,6 @@ public class Project extends java.lang.Object implements Serializable {
         return name;
     }
 
-    /** Sets the editor in the project.
-     *  While connecting an editor to the project, the project name is set in it.
-     *  @param _editor  The editor in which the project is opened.
-     */
-    public void setEditor(Editor _editor) {
-        editor = _editor;
-        editor.setFilename(name);
-    }
-    
     /** Retruns the project editor.
      *  If no editor is specified in the project, null is returned.
      *  @return editor  The connected editor. 
@@ -154,4 +134,51 @@ public class Project extends java.lang.Object implements Serializable {
        System.out.print(" opening SFC ...");
        return new Project();
     }
+ 
+
+    
+//##############################################
+//
+//  The Editor Interface
+//
+//##############################################
+
+
+
+    /** Sets the name of the project.
+     *  So far a editor is present in the project, the name is also set in the editor.
+     *  @param _name    The desired name of the project.
+     */
+    public void setName(String _name) {
+        name = _name;
+        if (editor != null)
+//            editor.setFilename(name);
+            editor.setName(name);
+    }
+
+    /** Sets the editor in the project.
+     *  While connecting an editor to the project, the project name is set in it.
+     *  @param _editor  The editor in which the project is opened.
+     */
+    public void setEditor(Editor _editor) {
+        editor = _editor;
+        editor.setFilename(name);
+//        editor.setName(name);
+    }
+    
+    /** Returns the editor modified flag.
+     *  This function is part of the editor interface.
+     *  @return isModified  The editor's modified status
+     */
+    public boolean isModified() {
+        return editor.isModified();
+    }
+    
+    /** Sets the editor modified flag.
+     *  This function is part of the editor interface.
+     */
+    public void clearModified() {
+        editor.setModified(false);
+    }
+    
 }

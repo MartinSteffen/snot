@@ -246,7 +246,7 @@
     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
       <Color blue="c0" green="c0" id="lightGray" palette="1" red="c0" type="palette"/>
     </Property>
-    <Property name="defaultCloseOperation" type="int" editor="org.openide.util.SwingEditors$DefaultCloseOperationPropertyEditor" value="2"/>
+    <Property name="defaultCloseOperation" type="int" editor="org.openide.util.SwingEditors$DefaultCloseOperationPropertyEditor" value="0"/>
     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
       <Font name="Abadi MT Condensed Light" size="12" style="0"/>
     </Property>

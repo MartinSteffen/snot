@@ -10,6 +10,9 @@ import java.util.Hashtable;
 import java.lang.*;
 import java.io.Serializable;
 import java.io.File;
+import java.io.ObjectOutputStream;
+import java.io.FileOutputStream;
+import java.util.Enumeration;
 
 import editor.Editor;
 
@@ -20,7 +23,7 @@ import editor.Editor;
  *  create new, import or export Projects.
  *
  * @author  Hans Theman and Ingo Schiller
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 
 public class Session extends java.lang.Object implements Serializable {
@@ -33,7 +36,7 @@ public class Session extends java.lang.Object implements Serializable {
     private String name;
     /** The file is set by saving the current session.
      */
-    private File file = null;
+    private transient File file = null;
     /** Once saved this flag is set to true. It is also set when a session is read from disk.
      *  It indicats that a valid filename is set and the SaveSessionbutton can be invoked.
      */
@@ -93,19 +96,19 @@ public class Session extends java.lang.Object implements Serializable {
      *  The is_saved flag is also set.
      *  @param _file The defined filename with full pathname.
      */
-    public void setFileName(File _file) throws Exception {
+    public void setFile(File _file) throws Exception {
         boolean status;
-        file = _file;
-        try {
-            status = file.isFile();
+         try {
+            status = _file.isFile();
         }
         catch (SecurityException ex) {
             throw new Exception(ex.getMessage());
         }
         if (!status) 
-            throw new Exception("File \""+file.getName()+"\" is not valid or does not exist!");
+            throw new Exception("File \""+_file.getName()+"\" is not valid or does not exist!");
             
-        name = file.getName().replace('.','\0');
+        file = _file;
+        name = _file.getName().replace('.','\0');
         is_saved = true;
     }
     
@@ -201,23 +204,44 @@ public class Session extends java.lang.Object implements Serializable {
     public boolean isEmpty() {
         return table.isEmpty();
     }
-    
- 
-    public void save(File _file) throws Exception {
-//##################################
-// Please complete me!!!!
-//      check _file for validity
-//      write session to disk
-//      set filename in session    
-// Important: save(null) uses old file, save(file) sets new file!        
-//##################################   
 
-/*        if (_file != null)
-            setFileName(_file); // throws Exception! sets is_saved flag!
-        // ... else use the old file
-*/        
-//        throw new Exception("Method \"session.save(File)\" not yet implemented!");
-System.out.print("\nMethod \"session.save(File)\" not yet implemented!"); 
+    /** Shuts down all pending editor frames.
+     *  It is called when closing the session in order to clean up the desktop.
+     */
+    public void disposeEditors() {
+        for (Enumeration e = this.table.elements() ; e.hasMoreElements() ;) {
+            ((Project)e.nextElement()).getEditor().dispose();
+        }
     }
     
+    /** Saves the whole Session inclusive all Projects.
+     *  The passed File parameter is stored in the Session object. Once stored, the is_saved flag is set.
+     *  When saving the Session the next time, the File parameter may be null.
+     *  @param _file    Specifies the file in which to store the entire Session.
+     */
+    public void save(File _file) throws Exception {
+        boolean status = false;
+        
+        if (_file != null) {
+            this.setFile(_file);
+        }
+        // ... else use the old file
+        
+        ObjectOutputStream outStream = new ObjectOutputStream(new FileOutputStream(file));
+        outStream.writeObject((Object)new Project()); // throws IOException!!!!
+        outStream.flush(); // throws IOException!!!!
+        outStream.close(); // throws IOException!!!!
+        
+        this.is_saved = true;
+        this.is_modified = false;
+
+        // tell all the editors that the session is saved
+        for (Enumeration e = this.table.elements() ; e.hasMoreElements() ;) {
+            ((Project)e.nextElement()).clearModified();
+        }
+    }
+    
+    public Session read(File _file, String extension) throws Exception {
+        throw new Exception("Method read session not yet implemented!");
+    }
 }
