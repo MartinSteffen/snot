@@ -10,7 +10,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.42 2001-07-10 14:25:34 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.43 2001-07-11 07:14:49 swprakt Exp $
  *
  */
 
@@ -22,6 +22,7 @@ public class Snotcheck{
 	//und es wird ermittelt, welchen typ dieser hat
 	/////////////////////////////////////////////////////////////////////////
 	Expr lExpr,rExpr;
+	boolean allesOk = true;
 	
 	lExpr = aBExpr.left_expr;
 	rExpr = aBExpr.right_expr;
@@ -30,8 +31,30 @@ public class Snotcheck{
 	if ((lExpr == null)||(rExpr == null)||(aBExpr.op < 0)||(aBExpr.op > 12)){return false;}
 
 	//pruefen der linken expression:
+	String className = (lExpr.getClass()).getName();
+	if (className == "B_expr"){
+	    B_expr lBExpr = (B_expr) lExpr;
+	    allesOk = isBExprOk(lBExpr);
+	    if (allesOk == false){return false;}
+	} else {
+	    U_expr lUExpr = (U_expr) lExpr;
+	    allesOk = isUExprOk(lUExpr);
+	    if (allesOk == false){return false;}
+	}
+
 
 	//pruefen der rechten expression:
+	className = (rExpr.getClass()).getName();
+	if (className == "B_expr"){
+	    B_expr rBExpr = (B_expr) rExpr;
+	    allesOk = isBExprOk(rBExpr);
+	    if (allesOk == false){return false;}
+	} else {
+	    U_expr rUExpr = (U_expr) rExpr;
+	    allesOk = isUExprOk(rUExpr);
+	    if (allesOk == false){return false;}
+	}
+
 
 	//"berechnen" des Typs von dieser Expression aus dem Operator und den Typen der linken/rechten expression
 	if (((lExpr.type.getClass()).getName()) != ((rExpr.type.getClass()).getName())){
@@ -40,19 +63,87 @@ public class Snotcheck{
 	}
 
 	String typeName = (lExpr.type.getClass()).getName();
-	if ((aBExpr.op == aBExpr.AND)&&(typeName == "BoolType")){
-	    aBExpr.type = new BoolType();
+
+
+	if ((aBExpr.op == aBExpr.AND)||(aBExpr.op == aBExpr.OR)){
+	    //AND und OR sind nur auf boolschen Werten definiert:
+	    if (typeName == "BoolType"){
+		aBExpr.type = new BoolType();
+		return true;
+	    } else {
+		return false;
+	    }
 	}
 
-	return true;
+
+	if ((aBExpr.op == aBExpr.DIV)||(aBExpr.op == aBExpr.MINUS)||(aBExpr.op == aBExpr.PLUS)||(aBExpr.op == aBExpr.TIMES)){
+	    //DIV MINUS PLUS und TIMES sind Operationen, die nur auf Integers erlaubt sind:
+	    if (typeName == "IntType"){
+		aBExpr.type = new IntType();
+		return true;
+	    } else {
+		return false;
+	    }
+	}
+
+
+	if((aBExpr.op == aBExpr.GREATER)||(aBExpr.op == aBExpr.GEQ)||(aBExpr.op == aBExpr.LESS)||(aBExpr.op == aBExpr.LEQ)){
+	    //GREATER GEQ LESS und LEQ sind auch Operationen, die nur auf Integers erlaubt sind:
+	    if (typeName == "IntType"){
+		aBExpr.type = new IntType();
+		return true;
+	    } else {
+		return false;
+	    }
+	}
+
+	if (aBExpr.op == aBExpr.EQ){
+	    //EQ ist sowohl fuer boolsche Variablen als auch fuer integer Variablen definiert
+	    if (typeName == "IntType"){
+		//bei Operation auf Integers:
+		aBExpr.type = new IntType();
+	    } else {
+		//bei OPeration auf Booleans:
+		aBExpr.type = new BoolType();
+	    }
+	}
+
+
+	return false;
     }
+
+
 
     private static boolean isUExprOk(U_expr anUExpr){
 	/////////////////////////////////////////////////////////////////////////
 	//in dieser methode wird geprueft, ob der unaere ausdruck korrekt ist,
 	//und es wird ermittelt, welchen typ dieser hat
 	/////////////////////////////////////////////////////////////////////////
-	return true;
+	Expr lExpr;
+	String typeName;
+	boolean allesOk = true;
+
+	lExpr = anUExpr.sub_expr;
+
+	//ist die Expression vorhanden und ist der Operator gueltig (d.h. MINUS oder NEG)
+	if ((lExpr == null)||((anUExpr.op != anUExpr.MINUS)&&(anUExpr.op != anUExpr.NEG))){return false;}
+
+	//pruefen der linken Expression:
+	String className = (lExpr.getClass()).getName();
+	if (className == "B_expr"){
+	    B_expr lBExpr = (B_expr) lExpr;
+	    allesOk = isBExprOk(lBExpr);
+	    if (allesOk == false){return false;}
+	} else {
+	    U_expr lUExpr = (U_expr) lExpr;
+	    allesOk = isUExprOk(lUExpr);
+	    if (allesOk == false){return false;}
+	}
+	
+	//"berechnen" des Typs von dieser Expression aus dem Operator und den Typen der linken/rechten expression
+	typeName = (lExpr.type.getClass()).getName();
+
+	return false;
     }
 
 
@@ -75,12 +166,12 @@ public class Snotcheck{
 	
 	if (anExpr == null){return false;}
 
-	System.out.println("jjbfsvjhlhd");
+//	System.out.println("jjbfsvjhlhd");
 
 	exprClass = anExpr.getClass();
 	nameOfExprClass = exprClass.getName();
 
-	System.out.println("jjbfsvjhlhd");
+//	System.out.println("jjbfsvjhlhd");
 
 	if (nameOfExprClass != "B_expr"){return false;}     //ist es eine BinaryExpr, wenn nicht, dann gebe false zurueck
 
@@ -517,9 +608,12 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.42 2001-07-10 14:25:34 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.43 2001-07-11 07:14:49 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.42  2001/07/10 14:25:34  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.41  2001/07/10 14:10:35  swprakt
 //	*** empty log message ***
 //	
