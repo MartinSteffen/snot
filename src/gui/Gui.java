@@ -23,6 +23,7 @@ import java.util.*;
 import absynt.*;
 import editor.*;
 import smv.*;
+import io.*;
 
 import checks.CheckException;
 import checks.*;
@@ -33,7 +34,7 @@ import simulator.Simulator;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.31 $
+ * @version $Revision: 1.32 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -47,6 +48,7 @@ public class Gui extends javax.swing.JFrame {
     private final String SessionFileExtension = ".snot"; // the session file extension
     private final String ProjectFileExtension = ".sfc";  // the exported SFC file extension
     private final String SmvFileExtension = ".smv";   // the SMV - translated file extension
+    private final String ParserFileExtension = ".txt";  // Parser file extension
     private final Point GuiLocation = new Point(100,50);
     private final Point EditorLocation = new Point(350, 220);
     private Point ProjectListLocation = new Point(100,220);
@@ -124,6 +126,7 @@ public class Gui extends javax.swing.JFrame {
         PanelStatus = new javax.swing.JPanel();
         Status = new javax.swing.JLabel();
 
+	ButtonParser = new javax.swing.JButton();
       //the files option toolbar
 	ToolBarFiles = new javax.swing.JToolBar();
  	ButtonOpenSession = new javax.swing.JButton();
@@ -440,6 +443,20 @@ public class Gui extends javax.swing.JFrame {
           );
           ToolBarTools.add(ButtonSMV);
 
+
+
+	ButtonParser.setPreferredSize(new java.awt.Dimension(90, 35));
+          ButtonParser.setToolTipText("Start Parser");
+          ButtonParser.setMaximumSize(new java.awt.Dimension(180, 35));
+          ButtonParser.setName("buttonParser");
+          ButtonParser.setText("Parser");
+          ButtonParser.addActionListener(new java.awt.event.ActionListener() {
+              public void actionPerformed(java.awt.event.ActionEvent evt) {
+                  ParserActionPerformed(evt);
+              }
+          }
+          );
+	ToolBarTools.add(ButtonParser);
 
 
 	/**
@@ -767,6 +784,74 @@ public class Gui extends javax.swing.JFrame {
       }
   }
 
+
+ private void ParserActionPerformed(java.awt.event.ActionEvent evt) {
+      int result;
+      File file = null;
+      Project project = null;
+      Editor editor = null;
+
+      // check for valid session
+      if (session == null) {
+           SnotOptionPane.showMessageDialog(null, "Parser failed!\nPlease open or create a new session first!",
+                                            "Error", JOptionPane.ERROR_MESSAGE);
+           return;
+      }
+
+      // initializing FileChooser
+      JFileChooser chooser = new JFileChooser();
+      chooser.setFileFilter(new SnotFileFilter(ParserFileExtension,"ASCII-File"));
+      chooser.setDialogType(JFileChooser.CUSTOM_DIALOG);
+      chooser.setApproveButtonToolTipText("Parse File");
+      chooser.setDialogTitle("Parse textfile to SFC");
+
+      // set prefered Directory
+      if (session.isSaved())
+          chooser.setCurrentDirectory(session.getFile());
+
+      // show FileChooser
+      int result = chooser.showDialog(null, "Parse");
+      if (result == JFileChooser.APPROVE_OPTION) {
+          file = chooser.getSelectedFile();
+
+          // check choosen file
+          try {
+              Utilities.validateFile(file,ParserFileExtension);
+          }
+          catch (Exception ex) {
+              SnotOptionPane.showMessageDialog(null, ex.getMessage(), "File error", JOptionPane.ERROR_MESSAGE);
+          }
+
+      // parse file to SFC and add new Project to Session
+          try {
+              io.Parser parser = new io.Parser();
+	      project = new Project();
+              editor = new Editor(parser.parseFile(file));
+              project.setEditor(editor);
+              session.addProject(project);
+          }
+	  catch (ParseException pex) {
+	      SnotOptionPane.showMessageDialog(null, pex.getMessage(), "Parse-Error", JOptionPane.ERROR_MESSAGE);
+	  }
+          catch (EditorException edex){
+	      SnotOptionPane.showMessageDialog(null, edex.getMessage(), "Editor-Error", JOptionPane.ERROR_MESSAGE);
+          }
+	  catch (Exception ex) {
+System.out.print("\n"+ex.getClass());
+ex.printStackTrace();
+               SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+          }
+
+          editor.addWindowListener(new GuiWindowListener());
+      }
+
+      updateProjectList();
+      if (editor!=null)
+          editor.show();
+
+  }
+
+
   private void SMVActionPerformed(java.awt.event.ActionEvent evt) {
       int response;
       File file = null;
@@ -894,27 +979,31 @@ System.out.print("\nlaunching SMVTranslator ...");
           if (checkEx instanceof IStepException)
                 SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "No Istep Exception", JOptionPane.ERROR_MESSAGE);
-          else if(checkEx instanceof DecListFailure)
-                SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
+          else if(checkEx instanceof DecListFailure) {
+	        project.getEditor().highlight_state(checkEx.get_Declaration(),true);
+		SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "Error in the declaration list", JOptionPane.ERROR_MESSAGE);
-
-          else if(checkEx instanceof ActionFailure)
+          }
+          else if(checkEx instanceof ActionFailure) {
+	        project.getEditor().highlight_state(checkEx.get_Action(),true);
                 SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "Action Failure", JOptionPane.ERROR_MESSAGE);
-
-          else if(checkEx instanceof StepFailure)
+          }
+          else if(checkEx instanceof StepFailure) {
+	        project.getEditor().highlight_state(checkEx.get_Step(),true);
                 SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "Step Failure", JOptionPane.ERROR_MESSAGE);
-
-          else if(checkEx instanceof TransitionFailure)
+          }
+          else if(checkEx instanceof TransitionFailure) {
+	        project.getEditor().highlight_state(checkEx.get_Trans(),true);
                 SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "Transition Failure", JOptionPane.ERROR_MESSAGE);
-
+          }
 	  else SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "Check Error", JOptionPane.ERROR_MESSAGE);
       }
       catch (Exception ex) {
-          SnotOptionPane.showMessageDialog(null, "Abnormal Error "+ ex.getClass(),
+          SnotOptionPane.showMessageDialog(null, "Abnormal Error \n"+ ex.getClass(),
                                         "Check Error", JOptionPane.ERROR_MESSAGE);
       }
 
@@ -1024,7 +1113,7 @@ System.out.print(ex.getClass());
 
       // initializing FileChooser
       JFileChooser chooser = new JFileChooser();
-      chooser.setFileFilter(new SnotFileFilter("sfc","Blubb"));
+      chooser.setFileFilter(new SnotFileFilter(ProjectFileExtension,"Sequential Function Chart"));
       chooser.setDialogType(JFileChooser.CUSTOM_DIALOG);
       chooser.setApproveButtonToolTipText("Import SFC");
       chooser.setDialogTitle("Import SFC");
@@ -1201,7 +1290,7 @@ System.out.print("\n"+ex.getClass());
       File file = null;
 
       JFileChooser chooser = new JFileChooser();
-      chooser.setFileFilter(new SnotFileFilter("snot","Snot sessions"));
+      chooser.setFileFilter(new SnotFileFilter(SessionFileExtension,"Snot sessions"));
       chooser.setDialogTitle("Save session as");
       int result = chooser.showDialog(null, "Save as");
       if (result == JFileChooser.APPROVE_OPTION) {
@@ -1329,6 +1418,7 @@ System.out.print(ex.getClass());
         ButtonCheckSFC.setEnabled(state);
         ButtonSimulator.setEnabled(state);
         ButtonSMV.setEnabled(state);
+	ButtonParser.setEnabled(state);
     }
 
     private void closeSession() {
@@ -1492,7 +1582,6 @@ System.out.print("\nSession is closed!");
         public void windowClosing(java.awt.event.WindowEvent evt) {
             if (activeProject!=null) {
                 activeProject.setActive(false);
-//                activeProject.setEnvironment();
             }
 //            System.out.print("\n Window "+activeProject+" Closing");
             activeProject = null;
@@ -1631,6 +1720,9 @@ System.out.print("\nerr  "+sEx.toString());
     private javax.swing.JButton ButtonCheckSFC;
     private javax.swing.JButton ButtonSimulator;
     private javax.swing.JButton ButtonSMV;
+
+    private javax.swing.JButton ButtonParser;
+
     private javax.swing.JPanel PanelStatus;
     private javax.swing.JLabel Status;
 

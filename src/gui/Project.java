@@ -25,7 +25,7 @@ import editor.Editor;
  *  It also keeps the name and status flags of the SFC.
  *
  * @author  Hans Theman and Ingo Schiller
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class Project extends java.lang.Object implements Serializable {
 
@@ -57,19 +57,7 @@ public class Project extends java.lang.Object implements Serializable {
         is_active = true;   // on creation Project is opened in Editor!
     }
 
-    /** The constructor.
-     *  Creates a new Project and initializes it whith these parameters.
-     */
-/*    public Project(Project p) throws Exception {
-        sfc = p.sfc;
-        name = p.name;
-//        editor = new Editor(p.sfc);
-        setEditor(new Editor(p.sfc));
-        is_checked = p.is_checked;
-        is_well_defined = p.is_well_defined;
-        is_active = p.is_active;
-    }
-*/
+
 
     public void restoreEnvironment() {
         Editor e = this.getEditor();
@@ -160,8 +148,8 @@ public class Project extends java.lang.Object implements Serializable {
     public void setSFC(SFC _sfc){
         sfc = _sfc;
     }
-    
-    
+
+
     public void exportSFC(File _file) throws Exception {
         if (_file == null)
             return;
