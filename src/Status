@@ -1,15 +1,73 @@
 ###########################################################
-## $Id: Status,v 1.3 2001-05-22 06:48:14 swprakt Exp $
+## $Id: Status,v 1.4 2001-05-22 07:06:15 swprakt Exp $
 ###########################################################
+
+
 
 
 
 The file contains the overall status of the source files.  The status
 is ``memoriless'' we don't keep a status  history here.
 
+------------------------------------------------------------------------
+Status as of $Date: 2001-05-22 07:06:15 $
+
+              comp.   doc.  int.  err.  time req. spec. 
+- overall:     +       +     -      -      -    -    o
 
 
-Date: $Date: 2001-05-22 06:48:14 $
+- gui:         o       o                                : nothing provided
+
+- absynt:      +       +                      1
+
+- utils        +       +
+
+- checks       o                                        : nothing provided
+
+- smv          +       +                        
+
+- editor       +       +
+
+
+- 
+
+-------------------------------------------------------------------
+The entries in the table are
+
+
+   - compilation (comp): whether or not the provided java-files compile,
+                         using the top-level makefile
+
+   - documentation (doc): whether the javadoc compiles and whether
+	                  there is a decent amount of documentation
+
+   - integrated    (int): is the package integrated within 
+	                  the whole tool
+
+   - errors (err):        are there any errors/bug know (except that it
+	                  doesn't compile at all. A more
+	                  detailed description (how critical they
+	                  are, what the error is, who's responsible to
+	                  fix it) etc should be kept in Errors.txt,
+	                  this is only the overview
+
+   - time:                Is the group within the schedule, or in delay?
+	                  also: have there been any progress since 
+	                  last week?
+	
+
+
+
+   - requests:           are there any (additional) feature requests
+	                 pending. For instance: other groups
+	                 wants to have additions, changes etc
+
+   - spec:               Is the implemenation in sync with the
+	                 requirement spec. (Pflichtenheft), is
+	                 something missing in the implementation, or is
+	                 is necessary to change the spec.
+	                
+
 
 
 
