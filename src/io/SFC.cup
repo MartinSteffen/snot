@@ -4,7 +4,7 @@
  * Offers the methods  parseFile and parseExpression 
  *
  * @author Karsten Stahl, Martin Steffen
- * @version $Id: SFC.cup,v 1.3 2001-06-30 13:07:35 swprakt Exp $
+ * @version $Id: SFC.cup,v 1.4 2001-06-30 13:44:06 swprakt Exp $
  *
  * The grammar definition contains 4 parts:
  *    -  initialization declarations and how to generate the parser
@@ -24,6 +24,7 @@ import java_cup.runtime.*;
 import java.lang.String;
 import absynt.*;
 import utils.*;
+import java.util.*;
 import java.io.*;
 
 
@@ -35,8 +36,10 @@ import java.io.*;
 *             routines usable int the actions of the grammar.
 *   - parser: code will be _directly_ placed int the parser class
 **/
-init with {: scanner.init() :}; 
-scan with {: return scanner.next_token(); :};  // equivalent to the default
+
+
+// init with {: io.scanner.init(); :}; 
+// scan with {: return scanner.next_token(); :};  // equivalent to the default
 
 
 action code {:
@@ -132,8 +135,8 @@ terminal         TRUE, FALSE;
 terminal String  IDENT;
 terminal Integer INTEGER;
 
-non terminal    stmt_list, stmt, block, atomic, if_else_stmt, loop;
-non terminal    input, output, assertion, var_dec, assignment;
+non terminal    stmt_list, stmt;
+non terminal    var_dec, assignment;
 
 non terminal    absynt.SFC        sfc;
 non terminal    absynt.SFC        program;
@@ -194,17 +197,10 @@ declarations ::= declaration
 declaration  ::= IDENT:var COLON IDENT:type EQ IDENT:val SEM
 		 ;
 
-istep	     ::= INIT EQ IDENT:stepname SEM
-                 {: System.out.println ("Programm \""+name+"\"{"); more(); :}
-                 INTEGER:i
-                 VARS:v
-                 RBRACKET
+istep	     ::= INIT EQ IDENT:stepname
                  {: 
 	    	    less();
-                    System.out.println ("\n} /* Ende "+name+" */"); 
-                    // p.name = name; 
-		    RESULT = new absynt.SFC(); 
+		  RESULT = new absynt.Step(stepname);  // no actions yet
                  :} 
-
              ;
 

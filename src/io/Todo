@@ -1,5 +1,5 @@
 #######################################################
-# $Id: Todo,v 1.4 2001-06-30 12:37:54 swprakt Exp $
+# $Id: Todo,v 1.5 2001-06-30 13:44:06 swprakt Exp $
 #######################################################
 
       
@@ -14,4 +14,4 @@ The file lists things to be done.
 
   o Parser/Lexer:
 
-     - take care of ``sym''     
+	- the scanner.init() is not found, neither is the next-token??
