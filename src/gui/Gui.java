@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.lang.Integer;
 import java.lang.String;
 import java.util.*;
@@ -24,8 +26,7 @@ import absynt.*;
 import editor.*;
 import smv.*;
 import io.*;
-
-//import checks.CheckException;
+import utils.*;
 import checks.*;
 import simulator.Simulator;
 
@@ -34,7 +35,7 @@ import simulator.Simulator;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.38 $
+ * @version $Revision: 1.39 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -50,8 +51,9 @@ public class Gui extends javax.swing.JFrame {
     private final String SmvFileExtension = "smv";   // the SMV - translated file extension
     private final String ParserFileExtension = "tsfc";  // Parser file extension
     private final Point GuiLocation = new Point(0,0);
-    private final Point EditorLocation = new Point(250, 170);
-    private Point ProjectListLocation = new Point(680,0);
+    private final Point EditorLocation = new Point(0, 170);
+    private Point ProjectListLocation = new Point(670,0);
+    private Point HelpLocation = new Point(920,0);
 
 
     /** Creates new form Gui */
@@ -112,11 +114,13 @@ public class Gui extends javax.swing.JFrame {
         Simulator = new javax.swing.JMenuItem();
         SMV = new javax.swing.JMenuItem();
 	Parser = new javax.swing.JMenuItem();
+	PrettyPrinter = new javax.swing.JMenuItem();
         View = new javax.swing.JMenu();
         SFCBrowser = new javax.swing.JCheckBoxMenuItem();
         ShowToolBar = new javax.swing.JCheckBoxMenuItem();
         HelpMenu = new javax.swing.JMenu();
         About = new javax.swing.JMenuItem();
+	Help = new javax.swing.JMenuItem();
         ToolBarTools = new javax.swing.JToolBar();
         ButtonEditor = new javax.swing.JButton();
         ButtonCheckSFC = new javax.swing.JButton();
@@ -126,6 +130,7 @@ public class Gui extends javax.swing.JFrame {
         Status = new javax.swing.JLabel();
 
 	ButtonParser = new javax.swing.JButton();
+	ButtonPrettyPrinter = new javax.swing.JButton();
       //the files option toolbar
 	ToolBarFiles = new javax.swing.JToolBar();
  	ButtonOpenSession = new javax.swing.JButton();
@@ -331,6 +336,18 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             ToolsMenu.add(Parser);
+
+        PrettyPrinter.setLabel("PrettyPrinter");
+            PrettyPrinter.setName("PrettyPrinter");
+            PrettyPrinter.setText("PrettyPrinter");
+            PrettyPrinter.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    PrettyPrinterActionPerformed(evt);
+                }
+            }
+            );
+            ToolsMenu.add(PrettyPrinter);
+
       jMenuBar.add(ToolsMenu);
 
 
@@ -385,7 +402,21 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             HelpMenu.add(About);
-            jMenuBar.add(HelpMenu);
+
+	    Help.setLabel("Documentation");
+            Help.setName("Help");
+            Help.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    HelpActionPerformed(evt);
+                }
+            }
+            );
+            HelpMenu.add(Help);
+
+
+
+
+	    jMenuBar.add(HelpMenu);
           setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         setName("frameGUI");
         setTitle("Snot");
@@ -470,7 +501,20 @@ public class Gui extends javax.swing.JFrame {
               }
           }
           );
-	ToolBarTools.add(ButtonParser);
+	  ToolBarTools.add(ButtonParser);
+	ButtonPrettyPrinter.setPreferredSize(new java.awt.Dimension(90, 35));
+          ButtonPrettyPrinter.setToolTipText("Start PrettyPrinter");
+          ButtonPrettyPrinter.setMaximumSize(new java.awt.Dimension(180, 35));
+          ButtonPrettyPrinter.setName("buttonPrettyPrinter");
+          ButtonPrettyPrinter.setText("PrettyPrinter");
+          ButtonPrettyPrinter.addActionListener(new java.awt.event.ActionListener() {
+              public void actionPerformed(java.awt.event.ActionEvent evt) {
+                  PrettyPrinterActionPerformed(evt);
+              }
+          }
+          );
+
+	ToolBarTools.add(ButtonPrettyPrinter);
 
 
 	/**
@@ -667,6 +711,7 @@ public class Gui extends javax.swing.JFrame {
           }
 
           project.setChecked(true);
+	  project.setOnlyBool(true);
           project.setName("Example1");
           activeProject = project;
           updateProjectList();
@@ -851,9 +896,9 @@ public class Gui extends javax.swing.JFrame {
 	      project = new Project();
 	      project.setSFC(parser.parseFile(file));
 System.out.println("File Parsed");
-              editor = new Editor(project.getSFC());
-	      editor.addWindowListener(new GuiWindowListener());
-	      editor.setLocation(EditorLocation);
+              //editor = new Editor(project.getSFC());
+	      //editor.addWindowListener(new GuiWindowListener());
+	      //editor.setLocation(EditorLocation);
 	      project.setName(file.getName());
 	      project.setEditor(editor);
 	      project.setEnvironment();
@@ -866,10 +911,10 @@ System.out.println("File Parsed");
 	      setStatusLine(true, "Parser failed");
 	      SnotOptionPane.showMessageDialog(null, pex.getMessage(), "Parse-Error", JOptionPane.ERROR_MESSAGE);
 	  }
-          catch (EditorException edex){
+          /*catch (EditorException edex){
 	      setStatusLine(true, "Parser failed");
 	      SnotOptionPane.showMessageDialog(null, edex.getMessage(), "Editor-Error", JOptionPane.ERROR_MESSAGE);
-          }
+          }*/
 	  catch (Exception ex) {
 System.out.print("\n"+ex.getClass());
 ex.printStackTrace();
@@ -877,11 +922,85 @@ ex.printStackTrace();
                SnotOptionPane.showMessageDialog(null, "Abnormal Error!\nError code 0-8-15\nPlease consult your local cofe machine ...\n\n"+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
           }
 
-      
+
       updateProjectList();
   }
   else{setStatusLine(true, "Parser aborted.");}
 }
+
+  /**
+   * The routine for the pretty Printer
+   */
+  private void PrettyPrinterActionPerformed(java.awt.event.ActionEvent evt) {
+
+      if(activeProject!=null){
+            try{
+	        setStatusLine(true, "Starting PrettyPrinter");
+	        PrettyPrint pp = new PrettyPrint();
+	        SFC sfc = activeProject.getSFC();
+	        System.out.println(activeProject.getName());
+	        pp.print(sfc);
+	    }
+	    catch(Exception e){
+	      setStatusLine(true, "PrettyPrinter failed");
+	      SnotOptionPane.showMessageDialog(null, "Pretty Printer failed.\n"+e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+	      }
+      }
+      else{SnotOptionPane.showMessageDialog(null, "Please select a SFC first!\n", "Error: no SFC", JOptionPane.ERROR_MESSAGE);}
+   }
+
+   /**
+   * The help routine
+   */
+  private void HelpActionPerformed(java.awt.event.ActionEvent evt) {
+
+    Help.setEnabled(false);
+    FileReader in = null;
+    File f = null;
+
+    helpFrame = new JFrame("Documentation");
+    helpFrame.setResizable(true);
+    helpFrame.setSize(300,700);
+    helpFrame.setLocation(HelpLocation);
+
+
+    //On close the window will be disposed.
+    helpFrame.addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent e){Help.setEnabled(true);
+					       HelpLocation = helpFrame.getLocation();
+					       helpFrame.dispose();}});
+
+    try{
+	f = new File("gui/help.txt");
+	in = new FileReader(f);
+	int size = (int)f.length();
+	char[] data = new char[size];
+	int chars_read = 0;
+	while (chars_read <size)
+	  chars_read += in.read(data, chars_read, size-chars_read);
+	textarea = new JTextArea(new String(data));
+	textarea.setEditable(false);
+	textarea.setLineWrap(true);
+	helpscrollpane = new JScrollPane(textarea);
+	Container pane = helpFrame.getContentPane();
+	pane.add(helpscrollpane);
+
+	}catch(IOException fe){
+	  SnotOptionPane.showMessageDialog(null, "Help not available!\n"+fe.getMessage(), "File not found", JOptionPane.ERROR_MESSAGE);
+	  }
+	 catch(Exception e){
+	  SnotOptionPane.showMessageDialog(null, "Help not available!\n"+e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+	  }
+	finally{try {in.close();}catch(IOException e){
+	    SnotOptionPane.showMessageDialog(null, "Help error.\n"+e.getMessage(), "File not found", JOptionPane.ERROR_MESSAGE);}}
+
+
+
+    helpFrame.show();
+  }
+
+
+
 
   /**
    * The SMV - Translator routine.
@@ -906,12 +1025,12 @@ ex.printStackTrace();
               return;
 
 	  // war der check erfolgreich???
-	  if (!activeProject.isChecked()) 
+	  if (!activeProject.isChecked())
 	      return;
       }
 
       if (!activeProject.isOnlyBool()) {
-	  SnotOptionPane.showMessageDialog(null, "The SFC \""+activeProject.getName()+"\" is not boolean!\n The SMV translator can only/nhandle SFCs with boolean operations./nAborting SMV translation", "Error: SFC is not boolean", JOptionPane.ERROR_MESSAGE);
+	  SnotOptionPane.showMessageDialog(null, "The SFC \""+activeProject.getName()+"\" is not boolean!\nThe SMV translator can only\nhandle SFCs with boolean operations.\nAborting SMV translation", "Error: SFC is not boolean", JOptionPane.ERROR_MESSAGE);
           return;
       }
 
@@ -946,7 +1065,7 @@ System.out.print("\nFile saved succesfully");
       }
       catch(Exception e){
 	 setStatusLine(true, "SMV translation failed.");
-	 SnotOptionPane.showMessageDialog(null, ("An unexpected condition occured!/n"+e.getMessage()), "Abnormal Error", JOptionPane.ERROR_MESSAGE);
+	 SnotOptionPane.showMessageDialog(null, ("An unexpected condition occured!\n"+e.getMessage()), "Abnormal Error", JOptionPane.ERROR_MESSAGE);
 e.printStackTrace();
       }
 
@@ -983,18 +1102,18 @@ e.printStackTrace();
 	 setStatusLine(true, "launching simulator ...");
 	 SFC _sfc = activeProject.getSFC();
 	 Simulator sim = new Simulator(_sfc);	// Simulator erzeugen
-	 
+
 	 sim.Initialize();						// Simulator initialisieren
-	 
+
 	 System.out.print("Anfangszustand: ");
 	 sim.PrintConfiguration(System.out);				// Zustand ausgeben
-	 
+
 	 for (int i=1; i<=15; i++) {
-	     
+
 	     sim.SingleStep();
-	     
+
 	     System.out.print("nach "+i+". Schritt: ");
-	     
+
 			sim.PrintConfiguration(System.out);
 	 }
      } catch (Exception e) {
@@ -1010,6 +1129,7 @@ System.out.println("Error while simulating the SFC"+e.getMessage());
    */
   private void CheckSFCActionPerformed(java.awt.event.ActionEvent evt) {
       boolean status = false;
+      boolean status2 = false;
 
       if (activeProject == null) {
           SnotOptionPane.showMessageDialog(null, "Please select a SFC first!\n", "Error: no SFC", JOptionPane.ERROR_MESSAGE);
@@ -1021,9 +1141,9 @@ System.out.println("Error while simulating the SFC"+e.getMessage());
 System.out.println("Nach isonlybool \n"+status);
 	  //Den Only Bool Wert des Projects setzen
 	  activeProject.setOnlyBool(status);
-          status = Snotcheck.isWellDefined(activeProject.getSFC());
+          status2 = Snotcheck.isWellDefined(activeProject.getSFC());
 	  // Checked setzen falls alle Tests bestanden wurden.
-	  activeProject.setChecked(status);
+	  activeProject.setChecked(status2);
       }
       catch (CheckException checkEx) {
           if (checkEx instanceof IStepException){
@@ -1070,7 +1190,7 @@ System.out.println("Nach isonlybool \n"+status);
 
      if(activeProject.isChecked()) {
 	 setStatusLine(true, "Checks passed");
-	 SnotOptionPane.showMessageDialog(null, "All checks passed succesfully",
+	 SnotOptionPane.showMessageDialog(null, "All checks passed succesfully.\nOnly boolean expressions occured: "+status,
                                         "Check Info", JOptionPane.INFORMATION_MESSAGE);
      }
 
@@ -1420,10 +1540,8 @@ System.out.print(ex.getClass());
 	       try {
                     activeProject = (Project)p.elementAt(index);
 		    setStatusLine(true);
-                    if(activeProject.getName().compareTo("Example1")!= 0 )
-		      activeProject.getEditor().show();
-		    else SnotOptionPane.showMessageDialog(null, "Example1 can not be displayed in the Editor by now. Rename it to try!",
-                                        "Example", JOptionPane.INFORMATION_MESSAGE);
+                    activeProject.getEditor().show();
+
 	       }catch(Exception ex){/*System.out.println("Daneben!!");*/}
                                                      // hihi! Daneben!! so, so ...
 	   }
@@ -1504,6 +1622,7 @@ System.out.print(ex.getClass());
         ButtonSimulator.setEnabled(state);
         ButtonSMV.setEnabled(state);
 	ButtonParser.setEnabled(state);
+	ButtonPrettyPrinter.setEnabled(state);
     }
 
     private void closeSession() {
@@ -1763,8 +1882,11 @@ System.out.print(ex.getClass());
     private javax.swing.JCheckBoxMenuItem ShowFilesToolBar;
 
     private javax.swing.JScrollPane scrollpane;
+    private javax.swing.JScrollPane helpscrollpane;
     private javax.swing.JList list;
     private javax.swing.JFrame projectFrame;
+    private javax.swing.JFrame helpFrame;
+    private javax.swing.JTextArea textarea;
 
     // Variables declaration - do not modify
     private javax.swing.JMenuBar jMenuBar;
@@ -1792,11 +1914,13 @@ System.out.print(ex.getClass());
     private javax.swing.JMenuItem Simulator;
     private javax.swing.JMenuItem SMV;
     private javax.swing.JMenuItem Parser;
+    private javax.swing.JMenuItem PrettyPrinter;
     private javax.swing.JMenu View;
     private javax.swing.JCheckBoxMenuItem SFCBrowser;
     private javax.swing.JCheckBoxMenuItem ShowToolBar;
     private javax.swing.JMenu HelpMenu;
     private javax.swing.JMenuItem About;
+    private javax.swing.JMenuItem Help;
     private javax.swing.JToolBar ToolBarTools;
     private javax.swing.JButton ButtonEditor;
     private javax.swing.JButton ButtonCheckSFC;
@@ -1804,6 +1928,7 @@ System.out.print(ex.getClass());
     private javax.swing.JButton ButtonSMV;
 
     private javax.swing.JButton ButtonParser;
+    private javax.swing.JButton ButtonPrettyPrinter;
 
     private javax.swing.JPanel PanelStatus;
     private javax.swing.JLabel Status;

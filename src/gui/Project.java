@@ -25,7 +25,7 @@ import editor.Editor;
  *  It also keeps the name and status flags of the SFC.
  *
  * @author  Hans Theman and Ingo Schiller
- * @version $Revision: 1.19 $
+ * @version $Revision: 1.20 $
  */
 public class Project extends java.lang.Object implements Serializable {
 
@@ -36,7 +36,7 @@ public class Project extends java.lang.Object implements Serializable {
 
     private boolean is_named;   // determines if a name is set
     private boolean is_checked;   // indicates if it is checked
-    private boolean is_only_bool;  // for the isOnlyBool() test of the ckecker Group
+    private boolean is_only_bool;  // for the isOnlyBool() test of the checker group
 
 
     private Point location; // the position of the editor frame
@@ -142,7 +142,7 @@ public class Project extends java.lang.Object implements Serializable {
         ObjectOutputStream outStream = new ObjectOutputStream(new FileOutputStream(_file));
         try {
             outStream.writeObject(this); // throws IOException!!!!
-	}
+        }
         finally {
             outStream.close(); // throws IOException!!!!
         }
