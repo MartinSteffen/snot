@@ -9,22 +9,27 @@ import absynt.*;
  *-checken von SFCs
  *-und nat"urlich auch checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.10 2001-05-22 14:54:59 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.11 2001-05-29 15:08:01 swprakt Exp $
  *
  */
 
 
 public class Snotcheck{
 
+    private static boolean isThereAnIStep(SFC aSFCObject){
+	if (aSFCObject.istep == null) {return false;}
+	return true;
+    }
 
+    public static boolean isWellDefined(SFC aSFCObject) throws Exception {
 
-    public boolean isWellDefine(SFC aSFCObject) throws Exception {
+	if (!isThereAnIStep( aSFCObject ) ){throw new NoIStepException();}
 
 	if (false) {
-	    throw new Exception("Es ist etwas Voll-schief gelaufen!");
+	    throw new Exception("Es ist voll 'was schief gelaufen!");
 	}
 	boolean nurBool;
-	nurBool = onlyBool(aSFCObject);
+	nurBool = isOnlyBool(aSFCObject);
 	if (nurBool) {
 	    return true;
 	} else {
@@ -32,8 +37,15 @@ public class Snotcheck{
 	}
     }
 
-    public boolean onlyBool(SFC aSFCObject) throws Exception {
+    public static boolean isOnlyBool(SFC aSFCObject) throws Exception {
 	return false;
+    }
+    public static void main(String[] args){
+	SFC test= new SFC(null,null,null,null,null);
+	boolean a;
+	try{
+	a=isWellDefined(test);
+	}catch (Exception e){};
     }
 
 }
@@ -43,9 +55,12 @@ public class Snotcheck{
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.10 2001-05-22 14:54:59 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.11 2001-05-29 15:08:01 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.10  2001/05/22 14:54:59  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.9  2001/05/22 14:50:36  swprakt
 //	*** empty log message ***
 //	
