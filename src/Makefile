@@ -1,6 +1,6 @@
 #----------------------------------------------------------------------
 # developers' top-level Makefile for the Siff project
-# $Id: Makefile,v 1.6 2001-05-04 09:00:08 swprakt Exp $
+# $Id: Makefile,v 1.7 2001-05-05 10:14:20 swprakt Exp $
 #----------------------------------------------------------------------
 
 # The targets installing gobal web-infos can be executed only
@@ -14,7 +14,8 @@ WEBDIR        = /home/info/www/inf/deRoever/SS01/Java/$(TOOLNAME)
 WEBDOCDIR     = $(WEBDIR)/doc
 SNAPSHOTSDIR  = $(WEBDIR)/snapshots
 LOCALDOCDIR   = doc
-PACKAGEDIRS   = absynt
+PACKAGEDIRS   = absynt\
+	        utils
 
 ################################################
 
@@ -35,10 +36,8 @@ packets:
 	(cd ./editor; make)
 	(cd ./gui; make)
 	(cd ./checks; make)
-	(cd ./parser; make)
-	(cd ./simulator; make)
-	(cd ./modcheck; make)
-	(cd ./position; make)
+	(cd ./smv; make)
+       
 
 
 

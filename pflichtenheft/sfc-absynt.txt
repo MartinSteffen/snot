@@ -4,7 +4,6 @@
                                actions    : action   list
                      step ::=  a_name     : string
                                actions    : stepaction list
-
                stepaction ::=  qualifier  : action_qualifier
                                a_name     : string  (* simple assignment program *)
                   action ::=   a_name     : string
@@ -20,7 +19,6 @@
                transition ::=  source     : step list
                                guard      : expr
                                target     : step list
-
                expr       ::=               b_expr
                            |                u_expr
                            |                constval
@@ -38,4 +36,3 @@
                 constval  ::=               ...| -2 | -1 | 0 | 1 | ... | true | false
                 type      ::=               inttype
                            |                booltype
-
