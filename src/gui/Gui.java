@@ -35,7 +35,7 @@ import simulator.Simulator;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.43 $
+ * @version $Revision: 1.44 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -52,8 +52,8 @@ public class Gui extends javax.swing.JFrame {
     private final String ParserFileExtension = "tsfc";  // Parser file extension
     private final Point GuiLocation = new Point(0,0);
     private final Point EditorLocation = new Point(0, 170);
-    private Point ProjectListLocation = new Point(670,0);
-    private Point HelpLocation = new Point(670,170);
+    private Point ProjectListLocation = new Point(672,0);
+    private Point HelpLocation = new Point(672,0);
     private File globalDirectory = null;
 
 
@@ -706,7 +706,7 @@ public class Gui extends javax.swing.JFrame {
 
 
   private void ImportExample1ActionPerformed(java.awt.event.ActionEvent evt) {
-// Add your handling code here:
+
       Project project = null;
       Editor editor = null;
       if (session == null) {
@@ -1171,7 +1171,7 @@ System.out.println("Error while simulating the SFC"+e.getMessage());
    */
   private void CheckSFCActionPerformed(java.awt.event.ActionEvent evt) {
       boolean status = false;
-      
+      boolean status2 = false;
 
       if (activeProject == null) {
           SnotOptionPane.showMessageDialog(null, "Please select a SFC first!\n", "Error: no SFC", JOptionPane.ERROR_MESSAGE);
@@ -1182,9 +1182,9 @@ System.out.println("Error while simulating the SFC"+e.getMessage());
 	  status = Snotcheck.isWellDefined(activeProject.getSFC());
 	  // Checked setzen falls alle Tests bestanden wurden.
 	  activeProject.setChecked(status);          
-	  status = Snotcheck.isOnlyBool(activeProject.getSFC());
+	  status2 = Snotcheck.isOnlyBool(activeProject.getSFC());
 	  //Den Only Bool Wert des Projects setzen
-	  activeProject.setOnlyBool(status);
+	  activeProject.setOnlyBool(status2);
          
       }
       catch (CheckException checkEx) {
@@ -1228,11 +1228,12 @@ System.out.println("Error while simulating the SFC"+e.getMessage());
 	  ex.printStackTrace();
 	  SnotOptionPane.showMessageDialog(null, "Abnormal Error \n"+ ex.getClass(),
                                         "Check Error", JOptionPane.ERROR_MESSAGE);
+	  return;
       }
 
      if(activeProject.isChecked()) {
 	 setStatusLine(true, "Checks passed");
-	 SnotOptionPane.showMessageDialog(null, "All checks passed succesfully.\nOnly boolean expressions occured: "+status,
+	 SnotOptionPane.showMessageDialog(null, "All checks passed succesfully.\nOnly boolean expressions occured: "+status2,
                                         "Check Info", JOptionPane.INFORMATION_MESSAGE);
      }
 

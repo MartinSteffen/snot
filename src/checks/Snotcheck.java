@@ -10,7 +10,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.47 2001-07-11 13:21:56 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.48 2001-07-12 15:22:00 swprakt Exp $
  *
  */
 
@@ -655,7 +655,7 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 	System.out.println(test);
 	test = isAllTransitionOk(aSFCObject);
 	System.out.println(test);
-	return true;
+	return test;
     }
 
 
@@ -666,9 +666,12 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.47 2001-07-11 13:21:56 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.48 2001-07-12 15:22:00 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.47  2001/07/11 13:21:56  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.46  2001/07/11 12:05:25  swprakt
 //	*** empty log message ***
 //	

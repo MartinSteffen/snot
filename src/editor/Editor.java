@@ -591,16 +591,13 @@ public class Editor extends JFrame implements ActionListener {
      TransLL transLL = new TransLL(sfc.transs);
      sfc.transs.clear();
      for (int i=0; i < transLL.size(); i++) insertTrans(transLL.getTrans(i));
+
      //} 
     //catch(Exception e) {
 	//e.printStackTrace();
 	//System.out.println("\nATTENTION!\nThe editor failed to print the SFC!");     
 	//}
-     
-
-
-
-
+ 
     aligningSFC=false;
   } 
  
@@ -676,7 +673,8 @@ public class Editor extends JFrame implements ActionListener {
   public Editor(SFC anSFC) throws EditorException { 
     super();    
     setSFCName("NoName"); 
-    setSize(600, 420);
+    pack();
+    //setSize(600,420);
     setVisible(true);
     setSFC(anSFC); 
     SelectedLL = new LinkedList();
