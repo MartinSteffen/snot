@@ -38,7 +38,7 @@
                                type       : type
                operand    ::=               PLUS | MINUS | TIMES | DIV  (* Operand als *)
                            |                AND | OR | NEG              (* Konstanten in expr *)
-                           |                LESS | GREATER | LEQ | GEQ | EQ 
+                           |                LESS | GREATER | LEQ | GEQ | EQ | NEQ
                 constval  ::=               ...| -2 | -1 | 0 | 1 | ... | true | false
                 type      ::=               inttype
                            |                booltype
