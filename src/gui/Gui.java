@@ -27,7 +27,7 @@ import simulator.*;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.20 $
+ * @version $Revision: 1.21 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -652,7 +652,10 @@ System.out.print("\nlaunching SMVTranslator ...");
           status = Snotcheck.isWellDefined(project.getSFC());
       }
       catch (CheckException checkEx) {
-          SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
+          if (checkEx instanceof NoIStepException)
+                SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
+                                        "No Istep Exception", JOptionPane.ERROR_MESSAGE);
+          else SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "Check error", JOptionPane.ERROR_MESSAGE);
       }
       catch (Exception ex) {
