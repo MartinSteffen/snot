@@ -1,0 +1,5 @@
+     Pretty Printer
+     **************
+
+The pretty printer prints out an ascii representation of an abstract SFC.  It
+is only used for debugging purposes.
