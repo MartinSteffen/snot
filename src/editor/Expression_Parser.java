@@ -17,6 +17,8 @@ import absynt.*;
  * @author Natalja Froidenberg, Andreas Lukosch 
  * @version 1.0 
  */ 
+
+// --------------------------------------------------------------------------------------------------------------
  
   class drawObject{
     private String content;
@@ -30,6 +32,8 @@ import absynt.*;
     public String get_Content(){return content;}
     public int    get_x(){return x;}   
  }
+
+// --------------------------------------------------------------------------------------------------------------
 
  class VariableDialog extends Dialog implements ActionListener{
      
@@ -47,21 +51,22 @@ import absynt.*;
          
          super(parent, title, true);
          setLayout(new BorderLayout());
-         _sfc = sfc;
 
+        _sfc = sfc;
          ExpressionParser = ExpParser;
          
          JPanel panel_South = new JPanel();
+         panel_South.add(getJButton("OK"));
          panel_South.add(getJButton("Cancel"));
          
          if (_sfc != null)
          { ButtonGroup g          = new ButtonGroup();
            JPanel panel_Center    = new JPanel();
            
-           LinkedList    decl_lList = new LinkedList();                  
-           Iterator decl_List = (_sfc.declist).iterator();
-           Object   element;
-           int      numBut = 0; 
+           LinkedList decl_lList = new LinkedList();                  
+           Iterator   decl_List = (_sfc.declist).iterator();
+           Object     element;
+           int        numBut = 0; 
        
            while (decl_List.hasNext()){
                   element = decl_List.next();
@@ -69,14 +74,15 @@ import absynt.*;
                   numBut += 1;
                   if (numBut == 1){ but.setSelected(true); selectedNum = 1;}
             };
-            add(panel_Center, BorderLayout.CENTER);     
-            panel_South.add(getJButton("OK"));
+            add(panel_Center, BorderLayout.CENTER);                 
         };
         
         add(panel_South, BorderLayout.SOUTH);
+
         pack();
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation((dim.width - getWidth()) / 2, (dim.height - getHeight()) / 2);
+
         enableEvents(AWTEvent.MOUSE_EVENT_MASK);            
         }
         
@@ -133,7 +139,9 @@ import absynt.*;
              }
        }
       }
- 
+
+// --------------------------------------------------------------------------------------------------------------
+
   class ConstanteDialog extends Dialog implements ActionListener{
      
      final static public int _INTTYPE = 0;
@@ -214,10 +222,12 @@ import absynt.*;
 	 { ExpressionParser.set_Constante(null); dispose();}
       }
  }
+
+// --------------------------------------------------------------------------------------------------------------
  
  class ExpressionParserException extends Exception{
      public ExpressionParserException(int bed){
-         String msg = null;
+         String msg = "";
          switch (bed){
              case 1: msg = "The Constante must be TRUE or FALSE !\n";
                      break;
@@ -233,6 +243,8 @@ import absynt.*;
          (new JOptionPane()).showMessageDialog(null,msg,"Error",JOptionPane.ERROR_MESSAGE);
      }
  }
+
+// --------------------------------------------------------------------------------------------------------------
      
  class Expression_Panel extends JPanel{
 
@@ -246,6 +258,9 @@ import absynt.*;
        enableEvents(AWTEvent.MOUSE_EVENT_MASK);
     }
 
+     //    public get_letterHigh(){}
+     //    public get_letterBreight(){}
+
     public void paint(Graphics g) { 
         Graphics2D G2D = (Graphics2D)g; 
         super.paint(G2D);
@@ -255,6 +270,8 @@ import absynt.*;
         else ExprParser.paint_Expression_Panel(ExprParser.get_expr(),g); 
     }
   }
+
+// --------------------------------------------------------------------------------------------------------------
   
  class AssignVarPanel extends JPanel{
 
@@ -278,6 +295,8 @@ import absynt.*;
   }
  }
 
+// --------------------------------------------------------------------------------------------------------------
+
 public class Expression_Parser extends JDialog implements ActionListener{
 
     private Expression_Panel ExpressionPanel;
@@ -289,24 +308,28 @@ public class Expression_Parser extends JDialog implements ActionListener{
     private Expr     predecessor;
 
     private boolean  root , var , cons;
-    private int      x_fort , kk , pred_index;   
+    private int      x_fort , kk , pred_index;
     private int      y_a ,letter_width ,letter_high;
     
     private  SFC sfc;
     
     private Variable vari, varAssign;
     private Constval consi;
-    public boolean   canceled=false;
+    private boolean  canceled=false;
+    // private JFrame parFrame;
     
     public Expression_Parser(JFrame parentFrame, SFC _sfc){
     	
 	    super(parentFrame,"Statement erstellen",true);
 	    setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-	    sfc = _sfc;
+	    // parFrame = parentFrame;
+	    sfc = _sfc; //((Editor)parentFrame).getSFC();
+            if (sfc == null) System.out.println(" SFc ist LEER !");
+
 	    
-	 //   sfc = new SFC();
+	    /*	   sfc = new SFC();
 //-------------------------------------------------------------------------	  
- /*     BoolType btype = new BoolType();
+      BoolType btype = new BoolType();
       Variable v_x = new Variable ("x", btype);
       Variable v_y = new Variable ("y", btype);
       Variable v_z = new Variable ("z", btype);
@@ -350,7 +373,8 @@ public class Expression_Parser extends JDialog implements ActionListener{
         JPanel p = new JPanel();
         p.setLayout(new GridLayout(4,5,5,5));
 
-        p.add(getJButton("Var"));
+        JButton _Var = getJButton("Var");
+        p.add(_Var);  if (sfc == null) _Var.setEnabled(false);
         p.add(getJButton("Const"));
         p.add(getJButton("+"));
         p.add(getJButton("-"));
@@ -400,24 +424,7 @@ public class Expression_Parser extends JDialog implements ActionListener{
         set_Variable();
        }
 
-       private  void set_Fonts(){
-           y_a = 2;
-           letter_width = 12;
-           letter_high  = 8;
-       }
-       private void set_Variable(){
-           root   = true;
-           var    = false;
-           cons   = false;
-           index  = 0;
-           x_fort = 2;
-           kk     = 0;
-           pred_index = 0;
-       }
-       
-       public void set_Variable(Variable v){vari = v;}
-       public void set_Constante(Constval c){consi = c;}       
-           
+
        private JButton getJButton(String s){
 	  JButton button = new JButton(s);
           button.setFont(new Font("Monospaced", Font.PLAIN, 12));
@@ -425,22 +432,52 @@ public class Expression_Parser extends JDialog implements ActionListener{
           return button;
        }
 
-    
-    public int      get_Index()        { return index;}
-    public Expr     get_expr()         { return _expr;}
-    public Assign   get_assign()       { return _assign;}
-    public Variable get_VarAssign()    { return varAssign;}
-    public String   get_VarAssignName(){ return varAssign.name;}    
-    public boolean  get_canceled()     { // true - OK, false - Cancel
+// ------------------------------------------ return - Methoden  ------------------------------------------------ 
+  
+    public Assign   get_assign()       { return _assign;}                // gebe zurueck Assign
+    public Variable get_VarAssign()    { return varAssign;}              // gebe zurueck Variable in Assign
+    public Expr     get_expr()         { return _expr;}                  // gebe zurueck Expression in Assign
+    public boolean  get_canceled()     { // true - OK, false - Cancel    // bestimme, welches Button gedrueck war
                                          return canceled;}
+// --------------------------------------------------------------------------------------------------------------
+
+    public int      get_Index()        { return index;}                  // gebe an, welches Symbol in ParserPanel
+                                                                         // gewaehlt ist
+    public String   get_VarAssignName(){ return varAssign.name;}         // gebe zurueck VariablenNamen in Assign
+
+// --------------------------------------------------------------------------------------------------------------
+
+      private boolean isSelected(){ return (index != 0);}
+
+      private  void set_Fonts(){
+           y_a = 2;
+           letter_width = 12;
+           letter_high  = 8;
+	   }
+
+      private void set_Variable(){
+           root   = true;
+           var    = false;
+           cons   = false;
+           index  = 0;
+	   x_fort = 2;
+           kk     = 0;
+           pred_index = 0;
+       }
+       
+      public void set_Variable(Variable v){vari = v;}
+      public void set_Constante(Constval c){consi = c;}
+     
+// --------------------------------------------------------------------------------------------------------------    
        
     private void setExprTreeRoot(String str)
-    { if ((str == "+")|(str == "-")|(str == "*")|(str == "/")|(str == "&")|(str == "|")|(str == "=")
+    { // setze BaumWurzelExpression
+      if ((str == "+")|(str == "-")|(str == "*")|(str == "/")|(str == "&")|(str == "|")|(str == "=")
           |(str == "<") |(str == ">")|(str == "<=")|(str == "=>")|(str == "!="))
           _expr = new B_expr(null,op_string(str),null);
 
        else{ if ((str == "~")|(str == "-U"))   { if (str == "-U") str = "-";_expr = new U_expr(op_string(str),null);}
-            else{ if (var)                     {  _expr = vari;  var = false;}
+            else{ if (var)                     {  _expr = vari;  var  = false;}
                   else { if  (cons)            {  _expr = consi; cons = false;}
 		  }
             }
@@ -449,24 +486,6 @@ public class Expression_Parser extends JDialog implements ActionListener{
       root = false;    
     }
 
-    private int op_string(String str)
-    {  int op = 0;
-       if (str == "+") op = Expr.PLUS;
-       else if (str == "-")  op = Expr.MINUS;
-       else if (str == "*")  op = Expr.TIMES;
-       else if (str == "/")  op = Expr.DIV;
-       else if (str == "&")  op = Expr.AND;
-       else if (str == "|")  op = Expr.OR;
-       else if (str == "~")  op = Expr.NEG;
-       else if (str == "=")  op = Expr.EQ;
-       else if (str == "<")  op = Expr.LESS;
-       else if (str == ">")  op = Expr.GREATER;
-       else if (str == "<=") op = Expr.LEQ;
-       else if (str == ">=") op = Expr.GEQ;
-       else if (str == "!=") op = Expr.NEQ;
-       return op;
-    }
-    
     private void set_Expression(String str)
     { if (root){ setExprTreeRoot(str);}
       else{ if (isSelected()){
@@ -521,51 +540,7 @@ public class Expression_Parser extends JDialog implements ActionListener{
          predecessor = _expr;
     }
 
-    private String className(Expr _expr)
-    { return _expr.getClass().getName();}
-
-    private int classType(String className)
-    { int int_className = 0;
-      if      (className == "absynt.Constval") int_className = 1;
-      else if (className == "absynt.Variable") int_className = 2;
-      else if (className == "absynt.B_expr")   int_className = 3;
-      else if (className == "absynt.U_expr")   int_className = 4;
-
-      return int_className;
-     }
-
-     private  String op_add(int op)
-    {   String str = "";
-        switch(op){
-          case  0 : str = "+";  break;
-          case  1 : str = "-";  break;
-          case  2 : str = "*";  break;
-          case  3 : str = "/";  break;
-          case  4 : str = "&";  break;
-          case  5 : str = "|";  break;
-          case  6 : str = "~";  break;
-          case  7 : str = "=";  break;
-          case  8 : str = "<";  break;
-          case  9 : str = ">";  break;
-          case 10 : str = "<="; break;
-          case 11 : str = ">="; break;
-          case 12 : str = "!="; break;
-      };
-      return str;
-    }
-    
-    private void drawObject_List(LinkedList expr_lList, LinkedList expr_drawObject,int width)
-    { Iterator exp_List = expr_lList.iterator();
-      Object   element;
-      int      x_fort = 2;
-      
-      while (exp_List.hasNext()){
-            element = exp_List.next();
-             expr_drawObject.addLast(new drawObject(element.toString(),x_fort));
-             if ((element.toString()).length() == 0) x_fort += width;
-             else  x_fort += ((element.toString()).length()) * width;
-       }
-    }
+// --------------------------------------------------------------------------------------------------------------
         
     private void expression_to_linkedList(Expr _expr, LinkedList expr_lList)
     { if (_expr == null){ expr_lList.addLast(""); }
@@ -617,8 +592,6 @@ public class Expression_Parser extends JDialog implements ActionListener{
         }
       }
 
-      private boolean isSelected(){ return (index != 0);}
-      
       private void definePredecessor(Expr _exp){
          if ((_exp != null) & (this.kk != this.index)){
            switch (classType(className(_exp)))
@@ -645,26 +618,80 @@ public class Expression_Parser extends JDialog implements ActionListener{
 	   }
        } // end-of-if
       }
-       
-       private class MouseEventHandleAdapter extends MouseInputAdapter{
-           public void mousePressed(MouseEvent e){
-                mouseX = e.getX();
-                mouseY = e.getY();
-                
-                selectedElement_inLinkedList();                
-                if (isSelected()){ ExpressionPanel.repaint();}
-           }
-       }
-                    
-       private void setExpressionPanelAction(){
-           ExpressionPanel.addMouseListener(new MouseEventHandleAdapter());
-       }
 
+// --------------------------------------------------------------------------------------------------------------
+
+    private int op_string(String str)
+    {  int op = 0;
+       if      (str == "+")  op = Expr.PLUS;
+       else if (str == "-")  op = Expr.MINUS;
+       else if (str == "*")  op = Expr.TIMES;
+       else if (str == "/")  op = Expr.DIV;
+       else if (str == "&")  op = Expr.AND;
+       else if (str == "|")  op = Expr.OR;
+       else if (str == "~")  op = Expr.NEG;
+       else if (str == "=")  op = Expr.EQ;
+       else if (str == "<")  op = Expr.LESS;
+       else if (str == ">")  op = Expr.GREATER;
+       else if (str == "<=") op = Expr.LEQ;
+       else if (str == ">=") op = Expr.GEQ;
+       else if (str == "!=") op = Expr.NEQ;
+       return op;
+    }
+
+     private  String op_add(int op)
+    {   String str = "";
+        switch(op){
+          case  0 : str = "+";  break;
+          case  1 : str = "-";  break;
+          case  2 : str = "*";  break;
+          case  3 : str = "/";  break;
+          case  4 : str = "&";  break;
+          case  5 : str = "|";  break;
+          case  6 : str = "~";  break;
+          case  7 : str = "=";  break;
+          case  8 : str = "<";  break;
+          case  9 : str = ">";  break;
+          case 10 : str = "<="; break;
+          case 11 : str = ">="; break;
+          case 12 : str = "!="; break;
+      };
+      return str;
+    }
+    
+    private String className(Expr _expr)
+    { return _expr.getClass().getName();} // bestimme KlassenNamen
+
+    private int classType(String className)
+    { int int_className = 0;
+      if      (className == "absynt.Constval") int_className = 1;
+      else if (className == "absynt.Variable") int_className = 2;
+      else if (className == "absynt.B_expr")   int_className = 3;
+      else if (className == "absynt.U_expr")   int_className = 4;
+
+      return int_className;
+     }
+
+// --------------------------------------------------------------------------------------------------------------
+ 
+    private void drawObject_List(LinkedList expr_lList, LinkedList expr_drawObject,int width)
+    { Iterator exp_List = expr_lList.iterator();
+      Object   element;
+      int      x_fort = 2;
+      
+      while (exp_List.hasNext()){
+            element = exp_List.next();
+             expr_drawObject.addLast(new drawObject(element.toString(),x_fort));
+             if ((element.toString()).length() == 0) x_fort += width;
+             else  x_fort += ((element.toString()).length()) * width;
+       }
+    }
+// --------------------------------------------------------------------------------------------------------------
 
     public void paint_Expression_Panel(Expr _expr, Graphics expPan){
-/**
-    Gebe Expression in GraphicsObject expPan aus.
-*/    	
+
+/**    Gebe Expression in GraphicsObject expPan aus.  */
+  	
        Graphics2D G2D = (Graphics2D)expPan;
        super.paint(G2D);
         
@@ -694,14 +721,31 @@ public class Expression_Parser extends JDialog implements ActionListener{
             }
         }
     }   
-	
+// --------------------------------------------------------------------------------------------------------------
+
+    private class MouseEventHandleAdapter extends MouseInputAdapter{
+        public void mousePressed(MouseEvent e){
+             mouseX = e.getX();
+             mouseY = e.getY();
+                
+             selectedElement_inLinkedList();                
+             if (isSelected()){ ExpressionPanel.repaint();}
+        }
+    }
+                    
+    private void setExpressionPanelAction(){
+        ExpressionPanel.addMouseListener(new MouseEventHandleAdapter());
+    }
+
 //    public static void main(String[] args){
 //            new Expression_Parser(null,Ed.getSFC()).show();
 //        }	
 
-//      public void paint(){
-//      	_expr = null; root = true; varAssign = null;
-//      }
+       public void show(){
+        super.show();
+       _expr = null; root = true; varAssign = null;
+ }
+
 
       public void actionPerformed(ActionEvent e){
          String command = ((JButton)e.getSource()).getText();
@@ -723,15 +767,15 @@ public class Expression_Parser extends JDialog implements ActionListener{
          else if ((command.equals("Const")) & (root | isSelected())){
               new ConstanteDialog(this, "new Constante", this).show();
               if (consi != null){cons = true; set_Expression("");  ExpressionPanel.repaint();}}
-	       else if (command.equals("+")) { set_Expression("+");  ExpressionPanel.repaint();}
+	   else if (command.equals("+")) { set_Expression("+");  ExpressionPanel.repaint();}
            else if (command.equals("-")) { set_Expression("-");  ExpressionPanel.repaint();}
            else if (command.equals("*")) { set_Expression("*");  ExpressionPanel.repaint();}
            else if (command.equals("/")) { set_Expression("/");  ExpressionPanel.repaint();}
-	       else if (command.equals("&")) { set_Expression("&");  ExpressionPanel.repaint();}
+	   else if (command.equals("&")) { set_Expression("&");  ExpressionPanel.repaint();}
            else if (command.equals("|")) { set_Expression("|");  ExpressionPanel.repaint();}
            else if (command.equals("~")) { set_Expression("~");  ExpressionPanel.repaint();}
            else if (command.equals("=")) { set_Expression("=");  ExpressionPanel.repaint();}
-	       else if (command.equals("<")) { set_Expression("<");  ExpressionPanel.repaint();}
+	   else if (command.equals("<")) { set_Expression("<");  ExpressionPanel.repaint();}
            else if (command.equals(">")) { set_Expression(">");  ExpressionPanel.repaint();}
            else if (command.equals("<=")){ set_Expression("<="); ExpressionPanel.repaint();}
            else if (command.equals(">=")){ set_Expression(">="); ExpressionPanel.repaint();}
@@ -741,14 +785,14 @@ public class Expression_Parser extends JDialog implements ActionListener{
                                               ExpressionPanel.repaint(); AssVarPanel.repaint();}
            else if (command.equals("Variable")){
            	        try{ if(sfc != null){
-           	               if (sfc.declist != null)
+           	               if (sfc.declist.isEmpty())
            	               { new VariableDialog(this, "Variable", this, sfc).show();
                              if (vari != null){ varAssign = vari; AssVarPanel.repaint();}
                            }
                            else throw new ExpressionParserException(4);}
                           else throw new ExpressionParserException(5);
-                      }
-                      catch (ExpressionParserException _e){};
+                        }
+                        catch (ExpressionParserException _e){};
                     }
            else if (command.equals("OK")){
            	        try {
@@ -756,8 +800,8 @@ public class Expression_Parser extends JDialog implements ActionListener{
            	              else { Assign _assign = new Assign(varAssign,_expr); 
            	                     canceled = false; hide();                   
                                  dispose();}
-                      }
-                     catch (ExpressionParserException _e){};
+                         }
+                         catch (ExpressionParserException _e){};
                   }
            else if (command.equals("Cancel")){
            	  canceled = true; hide();
