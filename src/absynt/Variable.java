@@ -7,7 +7,7 @@ import java.io.Serializable;
  * They are very simply implemented as strings
  * 
  * @author Initially provided by Martin Steffen.
- * @version $Id: Variable.java,v 1.2 2001-05-02 05:52:04 swprakt Exp $	
+ * @version $Id: Variable.java,v 1.3 2001-05-02 07:03:38 swprakt Exp $	
  */
 
 
@@ -17,12 +17,12 @@ public class Variable extends Expr implements Serializable {
 
   public Variable (String s) {
     name = s;
-    type = nil;
+    type = null;
   };
 
   public Variable (String s, Type _t) {
     name = s;
-    type  = _t};
+    type  = _t;};
 };
 
 
@@ -32,9 +32,14 @@ public class Variable extends Expr implements Serializable {
 //	Abstract syntax for Snot programs
 //	------------------------------------
 //
-//	$Id: Variable.java,v 1.2 2001-05-02 05:52:04 swprakt Exp $
+//	$Id: Variable.java,v 1.3 2001-05-02 07:03:38 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.2  2001/05/02 05:52:04  swprakt
+//	I added a field for types and a second consctructor.
+//	
+//	[Steffen]
+//	
 //	Revision 1.1  2001/05/02 05:47:32  swprakt
 //	First proposal according to the req. spec.
 //	

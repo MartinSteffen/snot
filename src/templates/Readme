@@ -1,19 +1,20 @@
 ####################################################
-# $Id: Readme,v 1.1 2001-05-02 05:21:30 swprakt Exp $
+# $Id: Readme,v 1.2 2001-05-02 07:03:39 swprakt Exp $
 ####################################################
 
 
 
 Files:
 
-   template.txt
+   - template.txt
         Als kleine Hilfestellung: eine minimale Schablone, wie man seine
         Klassen dokumentieren soll (mit hilfe von Javadoc).
 
 	Mindestens enthalten:
 
-	   - Autor
-           - Kurzbeschreibung.
+	   - Autor(en)
+	   - Paket
+           - Kurzbeschreibung, falls nicht selbsterklaerend
 	   - Version
 
 

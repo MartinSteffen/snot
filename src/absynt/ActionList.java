@@ -8,7 +8,7 @@ import java.io.Serializable;
  * To iterate through the list, the steps adhere to the
  * ``Enumaration''-interface
  * @author Initially provided by Martin Steffen.
- * @version $Id: ActionList.java,v 1.1 2001-05-02 06:36:47 swprakt Exp $
+ * @version $Id: ActionList.java,v 1.2 2001-05-02 07:03:36 swprakt Exp $
  */
 
 
@@ -19,7 +19,7 @@ public class ActionList
 
   public ActionList (Action s, ActionList sl) {
     head = s;
-    tail = sl;
+    next = sl;
   };
 
   public boolean hasMoreElements (){ // required by ``Enumeration''
@@ -39,9 +39,14 @@ public class ActionList
 //	Abstract syntax for Snot programs
 //	------------------------------------
 //
-//	$Id: ActionList.java,v 1.1 2001-05-02 06:36:47 swprakt Exp $
+//	$Id: ActionList.java,v 1.2 2001-05-02 07:03:36 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.1  2001/05/02 06:36:47  swprakt
+//	First proposal according to the requirement specification.
+//	
+//	[Steffen]
+//	
 //	
 //---------------------------------------------------------------------
 

@@ -10,19 +10,19 @@ import java.io.Serializable;
  */
 
 
-public class Location extends Absyn { 
+public class Location extends Absynt { 
 }
 
 
 
 
 //----------------------------------------------------------------------
-//	Abstract Syntax for Mist Programs
+//	Abstract syntax for Snot programs
 //	------------------------------------
 //
-//	$Id: <dollar>
+//	$Id: Location.java,v 1.2 2001-05-02 07:03:36 swprakt Exp $
 //
-//	$Log: <dollar>
+//	$Log: not supported by cvs2svn $
 //	
 //---------------------------------------------------------------------
 

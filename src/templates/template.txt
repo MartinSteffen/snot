@@ -1,4 +1,4 @@
-package <mypackage>;
+package <mypackage>;          // for instance ``package absynt;''
 import java.io.Serializable;  // for instance 
 
 

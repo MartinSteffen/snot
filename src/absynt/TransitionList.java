@@ -8,7 +8,7 @@ import java.io.Serializable;
  * To iterate through the list, the steps adhere to the
  * ``Enumaration''-interface
  * @author Initially provided by Martin Steffen.
- * @version $Id: TransitionList.java,v 1.1 2001-05-02 06:35:12 swprakt Exp $
+ * @version $Id: TransitionList.java,v 1.2 2001-05-02 07:03:38 swprakt Exp $
  */
 
 
@@ -19,7 +19,7 @@ public class TransitionList
 
   public TransitionList (Transition s, TransitionList sl) {
     head = s;
-    tail = sl;
+    next = sl;
   };
 
   public boolean hasMoreElements (){ // required by ``Enumeration''
@@ -39,9 +39,12 @@ public class TransitionList
 //	Abstract syntax for Snot programs
 //	------------------------------------
 //
-//	$Id: TransitionList.java,v 1.1 2001-05-02 06:35:12 swprakt Exp $
+//	$Id: TransitionList.java,v 1.2 2001-05-02 07:03:38 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.1  2001/05/02 06:35:12  swprakt
+//	First proposal accoding to the req. spec.
+//	
 //	
 //---------------------------------------------------------------------
 

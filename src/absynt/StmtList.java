@@ -8,7 +8,7 @@ import java.io.Serializable;
  * To iterate through the list, the statements adhere to the
  * ``Enumeration''-interface
  * @author Initially provided by Martin Steffen.
- * @version $Id: StmtList.java,v 1.1 2001-05-02 06:47:47 swprakt Exp $
+ * @version $Id: StmtList.java,v 1.2 2001-05-02 07:03:37 swprakt Exp $
  */
 
 
@@ -19,7 +19,7 @@ public class StmtList
 
   public StmtList (Stmt s, StmtList sl) {
     head = s;
-    tail = sl;
+    next = sl;
   };
 
   public boolean hasMoreElements (){ // required by ``Enumeration''
@@ -39,8 +39,11 @@ public class StmtList
 //	Abstract syntax for Snot programs
 //	------------------------------------
 //
-//	$Id: StmtList.java,v 1.1 2001-05-02 06:47:47 swprakt Exp $
+//	$Id: StmtList.java,v 1.2 2001-05-02 07:03:37 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.1  2001/05/02 06:47:47  swprakt
+//	*** empty log message ***
+//	
 //---------------------------------------------------------------------
 
