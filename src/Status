@@ -1,19 +1,16 @@
 ###########################################################
-## $Id: Status,v 1.4 2001-05-22 07:06:15 swprakt Exp $
+## $Id: Status,v 1.5 2001-05-22 07:28:57 swprakt Exp $
 ###########################################################
-
-
-
 
 
 The file contains the overall status of the source files.  The status
 is ``memoriless'' we don't keep a status  history here.
 
 ------------------------------------------------------------------------
-Status as of $Date: 2001-05-22 07:06:15 $
+Status as of $Date: 2001-05-22 07:28:57 $
 
               comp.   doc.  int.  err.  time req. spec. 
-- overall:     +       +     -      -      -    -    o
+- overall:     +       +     -      -     -    -    o   : late in integration
 
 
 - gui:         o       o                                : nothing provided
@@ -28,8 +25,6 @@ Status as of $Date: 2001-05-22 07:06:15 $
 
 - editor       +       +
 
-
-- 
 
 -------------------------------------------------------------------
 The entries in the table are

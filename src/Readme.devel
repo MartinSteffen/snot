@@ -1,9 +1,9 @@
 #######################################################
-# $Id: Readme.devel,v 1.1.1.1 2001-04-19 11:24:28 swprakt Exp $
+# $Id: Readme.devel,v 1.2 2001-05-22 07:28:57 swprakt Exp $
 #######################################################
 
 
-project-internale readme for the developersforProjekt-internes Readme
+Project-internal ``Readme; for the developers of the Snot project
 -------------------------------------------
 
 
@@ -14,29 +14,38 @@ o Vorraussetzungen:
 	
 	CLASSPATH = <WORKINGDIRECTORY>/Mist/src
 
-o Java-Pakete/Unterverzeichnisse
-    parser
-    modcheck
-    gui
-    check
-    position2
-    position1
-    absynt
-    editor
-    utils
+o Files and directories
 
-o Weitere Files:
+  - Java packages/subdirectories
 
+	simulator/
+	editor/
+	utils/
+	absynt/
+	smv/
+	checks/
+	gui/
+	
+   - other files
 
-    - Readme.devel: diese Datei
-    - Readme:       allgemeines Readme (erst spaeter Relevant)
-    - Todo:         Dinge, die geloest werden muessen
-    - Org:          Verschiedenes zur internen Organisation 
-	            (z.B. Gruppeneinteilung mit mailadressen)
+      > Readme.devel:   this file
+      > Readme:         general Information, for outside users
+      > Todo:           list of things to do
 
-    - Status:       aktueller Status
+      > Status:         current status to survey the progress
 
-    - Baselines:    cvs-Snapshots
+      > Errors.txt      list of more detailed errors, can 
+	                be used by all developers. Status 
+	                just distills an overall view, Todo	
+	                lists general things that needs to
+	                be done, and Errors.txt keeps a
+	                detailed record of particular things
+	                to be fixed  and bugs  that have shown
+	                up.
+
+         templates/    How to mark the package and to
+	               use cvs-logs in java-doc comments.
+
 
 
 
