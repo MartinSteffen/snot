@@ -34,7 +34,7 @@ import simulator.Simulator;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.35 $
+ * @version $Revision: 1.36 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -50,7 +50,7 @@ public class Gui extends javax.swing.JFrame {
     private final String SmvFileExtension = "smv";   // the SMV - translated file extension
     private final String ParserFileExtension = "tsfc";  // Parser file extension
     private final Point GuiLocation = new Point(0,0);
-    private final Point EditorLocation = new Point(350, 220);
+    private final Point EditorLocation = new Point(250, 170);
     private Point ProjectListLocation = new Point(0,170);
 
 
@@ -667,7 +667,6 @@ public class Gui extends javax.swing.JFrame {
           }
 
           project.setChecked(true);
-          project.setActive(false);
           project.setName("Example1");
           activeProject = project;
           updateProjectList();
@@ -801,7 +800,9 @@ public class Gui extends javax.swing.JFrame {
 	projectFrame.dispose();
       }
   }
-
+ /**
+  * The Parser routine
+  */
 
  private void ParserActionPerformed(java.awt.event.ActionEvent evt) {
       int result;
@@ -838,6 +839,7 @@ public class Gui extends javax.swing.JFrame {
               Utilities.validateFile(file,ParserFileExtension);
           }
           catch (Exception ex) {
+	      setStatusLine(true, "Parser failed, file error.");
               SnotOptionPane.showMessageDialog(null, ex.getMessage(), "File error", JOptionPane.ERROR_MESSAGE);
           }
 
@@ -852,25 +854,34 @@ System.out.println("File Parsed");
 	      editor.setLocation(EditorLocation);
 	      project.setName(file.getName());
 	      project.setEditor(editor);
+	      project.setEnvironment();
               session.addProject(project);
-	      
+
           }
 	  catch (ParseException pex) {
+	      setStatusLine(true, "Parser failed");
 	      SnotOptionPane.showMessageDialog(null, pex.getMessage(), "Parse-Error", JOptionPane.ERROR_MESSAGE);
 	  }
           catch (EditorException edex){
+	      setStatusLine(true, "Parser failed");
 	      SnotOptionPane.showMessageDialog(null, edex.getMessage(), "Editor-Error", JOptionPane.ERROR_MESSAGE);
           }
 	  catch (Exception ex) {
 System.out.print("\n"+ex.getClass());
 ex.printStackTrace();
+	       setStatusLine(true, "Parser failed");
                SnotOptionPane.showMessageDialog(null, ex.getMessage()+"Anormal Error", "Error", JOptionPane.ERROR_MESSAGE);
           }
-      }
+
       activeProject = project;
       updateProjectList();
   }
+  else{setStatusLine(true, "Parser aborted.");}
+}
 
+  /**
+   * The SMV - Translator routine.
+   */
 
   private void SMVActionPerformed(java.awt.event.ActionEvent evt) {
       int response;
@@ -1123,8 +1134,7 @@ System.out.print(ex.getClass());
           }
           updateProjectList();
 	  setStatusLine(true, "SFC exported");
-          project.getEditor().show();
-      }
+       }
   }
 
   /**
@@ -1175,6 +1185,8 @@ System.out.print(ex.getClass());
               project = Project.importSFC(file);
               editor = new Editor(project.getSFC());
               project.setEditor(editor);
+	      project.restoreEnvironment();
+	      editor.addWindowListener(new GuiWindowListener());
               session.addProject(project);
           }
           catch (EditorException edex){
@@ -1185,12 +1197,6 @@ System.out.print("\n"+ex.getClass());
 ex.printStackTrace();
                SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
           }
-
-          // set environment parameters
-//          editor.setLocation(EditorLocation);
-          project.restoreEnvironment();
-          editor.addWindowListener(new GuiWindowListener());
-      
 
       updateProjectList();
       setStatusLine(true, "SFC "+project.getName()+ " imported");
@@ -1250,8 +1256,8 @@ ex.printStackTrace();
       // set environmental parameters
       updateProjectList();
       activeProject = project;
-      setStatusLine(true);
       editor.show();
+      setStatusLine(true);
  }
 
 
@@ -1372,7 +1378,7 @@ System.out.print(ex.getClass());
   private void showProjectList(){
     projectFrame = new JFrame("SFC - Browser");
     projectFrame.setResizable(true);
-    projectFrame.setSize(250,200);
+    projectFrame.setSize(250,170);
     projectFrame.setLocation(ProjectListLocation);
 
     //On close the window will be disposed.
@@ -1414,21 +1420,21 @@ System.out.print(ex.getClass());
     projectFrame.show();
     }
 
-    
-    private void setStatusLine(boolean status){
+
+    private void setStatusLine(boolean state){
 	Project project = activeProject;
-	if(status == true && project != null)
+	if(state == true && project != null)
 	    Status.setText("   "+project.getName() +" is active");
 	else
-	    Status.setText("   No active project");   
+	    Status.setText("   No active project");
     }
 
-    
+
     private void setStatusLine(boolean state, String msg){
 	Project project = activeProject;
 	if(state == true && project != null)
 	    Status.setText("   "+project.getName() +" is active. "+ msg);
-	else Status.setText("   No active project. "+ msg);   
+	else Status.setText("   No active project. "+ msg);
     }
 
 
@@ -1612,6 +1618,7 @@ System.out.print("\nSession is closed!");
         public void windowActivated(java.awt.event.WindowEvent evt) {
             // set the active Project
             activeProject = session.getProject(evt.getSource());
+	    setStatusLine(true);
 //            System.out.print("\n Window "+activeProject+" Activated");
         }
 
@@ -1625,13 +1632,12 @@ System.out.print("\nSession is closed!");
 //            System.out.print("\n Window "+activeProject+" Closed");
         }
 
-        public void windowDeiconified(java.awt.event.WindowEvent evt) {
+	public void windowDeiconified(java.awt.event.WindowEvent evt) {
 //            System.out.print("\n Window "+activeProject+" Deiconified");
         }
 
         public void windowOpened(java.awt.event.WindowEvent evt) {
-            if (activeProject!=null)
-                activeProject.setActive(true);
+
 //            System.out.print("\n Window "+activeProject+" Opened");
         }
 
@@ -1640,11 +1646,9 @@ System.out.print("\nSession is closed!");
         }
 
         public void windowClosing(java.awt.event.WindowEvent evt) {
-            if (activeProject!=null) {
-                activeProject.setActive(false);
-            }
-//            System.out.print("\n Window "+activeProject+" Closing");
+//          System.out.print("\n Window "+activeProject+" Closing");
             activeProject = null;
+	    setStatusLine(true);
         }
     }
 
