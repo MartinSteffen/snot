@@ -9,7 +9,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.18 2001-06-07 11:24:00 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.19 2001-06-07 12:04:25 swprakt Exp $
  *
  */
 
@@ -123,12 +123,23 @@ public class Snotcheck{
 	return true;
     }
 
+
+
+
+
+
     /**Diese Funktion prueft, ob der istep vorhanden ist
      */
     private static boolean isThereAnIStep(SFC aSFCObject) throws IStepException{
 	if (aSFCObject.istep == null) {return false;}
 	return true;
     }
+
+
+
+
+
+
 
     /**Diese Funktion prueft, ob alle Transitionen vollstaendig und korrekt sind
      *
@@ -163,8 +174,24 @@ public class Snotcheck{
     /**Diese Funktion prueft, ob nur boolsche Variablen vorkommen.
      */
     public static boolean isOnlyBool(SFC aSFCObject){
-	return true;
+
+	LinkedList decList = aSFCObject.declist;
+	Declaration decl;
+	String s1;
+	Class z;
+	String s2="BoolType";
+	boolean nurBool = true;
+	
+	for (int i=0; i < decList.size(); i++){
+	    decl = (Declaration)decList.get(i);
+	    z = decl.type.getClass();
+	    s1 = z.getName();
+	    if(s1 != "BoolType"){nurBool = false;}
+	}
+	return nurBool;
     }
+
+
 
 
 
@@ -173,7 +200,7 @@ public class Snotcheck{
      */
 
     public static boolean isWellDefined(SFC aSFCObject) throws CheckException {
-
+	if (aSFCObject == null){throw new IStepException("No SFC selected.");}
 	if (!isThereAnIStep( aSFCObject ) ){throw new IStepException("There is no I-Step!!");}
 	boolean nurBool,test;
 
@@ -194,9 +221,12 @@ public class Snotcheck{
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.18 2001-06-07 11:24:00 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.19 2001-06-07 12:04:25 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.18  2001/06/07 11:24:00  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.17  2001/06/07 11:00:12  swprakt
 //	*** empty log message ***
 //	
