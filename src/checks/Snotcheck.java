@@ -5,19 +5,35 @@ import absynt.*;
 
 /**
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
- *-checken von SFCs
- *-checken von SFCs
- *-und nat"urlich auch checken von SFCs
+ *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.11 2001-05-29 15:08:01 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.12 2001-05-30 14:01:58 swprakt Exp $
  *
  */
 
 
 public class Snotcheck{
 
+
+    /**Diese Funktion prueft, ob der istep vorhanden ist
+     */
     private static boolean isThereAnIStep(SFC aSFCObject){
 	if (aSFCObject.istep == null) {return false;}
+	return true;
+    }
+
+    /**Diese Funktion prueft, ob alle Transitionen vollstaendig und korrekt sind
+     *
+     */
+    private static boolean isAllTransitionOk(SFC aSFCObject){
+	//Quellcode fehlt
+	return true;
+    }
+
+    /**Diese Funktion prueft, ob alle Actions vollstaendig und korrekt sind
+     */
+    private static boolean isAllActionOk(SFC aSFCObject){
+	//Quellcode fehlt
 	return true;
     }
 
@@ -55,9 +71,12 @@ public class Snotcheck{
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.11 2001-05-29 15:08:01 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.12 2001-05-30 14:01:58 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.11  2001/05/29 15:08:01  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.10  2001/05/22 14:54:59  swprakt
 //	*** empty log message ***
 //	
