@@ -31,7 +31,7 @@ import javax.swing.event.*;
  *  create new, import or export Projects.
  *
  * @author  Hans Theman and Ingo Schiller
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 
 public class Session extends java.lang.Object implements Serializable {
@@ -217,8 +217,11 @@ public class Session extends java.lang.Object implements Serializable {
      *  It is called when closing the session in order to clean up the desktop.
      */
     public void disposeEditors() {
+        Project p = null;
         for (Enumeration e = this.table.elements() ; e.hasMoreElements() ;) {
-            ((Project)e.nextElement()).getEditor().dispose();
+            p = (Project)e.nextElement();
+            p.setEnvironment();
+            p.getEditor().dispose();
         }
     }
 
@@ -266,13 +269,15 @@ public class Session extends java.lang.Object implements Serializable {
         Enumeration e = s.table.elements();
         while (e.hasMoreElements()) {
             p = (Project)e.nextElement();
+            p.setEditor(new Editor(p.getSFC()));
+            p.restoreEnvironment();
             p.clearModified();
             if (p.isActive()) {
-                p.setEditor(new Editor(p.getSFC()));
                 p.getEditor().show();
             }
         }
 
+        // session settings
         s.setFile(_file);
 //        s.is_saved = true; // is set by setFile()
         s.is_modified = false;

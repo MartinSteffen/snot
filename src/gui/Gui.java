@@ -14,6 +14,7 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.Integer;
+import java.lang.String;
 import java.util.*;
 import absynt.*;
 import editor.*;
@@ -26,7 +27,7 @@ import checks.*;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.18 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -37,9 +38,12 @@ public class Gui extends javax.swing.JFrame {
     private GuiUtilities Utilities = new Gui.GuiUtilities();
 
     private final String TITLE = "Snot";    // the Gui title
-    private final String SessionFileExtension = "snot"; // the session file extension
-    private final String ProjectFileExtension = "sfc";  // the exported SFC file extension
-
+    private final String SessionFileExtension = ".snot"; // the session file extension
+    private final String ProjectFileExtension = ".sfc";  // the exported SFC file extension
+    private final Point GuiLocation = new Point(100,50);
+    private final Point EditorLocation = new Point(360, 170);
+    private final Point ProjectListLocation = new Point(100,170);
+    
 
     /** Creates new form Gui */
     public Gui(Session _session) {
@@ -62,7 +66,7 @@ public class Gui extends javax.swing.JFrame {
             enableSession(false);
         pack ();
         this.setResizable(false);
-        setLocation(100,50);
+        setLocation(GuiLocation);
     }
 
 	/** This method is called from within the constructor to
@@ -107,10 +111,10 @@ public class Gui extends javax.swing.JFrame {
         PanelStatus = new javax.swing.JPanel();
         Status = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
-
+        
         FileMenu.setActionCommand(null);
           FileMenu.setText("File");
-
+          
           OpenSession.setLabel("Open Session");
             OpenSession.setName("openSession");
             OpenSession.addActionListener(new java.awt.event.ActionListener() {
@@ -120,7 +124,7 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             FileMenu.add(OpenSession);
-
+            
           NewSession.setLabel(" New Session");
             NewSession.setName("newSession");
             NewSession.addActionListener(new java.awt.event.ActionListener() {
@@ -130,9 +134,9 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             FileMenu.add(NewSession);
-
+            
           FileMenu.add(jSeparator2);
-
+            
           SaveSession.setLabel("Save Session");
             SaveSession.setName("saveSession");
             SaveSession.addActionListener(new java.awt.event.ActionListener() {
@@ -142,7 +146,7 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             FileMenu.add(SaveSession);
-
+            
           SaveAsSession.setLabel("Save Session as");
             SaveAsSession.setName("saveAsSession");
             SaveAsSession.addActionListener(new java.awt.event.ActionListener() {
@@ -152,7 +156,7 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             FileMenu.add(SaveAsSession);
-
+            
           CloseSession.setLabel("Close Session");
             CloseSession.setName("closeSession");
             CloseSession.addActionListener(new java.awt.event.ActionListener() {
@@ -162,9 +166,9 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             FileMenu.add(CloseSession);
-
+            
           FileMenu.add(jSeparator3);
-
+            
           ExitSnot.setLabel("Exit");
             ExitSnot.setName("exitSnot");
             ExitSnot.setText("Exit Snot");
@@ -176,10 +180,10 @@ public class Gui extends javax.swing.JFrame {
             );
             FileMenu.add(ExitSnot);
             jMenuBar.add(FileMenu);
-
+          
         Edit.setLabel("Edit");
           Edit.setName("Edit");
-
+          
           NewSFC.setLabel("New SFC");
             NewSFC.setName("newSFC");
             NewSFC.addActionListener(new java.awt.event.ActionListener() {
@@ -189,10 +193,10 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             Edit.add(NewSFC);
-
+            
           Edit.add(jSeparator4);
-
-          ImportSFC.setLabel("Import");
+            
+          ImportSFC.setLabel("Import SFC");
             ImportSFC.setName("importSFC");
             ImportSFC.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -201,8 +205,8 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             Edit.add(ImportSFC);
-
-          ExportSFC.setLabel("Export");
+            
+          ExportSFC.setLabel("Export SFC");
             ExportSFC.setName("exportSFC");
             ExportSFC.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -211,10 +215,10 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             Edit.add(ExportSFC);
-
+            
           Edit.add(jSeparator5);
-
-          RenameSFC.setLabel("Rename");
+            
+          RenameSFC.setLabel("Rename SFC");
             RenameSFC.setName("renameSFC");
             RenameSFC.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -223,8 +227,8 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             Edit.add(RenameSFC);
-
-          RemoveSFC.setLabel("Remove");
+            
+          RemoveSFC.setLabel("Remove SFC");
             RemoveSFC.setName("removeSFC");
             RemoveSFC.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -234,9 +238,9 @@ public class Gui extends javax.swing.JFrame {
             );
             Edit.add(RemoveSFC);
             jMenuBar.add(Edit);
-
+          
         ToolsMenu.setText("Tools");
-
+          
           Editor.setLabel("Editor");
             Editor.setName("editor");
             Editor.addActionListener(new java.awt.event.ActionListener() {
@@ -246,7 +250,7 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             ToolsMenu.add(Editor);
-
+            
           CheckSFC.setLabel("Check SFC");
             CheckSFC.setName("check");
             CheckSFC.addActionListener(new java.awt.event.ActionListener() {
@@ -256,7 +260,7 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             ToolsMenu.add(CheckSFC);
-
+            
           Simulator.setLabel("Simulator");
             Simulator.setName("simulator");
             Simulator.addActionListener(new java.awt.event.ActionListener() {
@@ -266,7 +270,7 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             ToolsMenu.add(Simulator);
-
+            
           SMV.setLabel("SMV translation");
             SMV.setName("smv");
             SMV.setText("SMV");
@@ -278,10 +282,10 @@ public class Gui extends javax.swing.JFrame {
             );
             ToolsMenu.add(SMV);
             jMenuBar.add(ToolsMenu);
-
+          
         View.setLabel("View");
           View.setName("View");
-
+          
           SFCBrowser.setLabel("SFC Browser");
             SFCBrowser.setName("SFCBrowser");
             SFCBrowser.addActionListener(new java.awt.event.ActionListener() {
@@ -291,7 +295,7 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             View.add(SFCBrowser);
-
+            
           ShowToolBar.setLabel("Tool Bar");
             ShowToolBar.setSelected(true);
             ShowToolBar.setName("showToolBar");
@@ -303,9 +307,9 @@ public class Gui extends javax.swing.JFrame {
             );
             View.add(ShowToolBar);
             jMenuBar.add(View);
-
+          
         HelpMenu.setText("? (Help) ");
-
+          
           About.setLabel("About");
             About.setName("about");
             About.addActionListener(new java.awt.event.ActionListener() {
@@ -328,10 +332,10 @@ public class Gui extends javax.swing.JFrame {
             }
         }
         );
-
+        
         ToolBarTools.setName("ToolBarTools");
         ToolBarTools.setMinimumSize(new java.awt.Dimension(378, 39));
-
+        
         ButtonEditor.setPreferredSize(new java.awt.Dimension(90, 35));
           ButtonEditor.setToolTipText("Launch editor");
           ButtonEditor.setMaximumSize(new java.awt.Dimension(180, 35));
@@ -344,8 +348,8 @@ public class Gui extends javax.swing.JFrame {
           }
           );
           ToolBarTools.add(ButtonEditor);
-
-
+          
+          
         ButtonCheckSFC.setPreferredSize(new java.awt.Dimension(90, 35));
           ButtonCheckSFC.setToolTipText("Check SFC");
           ButtonCheckSFC.setMaximumSize(new java.awt.Dimension(180, 35));
@@ -358,8 +362,8 @@ public class Gui extends javax.swing.JFrame {
           }
           );
           ToolBarTools.add(ButtonCheckSFC);
-
-
+          
+          
         ButtonSimulator.setPreferredSize(new java.awt.Dimension(90, 35));
           ButtonSimulator.setToolTipText("Simulate SFC");
           ButtonSimulator.setMaximumSize(new java.awt.Dimension(180, 35));
@@ -372,8 +376,8 @@ public class Gui extends javax.swing.JFrame {
           }
           );
           ToolBarTools.add(ButtonSimulator);
-
-
+          
+          
         ButtonSMV.setPreferredSize(new java.awt.Dimension(90, 35));
           ButtonSMV.setToolTipText("Transform SFC to SMV");
           ButtonSMV.setMaximumSize(new java.awt.Dimension(180, 35));
@@ -386,29 +390,29 @@ public class Gui extends javax.swing.JFrame {
           }
           );
           ToolBarTools.add(ButtonSMV);
-
-
+          
+          
         getContentPane().add(ToolBarTools, java.awt.BorderLayout.NORTH);
-
-
+        
+        
         PanelStatus.setLayout(new java.awt.GridLayout(1, 1, 20, 0));
         PanelStatus.setPreferredSize(new java.awt.Dimension(400, 20));
         PanelStatus.setName("panelStatus");
         PanelStatus.setMinimumSize(new java.awt.Dimension(200, 20));
-
+        
         Status.setName("statusLine");
           Status.setText("StatusLine");
           PanelStatus.add(Status);
-
-
+          
+          
         getContentPane().add(PanelStatus, java.awt.BorderLayout.SOUTH);
-
-
-
+        
+        
+        
         getContentPane().add(jSeparator1, java.awt.BorderLayout.CENTER);
-
+        
         setJMenuBar(jMenuBar);
-
+        
     }//GEN-END:initComponents
 
 /**********************************************************************************
@@ -483,6 +487,7 @@ public class Gui extends javax.swing.JFrame {
           session.setModified(true);
      }
      updateProjectList();
+     project.getEditor().toFront();
   }//GEN-LAST:event_RenameSFCActionPerformed
 
   private void NewSessionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NewSessionActionPerformed
@@ -561,6 +566,8 @@ public class Gui extends javax.swing.JFrame {
                                             "Warning: SFC is not checked", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
           if (response == JOptionPane.OK_OPTION)
               CheckSFCActionPerformed(null);
+          else
+              return;
 
           if (!project.isChecked()) {
               SnotOptionPane.showMessageDialog(null, "The SFC \""+project.getName()+"\" is buggy!\n Aborting SMV translation",
@@ -621,7 +628,7 @@ project.setChecked(status);
   }
 
   private void ExitSnotActionPerformed(java.awt.event.ActionEvent evt) {
-        prepareForExitSnot(true);
+      prepareForExitSnot(true);
   }
 
   /**
@@ -632,13 +639,19 @@ project.setChecked(status);
    */
 
   private void ExportSFCActionPerformed(java.awt.event.ActionEvent evt) {
-      File file = null;
       Project project = activeProject;
+      File file = null;
+      String name = null;
 
-      // check for empty projects vector
+      // check for empty session
       if (session.isEmpty()) {
           SnotOptionPane.showMessageDialog(null, "Export SFC error:\nThere are no SFCs in the current session!",
                                            "Error", JOptionPane.ERROR_MESSAGE);
+          return;
+      }
+      
+      if (project == null) {
+          SnotOptionPane.showMessageDialog(null, "Please select a SFC first!\n", "Error: no SFC", JOptionPane.ERROR_MESSAGE);
           return;
       }
 
@@ -662,9 +675,19 @@ project.setChecked(status);
           if (file == null)
               return;
 
+          // set name out ouf filename
+          if (!project.isNamed()) {
+              name = file.getName();
+              name = name.substring(0,name.lastIndexOf(ProjectFileExtension));
+              project.setName(name);
+          }
+
+          // save the editor's environment
+          project.setEnvironment();
+          
           // save the session
           try {
-              project.saveSFC(file);
+              project.exportSFC(file);
           }
           catch (IOException ex) {
               SnotOptionPane.showMessageDialog(null, ex.getMessage(), "I/O error", JOptionPane.ERROR_MESSAGE);
@@ -675,11 +698,9 @@ System.out.print(ex.getClass());
               SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Save error", JOptionPane.ERROR_MESSAGE);
               return;
           }
-          // set name out ouf filename
-          project.setName(file.getName().replace('.','\0'));
-          return;
-        }
-      updateProjectList();
+          updateProjectList();
+          project.getEditor().show();
+      }
   }
 
   /**
@@ -690,6 +711,8 @@ System.out.print(ex.getClass());
    */
 
   private void ImportSFCActionPerformed(java.awt.event.ActionEvent evt) {
+      Project project = null;
+      Editor editor = null;
       File file = null;
 
       // check for valid session
@@ -725,15 +748,26 @@ System.out.print(ex.getClass());
 
           // read and add Project
           try {
-              session.addProject(Project.readSFC(file));
+              project = Project.importSFC(file);
+              editor = new Editor(project.getSFC());
+              project.setEditor(editor);
+              session.addProject(project);
           }
           catch (Exception ex) {
 System.out.print("\n"+ex.getClass());
 ex.printStackTrace();
                SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
           }
+
+          // set environment parameters
+//          editor.setLocation(EditorLocation);
+          project.restoreEnvironment();
+          editor.addWindowListener(new GuiWindowListener());
       }
-  updateProjectList();
+
+      updateProjectList();
+      if (editor!=null)
+          editor.show();
   }
 
   /**
@@ -770,7 +804,7 @@ ex.printStackTrace();
       }
 
       // set editor parameters
-      editor.setLocation(250, 250);
+      editor.setLocation(EditorLocation);
       editor.addWindowListener(new GuiWindowListener());
       project.setEditor(editor);
 
@@ -783,9 +817,8 @@ ex.printStackTrace();
            return;
       }
       // set environmental parameters
-//      session.setModified(true); this is set by addProject()!!!
-      editor.show();
       updateProjectList();
+      editor.show();
  }
 
 
@@ -901,11 +934,11 @@ System.out.print(ex.getClass());
    * Method to show the ProjektList.
    */
   private void showProjectList(){
-    System.out.println("The Project-List should appear.");
+    System.out.println("\nThe Project-List should appear.");
     projectFrame = new JFrame("SFC - Browser");
     projectFrame.setResizable(true);
     projectFrame.setSize(250,200);
-    projectFrame.setLocation(100,170);
+    projectFrame.setLocation(ProjectListLocation);
 
     //On close the window will be disposed.
     projectFrame.addWindowListener(new WindowAdapter() {
@@ -1126,8 +1159,10 @@ System.out.print("\n ... opening new session from file \""+file+"\": name: "+fil
         }
 
         public void windowClosing(java.awt.event.WindowEvent evt) {
-            if (activeProject!=null)
+            if (activeProject!=null) {
                 activeProject.setActive(false);
+                activeProject.setEnvironment();
+            }
             System.out.print("\n Window "+activeProject+" Closing");
             activeProject = null;
         }
@@ -1148,7 +1183,11 @@ System.out.print("\n ... opening new session from file \""+file+"\": name: "+fil
             boolean status = false;
 
             try {
-                status = Utilities.createFile(_file, extension);
+                // check file extension
+                if (!_file.getName().endsWith(extension)) 
+                    _file = new File(_file.getPath().concat(extension));   // throws Exception
+                // create file    
+                status = Utilities.createFile(_file, extension); // throws a lot ...
             }
             catch (Exception ex) {
 System.out.print(ex.getClass());
@@ -1185,7 +1224,9 @@ System.out.print(ex.getClass());
                 throw new Exception("File \""+file.getName()+"\" does not exist!");
 
             // compare file extension
-            checkFileExtension(file, extension);
+            if (!file.getName().endsWith(extension)) {
+                throw new Exception("File \""+file.getName()+"\" is not a \"*."+extension+"\" file!");
+            }
         }
 
         public boolean createFile(File file, String extension) throws Exception {
@@ -1193,9 +1234,6 @@ System.out.print(ex.getClass());
 
             if (file == null)
                 throw new Exception("NullPointer!");
-
-            // compare file extension
-            checkFileExtension(file, extension);
 
             try {
                 status = file.createNewFile();
@@ -1209,25 +1247,6 @@ System.out.print("\nerr  "+sEx.toString());
                 throw new Exception(sEx.getMessage());
             }
             return status;
-        }
-
-        private void checkFileExtension(File file, String extension) throws Exception {
-            int index;
-            if (extension != null) {
-
-                if ((index = file.getName().lastIndexOf('.'))<0)
-                    throw new Exception("File \""+file.getName()+"\" is not a \"*."+extension+"\" file!");
-
-                try {
-                    index = file.getName().indexOf(extension,index);
-                }
-                catch (NullPointerException nullEx) {
-System.out.print("\nerr  "+nullEx.toString());
-                    throw new Exception(nullEx.getMessage());
-                }
-                if (index<0)
-                    throw new Exception("File \""+file.getName()+"\" is not a \"*."+extension+"\" file!");
-            }
         }
     }
 
@@ -1270,17 +1289,6 @@ System.out.print("\nerr  "+nullEx.toString());
     private javax.swing.JPanel PanelStatus;
     private javax.swing.JLabel Status;
     private javax.swing.JSeparator jSeparator1;
-
-  public Gui() {
-    try {
-      jbInit();
-    }
-    catch(Exception e) {
-      e.printStackTrace();
-    }
-  }
-  private void jbInit() throws Exception {
-  }
     // End of variables declaration//GEN-END:variables
 
 }

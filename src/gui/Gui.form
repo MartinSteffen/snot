@@ -97,7 +97,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="ImportSFC">
               <Properties>
-                <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="Import"/>
+                <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="Import SFC"/>
                 <Property name="name" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="importSFC"/>
               </Properties>
 
@@ -107,7 +107,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="ExportSFC">
               <Properties>
-                <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="Export"/>
+                <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="Export SFC"/>
                 <Property name="name" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="exportSFC"/>
               </Properties>
 
@@ -119,7 +119,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="RenameSFC">
               <Properties>
-                <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="Rename"/>
+                <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="Rename SFC"/>
                 <Property name="name" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="renameSFC"/>
               </Properties>
 
@@ -129,7 +129,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="RemoveSFC">
               <Properties>
-                <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="Remove"/>
+                <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="Remove SFC"/>
                 <Property name="name" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="removeSFC"/>
               </Properties>
 

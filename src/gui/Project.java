@@ -14,6 +14,8 @@ import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
+import java.awt.Point;
+import java.awt.Dimension;
 
 import absynt.*;
 import editor.Editor;
@@ -23,11 +25,7 @@ import editor.Editor;
  *  It also keeps the name and status flags of the SFC.
  *
  * @author  Hans Theman and Ingo Schiller
- *  <<<<<<< Project.java
- * @version $Revision: 1.11 $
- * =======
- * @version $Revision: 1.11 $
- *  >>>>>>> 1.10
+ * @version $Revision: 1.12 $
  */
 public class Project extends java.lang.Object implements Serializable {
 
@@ -36,9 +34,14 @@ public class Project extends java.lang.Object implements Serializable {
     private transient Editor editor = null;
     private String name;
 
+    private boolean is_named;   // determines if a name is set
     private boolean is_checked;   // indicates if it is checked
     private boolean is_well_defined;  // ?????????????????????????
     private boolean is_active;    // indicates whether the Project is opened in the Editor
+    
+    private Point location; // the position of the editor frame
+    private Dimension size; // the size of the editor frame
+    private int state;      // the state ... (iconified, normal, ...)
 
     /** The standard constructor.
      *  It generates an empty SFC. All parameters of the SFC are null!
@@ -48,6 +51,7 @@ public class Project extends java.lang.Object implements Serializable {
     public Project () {
         sfc = new SFC(null, null, null, null, null);
         name = "unknown";
+        is_named = false;   
         is_checked = false;
         is_well_defined = false;
         is_active = true;   // on creation Project is opened in Editor!
@@ -56,64 +60,86 @@ public class Project extends java.lang.Object implements Serializable {
     /** The constructor.
      *  Creates a new Project and initializes it whith these parameters.
      */
-    public Project(SFC _sfc, Editor _editor, String _name,
-                    boolean _is_checked, boolean _is_well_defined, boolean _is_active) {
-        sfc = _sfc;
-        editor = _editor;
-        name = _name;
-        is_checked = _is_checked;
-        is_well_defined = _is_well_defined;
-        is_active = _is_active;
+/*    public Project(Project p) throws Exception {
+        sfc = p.sfc;
+        name = p.name;
+//        editor = new Editor(p.sfc);
+        setEditor(new Editor(p.sfc));
+        is_checked = p.is_checked;
+        is_well_defined = p.is_well_defined;
+        is_active = p.is_active;
     }
-
+*/
+    
+    public void restoreEnvironment() {
+        Editor e = this.getEditor();
+        if (e!=null) {
+            e.setSize(size);
+            e.setLocation(location);
+            e.setState(state);
+        }
+    }
+    
+    public void setEnvironment() {
+        Editor e = this.getEditor();
+        if (e!=null) {
+            this.size = e.getSize();
+            this.location = e.getLocation();
+            this.state = e.getState();
+        }
+    }
+    
+    public boolean isNamed() {
+        return this.is_named;
+    }
+    
     /** Return the projet checked flag.
      *  @return is_checked  Indicates whether the project SFC is checked.
      */
     public boolean isChecked() {
-        return is_checked;
+        return this.is_checked;
     }
 
     /** Sets the project checked flag.
      *  @param status   The checked status of the SFC in the project.
      */
     public void setChecked(boolean status) {
-        is_checked = status;
+        this.is_checked = status;
     }
 
     /** Returns the project welldefined flag.
      *  @return is_well_defined The status of the SFC of the project.
      */
     public boolean isWellDefined() {
-        return is_well_defined;
+        return this.is_well_defined;
     }
 
     /** Sets the project welldefined flag.
      *  @param status   The specified status of the SFC of the project.
      */
     public void setWellDefined(boolean status) {
-        is_well_defined = status;
+        this.is_well_defined = status;
     }
 
     /** Returns the project active flag.
      *  @return is_active   Indicates whether the SFC is currently displayed in an editor window.
      */
     public boolean isActive() {
-        return is_active;
+        return this.is_active;
     }
 
     /** Sets the project active flag.
      *  @param status   Indicates whether the SFC is currently displayed in an editor window.
      */
     public void setActive(boolean status) {
-        is_active = status;
+        this.is_active = status;
     }
-
 
     /** Retruns the project name.
      *  @return name    The name of the project.
      */
     public String getName() {
-        return name;
+        return this.name;
     }
 
     /** Retruns the project editor.
@@ -121,23 +147,23 @@ public class Project extends java.lang.Object implements Serializable {
      *  @return editor  The connected editor.
      */
     public Editor getEditor() {
-        return editor;
+        return this.editor;
     }
 
     /** Retruns the project SFC.
      *  @return sfc The SFC that belongs to the project.
      */
     public SFC getSFC() {
-        return sfc;
+        return this.sfc;
     }
 
-    public void saveSFC(File _file) throws Exception {
+    public void exportSFC(File _file) throws Exception {
         if (_file == null)
             return;
 
         ObjectOutputStream outStream = new ObjectOutputStream(new FileOutputStream(_file));
         try {
-            outStream.writeObject(new Project());//this); // throws IOException!!!!
+            outStream.writeObject(this); // throws IOException!!!!
         }
         finally {
             outStream.close(); // throws IOException!!!!
@@ -148,7 +174,7 @@ public class Project extends java.lang.Object implements Serializable {
 System.out.print("\nSFC exported");
     }
 
-    public static Project readSFC(File _file) throws Exception {
+    public static Project importSFC(File _file) throws Exception {
         Project p = null;
 
         if (_file == null)
@@ -157,13 +183,15 @@ System.out.print("\nSFC exported");
         ObjectInputStream inStream = new ObjectInputStream(new FileInputStream(_file));
         try {
            p = (Project)inStream.readObject();
+System.out.print("\nImported SFC name: "+p.name+" is active: "+p.is_active+" is_checked: "+p.is_checked);           
         }
         finally {
             inStream.close();
         }
         inStream.close();
-	p.setEditor(new Editor(p.sfc));
-	p.editor.show();
+        p.is_checked = false;
+        p.is_active = false;
+        p.is_well_defined = false;
 
 System.out.print("\nSFC imported");
         return p;
@@ -183,6 +211,7 @@ System.out.print("\nSFC imported");
      */
     public void setName(String _name) {
         name = _name;
+        is_named = true;
         if (editor != null)
           editor.setSFCName(name);
     }
