@@ -10,7 +10,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.52 2001-07-20 08:56:05 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.53 2001-07-20 09:02:04 swprakt Exp $
  *
  */
 
@@ -171,17 +171,17 @@ public class Snotcheck{
 
 	//pruefen der Sub-Expression:
 	String className = (sExpr.getClass()).getName();
-	if (sExpr  instanceof B_expr){
+	if (sExpr  instanceof B_expr){      //ist es eine BinaryExpression
 	    B_expr sBExpr = (B_expr) sExpr;
 	    allesOk = isBExprOk(sBExpr);
 	    if (allesOk == false){return false;}
 	}
-	if (sExpr  instanceof U_expr){
+	if (sExpr  instanceof U_expr){      //ist es eine UnaryExpression
 	    U_expr sUExpr = (U_expr) sExpr;
 	    allesOk = isUExprOk(sUExpr);
 	    if (allesOk == false){return false;}
 	}
-	if (sExpr  instanceof Constval){
+	if (sExpr  instanceof Constval){    //ist es ein konstanter Wert
 	    String nameOfConstvalClass = (((Constval) sExpr).val.getClass()).getName();
 	    if ((((Constval)sExpr).val) instanceof Boolean){
 		sExpr.type = new BoolType();
@@ -189,7 +189,7 @@ public class Snotcheck{
 		sExpr.type = new IntType();
 	    }
 	}
-	if (sExpr  instanceof Variable){
+	if (sExpr  instanceof Variable){   //ist es eine Variable
 	    String nameOfVariableType = (((Variable) sExpr).type.getClass()).getName();
 	    if ( ((Variable) sExpr).type instanceof BoolType){
 		sExpr.type = new BoolType();
@@ -200,7 +200,6 @@ public class Snotcheck{
 
 	
 	//pruefen, ob der Operator den Type der Sub-Expression verarbeiten kann und setzen des Types von dieser Expression
-	typeName = (sExpr.type.getClass()).getName();   //
 	if (anUExpr.op == anUExpr.MINUS){
 	    //das MINUS kann nur auf Integerwerte angewendet werden
 	    if (sExpr.type instanceof IntType){
@@ -260,7 +259,6 @@ public class Snotcheck{
 	    if (allesOk == false){return false;}
 	}
 
-//	if (nameOfExprClass == "absynt.Constval"){
 	if (anExpr instanceof Constval){
 	    //wenn die Expression ein konstanter Wert ist, so sind nur boolsche Werte erlaubt
 	    Constval constant = (Constval) anExpr;
@@ -269,11 +267,9 @@ public class Snotcheck{
 	    if ((constant.val instanceof Boolean) == false){
 		anExpr.type = new IntType();
 		//wenn der konstante Wert nicht zu den Booleans gehoert, dann gebe ein false zurueck:
-		System.out.println("nicht Boolean "+nameOfConstvalClass);
 		return false;
 	    } else {
 		anExpr.type = new BoolType();
-		System.out.println("Boolean "+nameOfConstvalClass);
 		return true;
 	    }
 	}
@@ -288,10 +284,10 @@ public class Snotcheck{
 		return false;
 	    }
 	}
-	System.out.println(nameOfExprClass);
+	//	System.out.println(nameOfExprClass);
 	
 	//wenn die Expression OK ist, dann pruefe noch, ob der Type der Expression BoolType ist, sonst gebe ein false zurueck:
-	System.out.println(((anExpr.type.getClass()).getName()));
+	//	System.out.println(((anExpr.type.getClass()).getName()));
 
 	if (anExpr.type instanceof BoolType){
 	    //alles ist OK
@@ -539,7 +535,7 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 		}
 	    }
 	}
-	//Pruefung auf Doppeltvorkommene Namen von Steps
+	//Pruefung auf Doppeltvorkommen von Namen von Steps
 	for (int i=0; i < stepListSize; i++){
 	    aStep = (Step)stepList.get(i);
 	    
@@ -550,7 +546,7 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 	}
 
     }else throw new StepFailure(null,"Where are the steps?!!");
-    System.out.println("Steps are OK!");
+    //    System.out.println("Steps are OK!");
 
     return true;
 }
@@ -564,6 +560,29 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
      */
     private static boolean isThereAnIStep(SFC aSFCObject) throws IStepException{
 	if (aSFCObject.istep == null) {throw new IStepException("There is no I-Step!!");}
+
+	//als naechstes wird geprueft, ob der I-Step auch in der Stepliste steht
+
+	if (aSFCObject.steps == null) {throw new IStepException("I-Step is not in Steplist!");}
+
+	LinkedList stepList = aSFCObject.steps;
+	int stepListSize = stepList.size();
+	String stepName1 = aSFCObject.istep.name;
+	String stepName2;
+	Step aStep;
+	boolean istVorhanden = false;
+
+	for (int i=0; i < stepListSize; i++){
+	    aStep = (Step)stepList.get(i);
+	    stepName2 = aStep.name;
+	    if (stepName1 == stepName2){
+		istVorhanden = true;
+		i = stepListSize;
+	    }
+	}
+
+	if (istVorhanden == false){throw new IStepException("I-Step is not in Steplist!");}
+
 	return true;
     }
 
@@ -669,9 +688,12 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.52 2001-07-20 08:56:05 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.53 2001-07-20 09:02:04 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.52  2001/07/20 08:56:05  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.51  2001/07/18 13:37:24  swprakt
 //	*** empty log message ***
 //	
