@@ -9,7 +9,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.16 2001-06-05 14:42:17 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.17 2001-06-07 11:00:12 swprakt Exp $
  *
  */
 
@@ -91,14 +91,23 @@ public class Snotcheck{
 	return true;
     }
 
+
+
+    /**Diese Funktion prueft, ob der angegebene SFC korrekt ist
+       
+     */
+
     public static boolean isWellDefined(SFC aSFCObject) throws CheckException {
 
-	if (!isThereAnIStep( aSFCObject ) ){throw new IStepException("Ihr Idioten habt vergessen einen I-Step zu setzen!!");}
+	if (!isThereAnIStep( aSFCObject ) ){throw new IStepException("There is no I-Step!!");}
+	boolean nurBool,test;
 
-
-	boolean nurBool;
-	nurBool = isOnlyBool(aSFCObject);
-	if (!nurBool) throw new BoolException("Es kamen auch Integervariablen vor!");
+	test = isDeclarationOk(aSFCObject);
+	test = isAllActionOk(aSFCObject);
+	test = isAllStepOk(aSFCObject);
+	test = isAllTransitionOk(aSFCObject);
+//	nurBool = isOnlyBool(aSFCObject);
+//	if (!nurBool) throw new BoolException("Es kamen auch Integervariablen vor!");
 	return true;
     }
 
@@ -110,9 +119,12 @@ public class Snotcheck{
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.16 2001-06-05 14:42:17 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.17 2001-06-07 11:00:12 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.16  2001/06/05 14:42:17  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.15  2001/06/05 14:33:52  swprakt
 //	*** empty log message ***
 //	
