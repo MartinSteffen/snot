@@ -10,7 +10,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.45 2001-07-11 09:25:18 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.46 2001-07-11 12:05:25 swprakt Exp $
  *
  */
 
@@ -423,9 +423,6 @@ public class Snotcheck{
 	String class1Name,valClassName,varTypeName,valTypeName;
 	Assign ass;
 
-
-	boolean eee;
-
 	//nun muessen nur noch die einzelnen sap`s ueberprueft werden:
 	for (int i=0; i < actionList.size(); i++){
 	    action = (Action)actionList.get(i);
@@ -433,14 +430,7 @@ public class Snotcheck{
 	    for (int j=0; j < stmtList.size(); j++){
 		stmt1 = (Stmt)stmtList.get(j);               //auslesen des j-ten Statements aus der sap
 
-		//Einschub fuer Bier
 		class1 = stmt1.getClass();
-		eee = class1.isInstance(new Assign(null,null));
-		
-		
-		
-
-		//	class1 = stmt1.getClass();
 		class1Name = class1.getName();
 		//	if (stmt1 == null){throw new ActionFailure(action, "neuer fehler.");}
 		if (class1Name == "absynt.Assign" || class1Name == "absynt.Skip"){
@@ -458,7 +448,7 @@ public class Snotcheck{
 			/////////////////////////////////////////////////////////////////////
 			/////////////////////////////////////////////////////////////////////
 
-			//pruefen, ob val eine gueltige Expression ist:
+			//pruefen, ob val eine gueltige Expression ist, und setzen des Typs von val:
 			String nameOfValClass = ((ass.val).getClass()).getName();
 			boolean allesOk;
 			if (nameOfValClass == "B_expr"){
@@ -472,6 +462,7 @@ public class Snotcheck{
 			    if (allesOk == false){throw new ActionFailure(action, "This val is no correct expression.");} 
 			}
 			if (nameOfValClass == "Constval"){
+			    //wenn val ein konstanter Wert ist, dann muss erstmal nur der Typ von val geaendert werden
 			    Constval constant = (Constval) ass.val;
 			    String nameOfConstvalClass = (constant.val.getClass()).getName();  //name des Typs der Konstanten
 			    if (nameOfConstvalClass == "Boolean"){
@@ -481,7 +472,13 @@ public class Snotcheck{
 			    }
 			}
 			if (nameOfValClass == "Variable"){
-			    //fc
+			    //wenn val eine Variable ist, dann muss erstmal nur der Typ von val geaendert werden
+			    String nameOfVariableType = (((Variable) ass.val).type.getClass()).getName();
+			    if (nameOfVariableType == "Boolean"){
+				ass.val.type = new BoolType();
+			    } else {
+				ass.val.type = new IntType();
+			    }
 			}
 
 
@@ -490,41 +487,21 @@ public class Snotcheck{
 
 
 			//pruefen, ob val den gleichen Typ wie var hat:
-			valClass = ass.val.getClass();
-			valClassName = valClass.getName();
+			valTypeClass = ass.val.type.getClass();
+			valTypeName = valTypeClass.getName();
 			varTypeClass = ass.var.type.getClass();
 			varTypeName = varTypeClass.getName();
 
-			//1.Fall: der Ausdruck von val ist ein constval:
-			if (valClassName == "Constval"){
-
-			   /* if ((((Constval)ass.val).val == true || ass.val.val == false) && varTypeName != "BoolType"){
-				throw new ActionFailure(action, "This statement tries to assign a Boolean to an Integer.");
-			    }*/
-
-			} else {
-
-			    //2.Fall: der AUsdruck von val ist kein constval, hat also einen Type, den man abfragen kann
-			    valTypeClass = ass.val.type.getClass();
-			    valTypeName = valTypeClass.getName();
-
-			    if (varTypeName != valTypeName){
-				throw new ActionFailure(action, "This statement tries to assign a Boolean to an Interger or an Interger to a Boolean.");
-			    }
+			if (varTypeName != valTypeName){
+			    throw new ActionFailure(action, "This statement tries to assign a Boolean to an Interger or an Interger to a Boolean.");
 			}
-
-
-
-
+		    } else {
+			//bei einem Skip wird nichts weiter geprueft, da in diesem Falle alles in Ordnung ist
 		    }
-		} else {throw new ActionFailure(null, "Impossible Error, that can`t be solved.");}
+		} else {throw new ActionFailure(null, "Statements MUST be an Assign or a Skip!");}
 	    }        //Ende der inneren for-Schleife
 	}            //Ende der ausseren for-Schleife
-	
-	
-	
-	
-	return true;
+       	return true;
     }
 
 
@@ -689,9 +666,12 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.45 2001-07-11 09:25:18 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.46 2001-07-11 12:05:25 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.45  2001/07/11 09:25:18  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.44  2001/07/11 08:41:20  swprakt
 //	jetzt werden die guards gecheckt
 //	
