@@ -106,7 +106,7 @@ import absynt.*;
          Variable var = null;
          if ((e.getActionCommand()).equals("OK")){
 
-         	LinkedList  decl_lList = new LinkedList();                  
+            LinkedList  decl_lList = new LinkedList();                  
             Iterator decl_List = (_sfc.declist).iterator();
             Object   element = null;                     
             int numElement = 0;
@@ -119,9 +119,7 @@ import absynt.*;
              var = ((Variable)((Declaration)element).var);
              ExpressionParser.set_Variable(var); dispose();               	       	         	
          	}   
-         else{ if ((e.getActionCommand()).equals("Cancel"))
-               { ExpressionParser.set_Variable(null); dispose();}
-               
+         else{ if ((e.getActionCommand()).equals("Cancel")) dispose();              
                else { // finde, welches Button gedrueckt war
                       LinkedList    decl_lList = new LinkedList();                  
                       Iterator decl_List = (_sfc.declist).iterator();
@@ -138,13 +136,14 @@ import absynt.*;
                    }
              }
        }
-      }
+
+ }
 
 // --------------------------------------------------------------------------------------------------------------
 
   class ConstanteDialog extends Dialog implements ActionListener{
      
-     final static public int _INTTYPE = 0;
+     final static public int _INTTYPE  = 0;
      final static public int _BOOLTYPE = 1;
      int selectedType = 0;
      JTextField textField;
@@ -315,57 +314,13 @@ public class Expression_Parser extends JDialog implements ActionListener{
     
     private Variable vari, varAssign;
     private Constval consi;
-    private boolean  canceled=false;
-    // private JFrame parFrame;
+    private boolean  canceled;
     
     public Expression_Parser(JFrame parentFrame, SFC _sfc){
     	
-	    super(parentFrame,"Statement erstellen",true);
-	    setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-	    // parFrame = parentFrame;
-	    sfc = _sfc; //((Editor)parentFrame).getSFC();
-            if (sfc == null) System.out.println(" SFc ist LEER !");
-
-	    
-	    /*	   sfc = new SFC();
-//-------------------------------------------------------------------------	  
-      BoolType btype = new BoolType();
-      Variable v_x = new Variable ("x", btype);
-      Variable v_y = new Variable ("y", btype);
-      Variable v_z = new Variable ("z", btype);
-      
-     Variable v_z1 = new Variable ("z1", btype);
-     Variable v_z2 = new Variable ("z2", btype);
-     Variable v_z3 = new Variable ("z3", btype);
-     Variable v_z4 = new Variable ("z4", btype);
-     Variable v_z5 = new Variable ("z5", btype);
-                               
-      Constval c5  = new Constval (5);
-      Constval cfalse = new Constval (false);
-      Skip     stmt_skip = new Skip();
-
-      //   ------- Variable-Declarations
-      Declaration dec_x = new Declaration(v_x, btype, cfalse);
-      Declaration dec_y = new Declaration(v_y, btype, cfalse);
-      Declaration dec_z = new Declaration(v_z, btype, cfalse);
-     Declaration dec_z1 = new Declaration(v_z1, btype, cfalse);
-     Declaration dec_z2 = new Declaration(v_z2, btype, cfalse);
-     Declaration dec_z3 = new Declaration(v_z3, btype, cfalse);
-     Declaration dec_z4 = new Declaration(v_z3, btype, cfalse);
-     Declaration dec_z5 = new Declaration(v_z5, btype, cfalse);                          
-      
-      LinkedList decl = new LinkedList();
-      decl.add(dec_x);
-      decl.add(dec_y);
-      decl.add(dec_z);
-     decl.add(dec_z1);
-     decl.add(dec_z2);           
-     decl.add(dec_z3);
-     decl.add(dec_z4);
-     decl.add(dec_z5);
-                     
-      sfc.declist = decl;           */ 
-	
+	super(parentFrame,"Statement erstellen",true);
+	setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        sfc = _sfc;	    	  
 //-------------------------------------------------------------------------	  
         Container c = getContentPane();
         c.setLayout(new BorderLayout(2,5));
@@ -388,8 +343,6 @@ public class Expression_Parser extends JDialog implements ActionListener{
         p.add(getJButton("<="));
         p.add(getJButton(">="));
         p.add(getJButton("="));
-        p.add(getJButton("->"));
-        p.add(getJButton("<-"));
         p.add(getJButton("-U"));
         p.add(getJButton("CLEAR"));
         p.add(getJButton("OK"));
@@ -435,7 +388,7 @@ public class Expression_Parser extends JDialog implements ActionListener{
 // ------------------------------------------ return - Methoden  ------------------------------------------------ 
   
     public Assign   get_assign()       { return _assign;}                // gebe zurueck Assign
-    public Variable get_VarAssign()    { return varAssign;}              // gebe zurueck Variable in Assign
+    public Variable get_VarAssign()    { return  varAssign;}             // gebe zurueck Variable in Assign
     public Expr     get_expr()         { return _expr;}                  // gebe zurueck Expression in Assign
     public boolean  get_canceled()     { // true - OK, false - Cancel    // bestimme, welches Button gedrueck war
                                          return canceled;}
@@ -456,16 +409,17 @@ public class Expression_Parser extends JDialog implements ActionListener{
 	   }
 
       private void set_Variable(){
-           root   = true;
-           var    = false;
-           cons   = false;
-           index  = 0;
-	   x_fort = 2;
-           kk     = 0;
+           root     = true;
+           var      = false;
+           cons     = false;
+           canceled = false;
+           index    = 0;
+	   x_fort   = 2;
+           kk       = 0;
            pred_index = 0;
        }
        
-      public void set_Variable(Variable v){vari = v;}
+      public void set_Variable (Variable v){vari  = v;}
       public void set_Constante(Constval c){consi = c;}
      
 // --------------------------------------------------------------------------------------------------------------    
@@ -738,35 +692,31 @@ public class Expression_Parser extends JDialog implements ActionListener{
     }
 
 //    public static void main(String[] args){
-//            new Expression_Parser(null,Ed.getSFC()).show();
-//        }	
+//        new Expression_Parser(null,null).show();
+//     }	
 
        public void show(){
         super.show();
        _expr = null; root = true; varAssign = null;
- }
+     }
 
 
       public void actionPerformed(ActionEvent e){
          String command = ((JButton)e.getSource()).getText();
          setExpressionPanelAction();
-           
-	 if ((command.equals("Var")) & (root | isSelected())){
-	 	      try{ if(sfc != null){
-           	           if (sfc.declist != null)
-           	            { new VariableDialog(this, "Variable", this, sfc).show();
-                             if (vari != null){ varAssign = vari; AssVarPanel.repaint();}
-                         }
-                        else throw new ExpressionParserException(4);}
-                     else throw new ExpressionParserException(5);
-                  }
-                  catch (ExpressionParserException _e){};
-               };
-              if (vari != null){var = true; set_Expression(""); ExpressionPanel.repaint();
-           }
-         else if ((command.equals("Const")) & (root | isSelected())){
-              new ConstanteDialog(this, "new Constante", this).show();
-              if (consi != null){cons = true; set_Expression("");  ExpressionPanel.repaint();}}
+
+         if ((command.equals("Var")) & (root | isSelected()))
+            {    try{ if(sfc != null){
+	                if (!((sfc.declist).isEmpty())) new VariableDialog(this, "Variable", this, sfc).show();
+                         else throw new ExpressionParserException(4);}
+                      else throw new ExpressionParserException(5);
+                 }
+                 catch (ExpressionParserException _e){};
+                 if (vari != null){var = true; set_Expression(""); ExpressionPanel.repaint();}
+            }
+	  else if ((command.equals("Const")) & (root | isSelected()))
+                  { new ConstanteDialog(this, "new Constante", this).show();
+                  if (consi != null){cons = true; set_Expression("");  ExpressionPanel.repaint();}}
 	   else if (command.equals("+")) { set_Expression("+");  ExpressionPanel.repaint();}
            else if (command.equals("-")) { set_Expression("-");  ExpressionPanel.repaint();}
            else if (command.equals("*")) { set_Expression("*");  ExpressionPanel.repaint();}
@@ -784,27 +734,27 @@ public class Expression_Parser extends JDialog implements ActionListener{
            else if (command.equals("CLEAR")){ _expr = null; root = true; varAssign = null;
                                               ExpressionPanel.repaint(); AssVarPanel.repaint();}
            else if (command.equals("Variable")){
-           	        try{ if(sfc != null){
-           	               if (sfc.declist.isEmpty())
-           	               { new VariableDialog(this, "Variable", this, sfc).show();
-                             if (vari != null){ varAssign = vari; AssVarPanel.repaint();}
-                           }
-                           else throw new ExpressionParserException(4);}
-                          else throw new ExpressionParserException(5);
+                        try{ if(sfc != null){
+           	               if (!(sfc.declist.isEmpty())) new VariableDialog(this, "Variable", this, sfc).show();
+                               else throw new ExpressionParserException(4);}
+                              else throw new ExpressionParserException(5);
                         }
                         catch (ExpressionParserException _e){};
+                        if (vari != null){ varAssign = vari; AssVarPanel.repaint();}
                     }
            else if (command.equals("OK")){
            	        try {
            	              if ((varAssign == null) | (_expr == null)) throw new ExpressionParserException(3);
-           	              else { Assign _assign = new Assign(varAssign,_expr); 
+           	              else {_assign = new Assign(varAssign,_expr); 
            	                     canceled = false; hide();                   
-                                 dispose();}
+                                 dispose();
+                            }
                          }
                          catch (ExpressionParserException _e){};
                   }
-           else if (command.equals("Cancel")){
-           	  canceled = true; hide();
-           	 _expr = null; _assign = null; varAssign = null; dispose();}
+           else if (command.equals("Cancel"))
+                {  canceled = true; hide();
+           	  _expr = null; _assign = null; varAssign = null; dispose();
+                 }
+	 }
       }
-}
