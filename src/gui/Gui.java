@@ -35,7 +35,7 @@ import simulator.Simulator;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.41 $
+ * @version $Revision: 1.42 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -53,7 +53,8 @@ public class Gui extends javax.swing.JFrame {
     private final Point GuiLocation = new Point(0,0);
     private final Point EditorLocation = new Point(0, 170);
     private Point ProjectListLocation = new Point(670,0);
-    private Point HelpLocation = new Point(920,0);
+    private Point HelpLocation = new Point(670,170);
+    private File globalDirectory = null;
 
 
     /** Creates new form Gui */
@@ -89,14 +90,7 @@ public class Gui extends javax.swing.JFrame {
 	 * initialize the form.
 	 */
     private void initComponents() {
-	ImageIcon nsicon = new ImageIcon("gui/icons/newsession.gif");
-	ImageIcon ssicon = new ImageIcon("gui/icons/savesession.gif");
-	ImageIcon ssaicon = new ImageIcon("gui/icons/savesessionas.gif");
-	ImageIcon osicon = new ImageIcon("gui/icons/opensession.gif");
-	ImageIcon csicon = new ImageIcon("gui/icons/closesession.gif");
-	ImageIcon isfcicon = new ImageIcon("gui/icons/importsfc.gif");
-	ImageIcon esfcicon = new ImageIcon("gui/icons/exportsfc.gif");
-    
+	
 	jMenuBar = new javax.swing.JMenuBar();
         FileMenu = new javax.swing.JMenu();
         OpenSession = new javax.swing.JMenuItem();
@@ -542,8 +536,9 @@ public class Gui extends javax.swing.JFrame {
           ButtonNewSession.setToolTipText("New Session");
           ButtonNewSession.setMaximumSize(new java.awt.Dimension(180, 35));
           ButtonNewSession.setName("buttonNewSession");
-          //ButtonNewSession.setText("New Session");
-	  //	  ButtonNewSession.setIcon((Icon)nsicon);
+          ButtonNewSession.setText("New Session");
+	  //ImageIcon nsicon = new ImageIcon("gui/icons/newsession.gif");
+	  //ButtonNewSession.setIcon(nsicon);
           ButtonNewSession.addActionListener(new java.awt.event.ActionListener() {
               public void actionPerformed(java.awt.event.ActionEvent evt) {
                   NewSessionActionPerformed(evt);
@@ -558,8 +553,9 @@ public class Gui extends javax.swing.JFrame {
           ButtonOpenSession.setToolTipText("Open Session");
           ButtonOpenSession.setMaximumSize(new java.awt.Dimension(180, 35));
           ButtonOpenSession.setName("buttonOpenSession");
-	  //ButtonOpenSession.setText("Open Session");
-	  //	  ButtonOpenSession.setIcon((Icon)osicon);
+	  ButtonOpenSession.setText("Open Session");
+	  //ImageIcon osicon = new ImageIcon("gui/icons/opensession.gif");
+	  //ButtonOpenSession.setIcon(osicon);
           ButtonOpenSession.addActionListener(new java.awt.event.ActionListener() {
               public void actionPerformed(java.awt.event.ActionEvent evt) {
                   OpenSessionActionPerformed(evt);
@@ -573,8 +569,9 @@ public class Gui extends javax.swing.JFrame {
           ButtonCloseSession.setToolTipText("Close Session");
           ButtonCloseSession.setMaximumSize(new java.awt.Dimension(180, 35));
           ButtonCloseSession.setName("buttonCloseSession");
-          //ButtonCloseSession.setText("Close Session");
-	  //	  ButtonCloseSession.setIcon((Icon)csicon);
+          ButtonCloseSession.setText("Close Session");
+	  //ImageIcon csicon = new ImageIcon("gui/icons/closesession.gif");
+	  //ButtonCloseSession.setIcon(csicon);
           ButtonCloseSession.addActionListener(new java.awt.event.ActionListener() {
               public void actionPerformed(java.awt.event.ActionEvent evt) {
                   CloseSessionActionPerformed(evt);
@@ -589,8 +586,9 @@ public class Gui extends javax.swing.JFrame {
           ButtonSaveSession.setToolTipText("Save Session");
           ButtonSaveSession.setMaximumSize(new java.awt.Dimension(180, 35));
           ButtonSaveSession.setName("buttonSaveSession");
-          //ButtonSaveSession.setText("Save Session");
-	  //	  ButtonSaveSession.setIcon((Icon)ssicon);
+          ButtonSaveSession.setText("Save Session");
+	  //ImageIcon ssicon = new ImageIcon("gui/icons/savesession.gif");
+	  //ButtonSaveSession.setIcon(ssicon);
           ButtonSaveSession.addActionListener(new java.awt.event.ActionListener() {
               public void actionPerformed(java.awt.event.ActionEvent evt) {
                   SaveSessionActionPerformed(evt);
@@ -604,8 +602,9 @@ public class Gui extends javax.swing.JFrame {
           ButtonSaveAsSession.setToolTipText("Save Session As");
           ButtonSaveAsSession.setMaximumSize(new java.awt.Dimension(180, 35));
           ButtonSaveAsSession.setName("buttonSaveAsSession");
-          //ButtonSaveAsSession.setText("Save Session As");
-	  //	  ButtonSaveAsSession.setIcon((Icon)ssaicon);
+          ButtonSaveAsSession.setText("Save Session As");
+	  //ImageIcon ssaicon = new ImageIcon("gui/icons/savesessionas.gif");
+	  //ButtonSaveAsSession.setIcon((Icon)ssaicon);
           ButtonSaveAsSession.addActionListener(new java.awt.event.ActionListener() {
               public void actionPerformed(java.awt.event.ActionEvent evt) {
                   SaveAsSessionActionPerformed(evt);
@@ -622,8 +621,9 @@ public class Gui extends javax.swing.JFrame {
           ButtonImportSFC.setToolTipText("Import SFC");
           ButtonImportSFC.setMaximumSize(new java.awt.Dimension(180, 35));
           ButtonImportSFC.setName("buttonImportSFC");
-          //ButtonImportSFC.setText("Import SFC");
-	  //	  ButtonImportSFC.setIcon((Icon)isfcicon);
+          ButtonImportSFC.setText("Import SFC");
+	  //ImageIcon isfcicon = new ImageIcon("gui/icons/importsfc.gif");
+	  //ButtonImportSFC.setIcon(isfcicon);
           ButtonImportSFC.addActionListener(new java.awt.event.ActionListener() {
               public void actionPerformed(java.awt.event.ActionEvent evt) {
                   ImportSFCActionPerformed(evt);
@@ -637,8 +637,9 @@ public class Gui extends javax.swing.JFrame {
           ButtonExportSFC.setToolTipText("Export SFC");
           ButtonExportSFC.setMaximumSize(new java.awt.Dimension(180, 35));
           ButtonExportSFC.setName("buttonExportSFC");
-          //ButtonExportSFC.setText("Export SFC");
-	  //	  ButtonExportSFC.setIcon((Icon)esfcicon);
+          ButtonExportSFC.setText("Export SFC");
+	  //ImageIcon esfcicon = new ImageIcon("gui/icons/exportsfc.gif");
+	  //ButtonExportSFC.setIcon(esfcicon);
           ButtonExportSFC.addActionListener(new java.awt.event.ActionListener() {
               public void actionPerformed(java.awt.event.ActionEvent evt) {
                   ExportSFCActionPerformed(evt);
@@ -854,6 +855,7 @@ public class Gui extends javax.swing.JFrame {
       enableFilesToolBar(true);
       setTitle(TITLE+"  "+session.getName());
       setStatusLine(false, "New session opened.");
+      globalDirectory = null;
 
   }
 
@@ -894,13 +896,15 @@ public class Gui extends javax.swing.JFrame {
       chooser.setDialogTitle("Parse textfile to SFC");
 
       // set prefered Directory
-      if (session.isSaved())
+      if (globalDirectory != null){chooser.setCurrentDirectory(globalDirectory);}
+      else if (session.isSaved())
           chooser.setCurrentDirectory(session.getFile());
 
       // show FileChooser
       result = chooser.showDialog(null, "Parse");
       if (result == JFileChooser.APPROVE_OPTION) {
           file = chooser.getSelectedFile();
+	  globalDirectory = file;
 
           // check choosen file
           try {
@@ -1065,11 +1069,18 @@ ex.printStackTrace();
 	  setStatusLine(true, "launching SMV translator ...");
 System.out.print("\nlaunching SMVTranslator ...");
           JFileChooser chooser = new JFileChooser();
+	  
+	  // set prefered Directory
+	  if (globalDirectory != null){chooser.setCurrentDirectory(globalDirectory);}
+	  else if (session.isSaved())
+	      chooser.setCurrentDirectory(session.getFile());
+
           chooser.setFileFilter(new SnotFileFilter("smv","SMV output"));
           chooser.setDialogTitle("Save SMV translation output as");
           int result = chooser.showDialog(null, "Save as");
           if (result == JFileChooser.APPROVE_OPTION) {
              file = Utilities.createFileDialog(chooser.getSelectedFile(), SmvFileExtension);
+	     globalDirectory = file;
 	     FileOutputStream output = new FileOutputStream(file);
 	     byte[] array =  stream.toByteArray();
 	     output.write(array);
@@ -1260,7 +1271,8 @@ System.out.println("Error while simulating the SFC"+e.getMessage());
       chooser.setDialogTitle("Export SFC");
 
       // set prefered Directory and filename
-      if (session.isSaved())
+      if (globalDirectory != null){chooser.setCurrentDirectory(globalDirectory);}
+      else if (session.isSaved())
           chooser.setCurrentDirectory(session.getFile());
 
       chooser.setSelectedFile(new File(project.getName()));
@@ -1271,7 +1283,8 @@ System.out.println("Error while simulating the SFC"+e.getMessage());
           file = Utilities.createFileDialog(chooser.getSelectedFile(), ProjectFileExtension);
           if (file == null)
               return;
-
+	  //set the Global Directoty value
+	  globalDirectory = file;
           // set name out ouf filename
           if (!project.isNamed()) {
               name = file.getName();
@@ -1327,13 +1340,16 @@ System.out.print(ex.getClass());
       chooser.setDialogTitle("Import SFC");
 
       // set prefered Directory
-      if (session.isSaved())
-          chooser.setCurrentDirectory(session.getFile());
+      if (globalDirectory != null){chooser.setCurrentDirectory(globalDirectory);}
+      else if (session.isSaved())
+          chooser.setCurrentDirectory(session.getFile());      
+
 
       // show FileChooser
       int result = chooser.showDialog(null, "Import");
       if (result == JFileChooser.APPROVE_OPTION) {
           file = chooser.getSelectedFile();
+	  globalDirectory = file;
 
           // check choosen file
           try {
@@ -1483,13 +1499,17 @@ System.out.print("\n"+ex.getClass());
       chooser.setFileFilter(new SnotFileFilter("snot","Snot sessions"));
       chooser.setDialogTitle("Open session");
 
-      if (session != null && session.isSaved())
-          chooser.setCurrentDirectory(session.getFile());
+ // set prefered Directory
+      if (globalDirectory != null){chooser.setCurrentDirectory(globalDirectory);}
+      else if (session != null && session.isSaved())
+          chooser.setCurrentDirectory(session.getFile());            
+
 
       int result = chooser.showOpenDialog(null);
       if (result == JFileChooser.APPROVE_OPTION) {
           closeSession();
           session = openSession(chooser.getSelectedFile());
+	  globalDirectory = chooser.getSelectedFile();
 	  setStatusLine(false, "Session opened");
       }
   }
@@ -1500,6 +1520,12 @@ System.out.print("\n"+ex.getClass());
       File file = null;
 
       JFileChooser chooser = new JFileChooser();
+      
+      // set prefered Directory
+      if (globalDirectory != null){chooser.setCurrentDirectory(globalDirectory);}
+      else if (session != null && session.isSaved())
+          chooser.setCurrentDirectory(session.getFile());          
+
       chooser.setFileFilter(new SnotFileFilter(SessionFileExtension,"Snot sessions"));
       chooser.setDialogTitle("Save session as");
       int result = chooser.showDialog(null, "Save as");
@@ -1507,7 +1533,7 @@ System.out.print("\n"+ex.getClass());
           file = Utilities.createFileDialog(chooser.getSelectedFile(), SessionFileExtension);
           if (file == null)
               return false;
-
+	  globalDirectory = file;
           // save the session
           try {
                session.save(file);
@@ -1958,13 +1984,13 @@ System.out.print(ex.getClass());
     private javax.swing.JPanel PanelStatus;
     private javax.swing.JLabel Status;
 
-    private ImageIcon nsicon;
-    private ImageIcon osicon;
-    private ImageIcon ssaicon;
-    private ImageIcon ssicon;
-    private ImageIcon csicon;
-    private ImageIcon isfcicon;
-    private ImageIcon esfcicon;
+    private javax.swing.ImageIcon nsicon;
+    private javax.swing.ImageIcon osicon;
+    private javax.swing.ImageIcon ssaicon;
+    private javax.swing.ImageIcon ssicon;
+    private javax.swing.ImageIcon csicon;
+    private javax.swing.ImageIcon isfcicon;
+    private javax.swing.ImageIcon esfcicon;
     // End of variables declaration
 
 }
