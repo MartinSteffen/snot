@@ -5,7 +5,7 @@
 \team{}
 
 Es soll die Möglichkeit gegeben werden, die \emph{Korrektheit} des
-eingegebenen Programmes zu überprüfen. Dies soll in einfacher Weise dadurch
+eingegebenen SFC's zu überprüfen. Dies soll in einfacher Weise dadurch
 geschehen, daß überprüft wird, ob auf allen Ausführungen des Programmes die
 \emph{Assertions} nicht verletzt sind.
 
@@ -16,7 +16,7 @@ geschehen, daß überprüft wird, ob auf allen Ausführungen des Programmes die
 Im wesentlichen wird eine \emph{Graphsuche} implementiert werde: die
 abstrakte Syntax wird in einem ersten Schritt in einen (expliziten oder
 impliziten) Graphen übersetzt, der danach mittels \emph{Tiefensuche} nach
-verletzung der Zusicherungen abgesucht wird.
+Verletzung der Zusicherungen abgesucht wird.
 
 
 Die Semantik der Prozesse ist in Anhang~\ref{sec:semantik} informell
@@ -30,7 +30,7 @@ Im wesentlichen mit der Gui (Abschnitt~\ref{sec:gui}):
 Methode \texttt{start\_modcheck} mit Parameter eines Programmes in
 abstrakter Syntax. Rückgabe: \emph{noch zu klären}: entweder mittels
 Ausnahme oder boolescher Wert. Auf jeden Fall wird der Gui der Zustand,
-zurückgegeben wo die Verletztung auftritt. Wie die Gui darauf reagiert,
+zurückgegeben wo die Verletzung auftritt. Wie die Gui darauf reagiert,
 ist nicht Sache des Modelcheckerpaketes. (z.B.\ könnte der Zustand
 gehighlighted werden.)
 

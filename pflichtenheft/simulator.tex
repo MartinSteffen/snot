@@ -14,31 +14,12 @@ Die Funktionalität umfaßt folgende Punkte:
 
 \paragraph{Berechnung des Nachfolgezustandes:}
 Der Algorithmus zur Berechnung des Nachfolgezustandes soll implementiert
-werden. Sollte externe Kommunikation für einen Schritt notwendig sein, soll
-der Benutzer sie eingeben können.
+werden.
 
 \paragraph{Anzeige eines Schrittes:}
 Der vom Simulator genommene Schritt muß im Editor angezeigt werden. Dazu
 wird die Highlight-Funktion des Editors genutzt.
 
-
-\paragraph{Nichtdeterminismus:}
-
-Sollten mehrere Nachfolgerzustände möglich sein, soll der Simulator zwei
-Möglichkeiten zur Verfügung stellen:
-\begin{enumerate}
-\item Der Benutzer wird in den Entscheidungsprozeß einbezogen.
-\item Der Simulator  entscheidet, welcher Schritt genommen wird.
-\end{enumerate}
-
-Für die erste Möglichkeit muß man zwischen externen und internen
-Kommunikationen entscheiden. Wie machen es auf die einfachst-mögliche Art:
-jedes Label, welches \emph{sowohl} als Eingabe als auch als Ausgabe label
-vorkommt, sei ein \emph{internes Label,} alle anderen \emph{extern.}
-
-Der letzte Punkt |Unterscheiden zwischen externer und interner
-Kommunikation |kann in einer ersten Stufe der Implementierung noch
-unberücksichtigt bleiben.
 
 Weiteres für erweiterte Funktionalität, was in der ersten Stufe
 unberücksichtigt bleibt:
