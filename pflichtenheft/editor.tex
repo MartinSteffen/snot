@@ -30,12 +30,9 @@ Eigenschaften implementiert werden.
 
 \subsubsection*{Designentscheidungen der Editorgruppe/Gui-Gruppe/Graphplatzierungsgruppe:}
 \begin{itemize}
-\item Es wird dem Editor ein \emph{gesamtes Programm} (Klasse
+\item Es wird dem Editor ein \emph{gesamtes SFC} (Klasse
   \texttt{absynt.Program}) übergeben, welches der Editor anzuzeigen
-  hat.\footnote{In einer früheren Version des Pflichtenheftes (siehe
-    Version 3) wurde dem Editor nur einzelne Prozesse übergeben. Um die
-    Schnittstellen nicht zu verkomplizieren, wurde die Entscheidung
-    zurückgenommen}.
+  hat.
 \item Es wird mit \emph{Swing} gearbeit, um ein einheitliches
   \textit{Schau-und-fühl} zu bekommen. Falls es Probleme mit der Effizienz
   gibt, wird es nicht schwer sein, auf AWT umzusatteln.
@@ -56,12 +53,13 @@ Fälle als \texttt{absynt.Constval} eingegeben (d.h., ein möglicherweise
 eingegebener String wird ignoriert, da der Konstruktor
 \texttt{absynt.Constval} nur boolsche Werte oder Integerwerte akzeptiert.
 
+
 \subsubsection*{Schnittstelle}
 
-Mit der Gui (Abschnitt~\ref{sec:gui}). Desweiterern mit dem Simulator
-(Abschnutt~\ref{sec:simulator}). Es jedoch ist noch zu diskutieren, ob der
-Simulator sich \emph{direkt} an den Editor werdet oder ob dies
-\emph{vermittels} der Gui passiert, da ein Editor nur due Übersicht über
+Mit der Gui (Abschnitt~\ref{sec:gui}). Desweiteren mit dem Simulator
+(Abschnitt~\ref{sec:simulator}). Es ist jedoch noch zu diskutieren, ob der
+Simulator sich \emph{direkt} an den Editor wendet oder ob dies
+\emph{vermittels} der Gui passiert, da ein Editor nur die Übersicht über
 einen Prozess hat.
 
 Auf jeden Fall: eine Methode \texttt{highlight\_state}, als Übergabe

@@ -5,10 +5,10 @@
 
 \team{}
 
-Der Editor erlaubt es, Transitionssysteme frei-hand zu zeichnen. Daneben
+Der Editor erlaubt es, SFC's frei-hand zu zeichnen. Daneben
 soll es möglich sein, die Koordinaten der Transitionssysteme automatisch
 zu berechnen.  Dazu muß ein \emph{Graphplazierungsalgorithmus} entworfen
-und implementiert werden.  Die einzelnen Prozesse sowie ihre Zustände
+und implementiert werden.  Die SFC's
 sollen möglichst ``schön'' dargestellt werden.
 
 
@@ -16,29 +16,30 @@ sollen möglichst ``schön'' dargestellt werden.
 \subsubsection*{Schnittstelle}
 Gui und Editor. Die Graphplatzierung darf von gecheckter Syntax ausgehen.
 Was die Bedeutung der Koordinaten betrifft: siehe den entsprechenden
-Abschnitt beim Editor (Abschnitt~\ref{sec:editor}). Da der Editor genau ein
-Fenster pro Process bereitstellt, müssen nur diese vom Platzierungsgruppe
-positioniert werde, nicht ganze Programme. Gui übernimmt die
-Benutzerführung in eigener Regie (nur ein Prozess soll positioniert werden,
-z.B., derjenige, dessen Fenster den Fokus hat), oder alle Prozesse sollen
-positioniert werden.
+Abschnitt beim Editor (Abschnitt~\ref{sec:editor}).
+%  Da der Editor genau ein
+% Fenster pro Prozess bereitstellt, müssen nur diese vom Platzierungsgruppe
+% positioniert werde, nicht ganze Programme. Gui übernimmt die
+% Benutzerführung in eigener Regie (nur ein Prozess soll positioniert werden,
+% z.B., derjenige, dessen Fenster den Fokus hat), oder alle Prozesse sollen
+% positioniert werden.
 
-Angebote: eine Methode \texttt{position\_process}, die einen Prozeß in
-abstrakter Syntax nimmt und in mit Koordinaten zurückgibt. Ob dies
+Angebote: eine Methode \texttt{position\_sfc}, die ein SFC in
+abstrakter Syntax nimmt und ihn mit Koordinaten zurückgibt. Ob dies
 ebenfalls ein Objekt der abstrakten Syntax ist oder einer anderen
 Datenstruktur, wurde noch nicht festgelegt (siehe die Diskussion im
 Abschnitt~\ref{sec:editor} des Editors.)
 
-Für den Anfang sei davon ausgegangen, daß alle Zustände \emph{gleich groß}
+Für den Anfang sei davon ausgegangen, daß alle Steps \emph{gleich groß}
 seien und Kanten als Geraden.
 
 
 
 \paragraph{Erweiterungsmöglichkeiten:} In einem ersten Schritt sollen
-\emph{die Zustände} plaziert werden, und die Transitionen als
+\emph{die Steps} plaziert werden, und die Transitionen als
 \emph{Geraden} dazwischen. Falls Zeit ist, kann man versuchen,
 \emph{gebogene} Transitionen zeichen (d.h. auch berechnen!) zu lassen.
-Sonstige Erweiterungsmöglichkeiten: Zustände verschiedener Größen,
+Sonstige Erweiterungsmöglichkeiten: Steps verschiedener Größen,
 Berücksichtigung der Größe der Labels etc.
 
 
