@@ -20,6 +20,7 @@ import absynt.*;
 import editor.*;
 import smv.*;
 
+import checks.CheckException;
 import checks.*;
 import simulator.Simulator;
 
@@ -28,7 +29,7 @@ import simulator.Simulator;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.24 $
+ * @version $Revision: 1.25 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -62,7 +63,7 @@ public class Gui extends javax.swing.JFrame {
 
         // preparing visual components
         initComponents ();
-        ToolBarTools.setFloatable(true);
+        ToolBarTools.setFloatable(false);
         if (session == null)
             enableSession(false);
         pack ();
@@ -1129,22 +1130,8 @@ System.out.print("\nSession is closed!");
             ex.printStackTrace();
             return null;
         }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//      Hier muss unbedingt noch der GuiWindowListener an den Start geholt werden!!
-//      Und das für jedes Editorobject!!!!!!!!!!!!!!!
-
-//        for (Enumeration e = session
-//        e.addWindowListener(new Gui.GuiWindowListener());
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
         setTitle(TITLE+"  "+newSession.getName());
         enableSession(true);
-
-System.out.print("\n ... opening new session from file \""+file+"\": name: "+file.getName()+", "+file.toString());
-
 	return newSession;
     }
 
@@ -1196,10 +1183,7 @@ System.out.print("\n ... opening new session from file \""+file+"\": name: "+fil
             if (result != JOptionPane.YES_OPTION)
                 return false;
         }
-
-
-        closeSession
-        ();
+        closeSession();
         System.exit(0);
         return true; // weil sonst der Compiler jammert ...
     }
@@ -1212,8 +1196,7 @@ System.out.print("\n ... opening new session from file \""+file+"\": name: "+fil
 	 * @param args the command line arguments
 	 */
 	public static void main (String args[]) {
-
-		new Gui (null).show ();
+            new Gui (null).show ();
 	}
 
 /*******************************************************************************
@@ -1227,39 +1210,39 @@ System.out.print("\n ... opening new session from file \""+file+"\": name: "+fil
         public void windowActivated(java.awt.event.WindowEvent evt) {
             // set the active Project
             activeProject = session.getProject(evt.getSource());
-            System.out.print("\n Window "+activeProject+" Activated");
+//            System.out.print("\n Window "+activeProject+" Activated");
         }
 
         public void windowDeactivated(java.awt.event.WindowEvent evt) {
             if (activeProject != null && !session.isModified())
                 session.setModified(activeProject.isModified());
-            System.out.print("\n Window "+activeProject+" Deactivated and session modified is "+session.isModified());
+//            System.out.print("\n Window "+activeProject+" Deactivated and session modified is "+session.isModified());
         }
 
         public void windowClosed(java.awt.event.WindowEvent evt) {
-            System.out.print("\n Window "+activeProject+" Closed");
+//            System.out.print("\n Window "+activeProject+" Closed");
         }
 
         public void windowDeiconified(java.awt.event.WindowEvent evt) {
-            System.out.print("\n Window "+activeProject+" Deiconified");
+//            System.out.print("\n Window "+activeProject+" Deiconified");
         }
 
         public void windowOpened(java.awt.event.WindowEvent evt) {
             if (activeProject!=null)
                 activeProject.setActive(true);
-            System.out.print("\n Window "+activeProject+" Opened");
+//            System.out.print("\n Window "+activeProject+" Opened");
         }
 
         public void windowIconified(java.awt.event.WindowEvent evt) {
-            System.out.print("\n Window "+activeProject+" Iconified");
+//            System.out.print("\n Window "+activeProject+" Iconified");
         }
 
         public void windowClosing(java.awt.event.WindowEvent evt) {
             if (activeProject!=null) {
                 activeProject.setActive(false);
-                activeProject.setEnvironment();
+//                activeProject.setEnvironment();
             }
-            System.out.print("\n Window "+activeProject+" Closing");
+//            System.out.print("\n Window "+activeProject+" Closing");
             activeProject = null;
         }
     }
