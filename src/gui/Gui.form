@@ -150,7 +150,6 @@
             <MenuItem class="javax.swing.JMenuItem" name="ImportExample1">
               <Properties>
                 <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="Import Example1 SFC"/>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="Import Example1 SFC"/>
               </Properties>
 
               <Events>
