@@ -6,5 +6,5 @@ public abstract class CheckException extends Exception{
 protected
     String nachricht;
 public
-    String getNachricht(){return nachricht;}
+    String get_Nachricht(){return nachricht;}
 }
