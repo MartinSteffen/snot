@@ -4,7 +4,7 @@
  * Offers the methods  parseFile and parseExpression 
  *
  * @author Karsten Stahl, Martin Steffen
- * @version $Id: SFC.cup,v 1.2 2001-06-30 12:42:42 swprakt Exp $
+ * @version $Id: SFC.cup,v 1.3 2001-06-30 13:07:35 swprakt Exp $
  *
  * The grammar definition contains 4 parts:
  *    -  initialization declarations and how to generate the parser
@@ -28,11 +28,15 @@ import java.io.*;
 
 
 /**
-* The following 4 entries are for user-code insertions to the 
+* The following 4 (optional) entries are for user-code insertions to the generated parser:
+*   - init:   executed before start parsing
+*   - scan:   how the parser asks for the next token
+*   - action: code will be placed int the action class. Used as auxiliary
+*             routines usable int the actions of the grammar.
+*   - parser: code will be _directly_ placed int the parser class
 **/
-init with {: scanner.init() :};
-scan with {: return scanner.next_token(); :};
-
+init with {: scanner.init() :}; 
+scan with {: return scanner.next_token(); :};  // equivalent to the default
 
 
 action code {:
@@ -115,10 +119,11 @@ parser code {:
 
 /* ------ Declaration of terminals and non-terminals ----- */
 /** 
- * Terminals 
+ * The choice of names for the non-terminals is directly inspired
+ * byte the extended abstract grammar.
  */ 
 terminal         SFC, LBRACKET, RBRACKET, ASSIGN;
-terminal         LPAREN, RPAREN,  COMMA, SEM, FROMTO;  
+terminal         LPAREN, RPAREN,  COMMA, SEM, COLON, FROMTO;  
 terminal         INIT, WHEN, ACTIONS, BEGIN, END, VARS, STEPS, TRANSITIONS;
 terminal         INT, BOOL, GET, NEQ, OR, PLUS, TIMES;
 terminal         AND, DIV, EQ, GEQ, GREATER, LEQ, LESS, MINUS, NEG;
@@ -127,11 +132,6 @@ terminal         TRUE, FALSE;
 terminal String  IDENT;
 terminal Integer INTEGER;
 
-
-
-/** 
- * non-terminals
- */ 
 non terminal    stmt_list, stmt, block, atomic, if_else_stmt, loop;
 non terminal    input, output, assertion, var_dec, assignment;
 
@@ -142,6 +142,8 @@ non terminal	LinkedList	  steps;
 non terminal	LinkedList	  transitions;
 non terminal	LinkedList	  actions;
 non terminal	LinkedList	  declist;
+non terminal    LinkedList        declarations;
+non terminal    Declaration       declaration;
 
 non terminal    absynt.Expr       expr;
 non terminal    Integer           op;
@@ -182,24 +184,17 @@ program      ::= BEGIN
 declist      ::= VARS EQ LBRACKET
 		 declarations
 		 RBRACKET SEM
-		 ;
-
-declist      ::= VARS EQ LBRACKET
+              |   VARS EQ LBRACKET
 		 RBRACKET SEM
 		 ;
-
 declarations ::= declaration
-		 ;
-
-declarations ::= declaration SEM declarations
+              |  declaration SEM declarations
 		 ;
 
 declaration  ::= IDENT:var COLON IDENT:type EQ IDENT:val SEM
 		 ;
 
 istep	     ::= INIT EQ IDENT:stepname SEM
-
-
                  {: System.out.println ("Programm \""+name+"\"{"); more(); :}
                  INTEGER:i
                  VARS:v
