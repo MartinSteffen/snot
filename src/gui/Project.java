@@ -18,7 +18,7 @@ import editor.Editor;
  *  It also keeps the name and status flags of the SFC.
  *
  * @author  Hans Theman and Ingo Schiller
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class Project extends java.lang.Object implements Serializable {
 
@@ -37,7 +37,7 @@ public class Project extends java.lang.Object implements Serializable {
      *  Its active flag is set to true by default, because it is opened in the Editor.
      */
     public Project () {
-        sfc = new SFC();
+        sfc = new SFC(null, null, null, null, null);
         name = "unknown";
         is_checked = false;
         is_well_defined = false;
@@ -162,7 +162,7 @@ public class Project extends java.lang.Object implements Serializable {
      */
     public void setEditor(Editor _editor) {
         editor = _editor;
-        editor.setSFCName(name);
+  //      editor.setFilename(name);
 //        editor.setName(name);
     }
     
@@ -178,7 +178,7 @@ public class Project extends java.lang.Object implements Serializable {
      *  This function is part of the editor interface.
      */
     public void clearModified() {
-        editor.clearModified();
+        editor.setModified(false);
     }
     
 }

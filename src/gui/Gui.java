@@ -26,18 +26,18 @@ import checks.*;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class Gui extends javax.swing.JFrame {
 
     /** private declarations */
     private JOptionPane SnotOptionPane = null; // hierin werden jegliche popups dargestellt
     private Session session = null;
-    private Project activeProject = null;  // referes to the focosed Project
+    private Project activeProject = null;  // referes to the focused Project
     private GuiUtilities Utilities = new Gui.GuiUtilities();
 
     private final String TITLE = "Snot";    // the Gui title
-    private final String SessionFileExtension = "Snot"; // the session file extension
+    private final String SessionFileExtension = "snot"; // the session file extension
     private final String ProjectFileExtension = "sfc";  // the exported SFC file extension
     
     
@@ -52,7 +52,7 @@ public class Gui extends javax.swing.JFrame {
             // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName()); // the standard
         } catch (Exception exc) {
-            System.err.println("Error loading L&F: " + exc);
+            System.err.println("Error loading L&F: " + exc.getMessage());
         }
 
         // preparing visual components
@@ -593,10 +593,10 @@ System.out.print("\nlaunching SMVTranslator ...");
       try {
           status = Snotcheck.isWellDefined(project.getSFC());
       }
-      catch (CheckException checkEx) {
+      /*(catch (CheckException checkEx) {
           SnotOptionPane.showMessageDialog(null, checkEx.getMessage(), 
                                         "Check error", JOptionPane.ERROR_MESSAGE); 
-      }
+      }*/
       catch (Exception ex) {
           SnotOptionPane.showMessageDialog(null, ex.getMessage(),
                                         "Check error", JOptionPane.ERROR_MESSAGE); 
@@ -926,15 +926,21 @@ System.out.print("\nSession is closed!");
             Utilities.validateFile(file, SessionFileExtension);
         }
         catch (Exception ex) {
-            SnotOptionPane.showMessageDialog(null, ex.getMessage(), "File error", JOptionPane.WARNING_MESSAGE);
+            String msg = (ex.getMessage()+"\n\nError type:\n"+ex.getClass().getName());
+            SnotOptionPane.showMessageDialog(null, msg, "File error", JOptionPane.WARNING_MESSAGE);
             return null;
         }
         
         try {
-            newSession.read(file, SessionFileExtension);
+            newSession.read(file);
+        }
+        catch (IOException ex) {
+            SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Read error", JOptionPane.WARNING_MESSAGE);
+            return null;
         }
         catch (Exception ex) {
-            SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Read error", JOptionPane.WARNING_MESSAGE);
+            String msg = (ex.getMessage()+"\n\nError type:\n"+ex.getClass().getName());
+            SnotOptionPane.showMessageDialog(null, msg, "Read error", JOptionPane.WARNING_MESSAGE);
             return null;
         }
         

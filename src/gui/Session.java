@@ -11,9 +11,11 @@ import java.lang.*;
 import java.io.Serializable;
 import java.io.File;
 import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream;
 import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.util.Enumeration;
-
+import java.util.Vector;
 import editor.Editor;
 
 /**
@@ -23,7 +25,7 @@ import editor.Editor;
  *  create new, import or export Projects.
  *
  * @author  Hans Theman and Ingo Schiller
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 
 public class Session extends java.lang.Object implements Serializable {
@@ -220,15 +222,18 @@ public class Session extends java.lang.Object implements Serializable {
      *  @param _file    Specifies the file in which to store the entire Session.
      */
     public void save(File _file) throws Exception {
-        boolean status = false;
-        
         if (_file != null) {
             this.setFile(_file);
         }
         // ... else use the old file
         
         ObjectOutputStream outStream = new ObjectOutputStream(new FileOutputStream(file));
-        outStream.writeObject((Object)new Project()); // throws IOException!!!!
+        try {
+            outStream.writeObject((Object)new Project()); // throws IOException!!!!
+        }
+        finally {
+            outStream.close(); // throws IOException!!!!
+        }
         outStream.flush(); // throws IOException!!!!
         outStream.close(); // throws IOException!!!!
         
@@ -241,7 +246,46 @@ public class Session extends java.lang.Object implements Serializable {
         }
     }
     
-    public Session read(File _file, String extension) throws Exception {
-        throw new Exception("Method read session not yet implemented!");
+    public static Session read(File _file) throws Exception {
+        Project p = null;
+        Session s = null;
+        
+        ObjectInputStream inStream = new ObjectInputStream(new FileInputStream(_file));
+        try {
+            s = (Session)inStream.readObject(); 
+        }
+        finally {
+            inStream.close();
+        }
+        inStream.close();
+        
+        for (Enumeration e = s.table.elements() ; e.hasMoreElements() ;) {
+            p = (Project)e.nextElement();
+            p.clearModified();
+            if (p.isActive()) {
+                p.setEditor(new Editor(p.getSFC()));
+                p.getEditor().show();
+            }
+        }
+        
+        s.is_saved = true;
+        s.is_modified = false;
+
+        return s;
+    }
+    
+    
+    /**
+     * to get the projectvector to display the list
+     */    
+    
+    public Vector getprojectlist(){
+        Vector Projects = new Vector(); // vector to save the projects to displaz in the jList
+        Enumeration e = table.elements();
+    
+        while(e.hasMoreElements()){
+            Projects.add(e.nextElement());
+            }
+    return Projects;        
     }
 }
