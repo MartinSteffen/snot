@@ -1,0 +1,31 @@
+// Example sfc 2
+
+begin
+ vars =
+ [
+   x : bool = false;
+   y : bool = false
+ ];
+
+ init =  s1;
+
+ steps =
+ [ 
+   (s1, [(N,act1)]);
+   (s2, [(N,act2)]);
+   (s3, [(N,act3)])
+ ];
+
+ actions =
+ [
+   act1 = [ x := false ; z := true];
+   act2 = [ x := 2];
+   act3 = [ x := y ; y := not y]
+ ];
+  
+ transitions = 
+ [
+   [ s1 ] -> [s2;s3] when z and not x;
+   [ s2;s3 ] -> [s1]  when not y
+ ]
+end
