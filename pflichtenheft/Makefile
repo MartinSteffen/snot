@@ -1,5 +1,5 @@
 ########################################################
-## $Id: Makefile,v 1.1 2001-04-20 05:57:37 swprakt Exp $
+## $Id: Makefile,v 1.2 2001-04-21 12:08:06 swprakt Exp $
 ########################################################
 
 
@@ -12,6 +12,13 @@ CODEDIR     =
 ############# Achtung: die Versionen ändern sich!
 WWWDIR      = /home/info/www/inf/deRoever/SS01/Java/Siff/pflichtenheft1
 
+
+
+main.ps:
+	dvips -o main.ps main.dvi
+
+main-small.ps:
+	psnup -2 main.ps > main-small.ps
 
 index.html: $(DOC).html
 	$(HACHA) -o index.html $(DOC).html

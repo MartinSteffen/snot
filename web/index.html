@@ -1,633 +1,102 @@
-<HEAD>
-<TITLE>Model-checking environment for state-transition systems (aka. Mist)  </TITLE>
 
-<meta name="description" content="Java Lab course, summer semester 2000">
 
-<meta name="keywords" content="Java, Java course, Java programming course, Java programming, programming course, teaching, Java project, software engineering, Mist, model checker">
 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+            "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML>
+<HEAD><TITLE>Sequential Function Charts Tool
+ (aka. Snot)</TITLE>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<META name="GENERATOR" content="hevea 1.05">
 </HEAD>
-<BODY  bgcolor="white" vlink="#407999" link="#7070ff">
+<BODY bgcolor="white" alink="red" vlink="#407999" link="#7070ff">
+<!--HEVEA command line is: hevea -fix -exec xxdate.exe /home/ms/dc/tex/inputs/ocamlweb.sty ../tex/inputs/handout-title.tex ../tex/inputs/macros.hva ../tex/inputs/macros.tex main.tex -o index.html -->
+<!--HTMLHEAD-->
+<!--ENDHTML-->
+<!--CUT DEF section 1 -->
+
+<BR>
+<BR>
 
 <a href="http://www.techfak.uni-kiel.de/">
   <img border=0 alt="[Technical Faculty]" height=20  src="/images/tflogo.gif"></a>
-
 <hr>
-<P>
+<BR>
+<BR>
 
+<H1 ALIGN=center><FONT SIZE=6><B><I><FONT COLOR=maroon>S</FONT></I></B></FONT><FONT SIZE=6><B>equential Fu</B></FONT><FONT SIZE=6><B><I><FONT COLOR=maroon>n</FONT></I></B></FONT><FONT SIZE=6><B>ction Charts T</B></FONT><FONT SIZE=6><B><I><FONT COLOR=maroon>o</FONT></I></B></FONT><FONT SIZE=6><B>ol
+ (aka. </B></FONT><FONT SIZE=6><B><FONT COLOR=navy>Snot</FONT></B></FONT><FONT SIZE=6><B>)</B></FONT></H1>
 
-<H1>Model-checking environment for state-transition systems (aka. Mist) </H1>
+<!--TOC section Pflichtenheft-->
 
+<H2>Pflichtenheft</H2><!--SEC END -->
 
+<A NAME="sec:pflichtenheft"></A>Die folgende Liste enth"alt das Pflichtenheft. Der erste Eintrag ist
+jeweils der <EM>aktuelle.</EM><BR>
+<BR>
+<DIV ALIGN=center>
+ <TABLE CELLSPACING=2 CELLPADDING=0>
+<TR><TD VALIGN=top ALIGN=right NOWRAP>1.</TD>
+<TD VALIGN=top ALIGN=left NOWRAP><A HREF="pflichtenheft0/">Vorversion 0</A></TD>
+<TD VALIGN=top ALIGN=left NOWRAP>23. April 2001</TD>
+<TD VALIGN=top ALIGN=left>Diskussionsgrundlage, dient zur Gruppeneinteilung</TD>
+</TR></TABLE>
+</DIV><BR>
+<!--TOC section Snapshots-->
 
+<H2>Snapshots</H2><!--SEC END -->
 
+<A NAME="snapshots"></A>Die <EM>Snapshots</EM> sind hier zur schnelleren Referenz als
+<EM>Javaarchiv</EM> <TT>snot_v[x].jar</TT> festgehalten, wobei <TT>[x]</TT>
+die Nummber des Schnappschusses ist. Als Entwickler mit Zugriff auf das
+Quellcoderepositorium kann man die Entwicklungsschritte sie natürlich
+mittels  wieder zurückholen. Zum Ausführen der Archivs speichere man
+die Datei <TT>snot_v[x].jar</TT> an einen geeigneten Platz, und setze<BR>
+<BR>
+<PRE>
+ export CLASSPATH=[geeigneter_platz]/snot_v[x].jar
+</PRE><!--TOC section HTML-Dokumentation-->
 
-<br>
-<br>
-<hr>
-<center>
-<FONT COLOR="red" size=+1><b>erneute Transplantation des Quell-Repositoriums (13. Sept. 2000):</b>
-</font> <FONT  size=+1><b>neuer Ort</b>: <tt> swprakt@aristoteles.informatik.uni-kiel.de:/home/swprakt/cvsroot</tt></font>
-<br>
+<H2>HTML-Dokumentation</H2><!--SEC END -->
 
-<FONT COLOR="red" size=+1><b>Mist-Endbesprechung :</b> </font> <FONT  size=+1><b>20. Juli 2000, 10 Uhr, Preußerstr. 1-9</b> </font>
-<br>
-<FONT COLOR="red" size=+1><b>Schließung der Accounts im GA-Pool:</b> 24. Juli 2000</font>
-
-</center>
-<hr>
-<br>
-<br>
-
-<center>
-<IMG SRC="editor1.gif" height=350>
-</center>
-
-<br>
-
-<h4> Entwurfs & Prototypphase (für 8stündige Teilnehmer)</h4>
-
-Dieser erste Teil ist für die <em>8stündigen</em> Gruppen gedacht. In einer
-ersten Phase eines Projektes geht es um den Entwurf und hier bereits einen
-<em> Prototypen</em>, d.h., einen ersten, teillauffähiges Programm, mit
-Hilfe dessen man einschätzen kann, wie umfangreich man das Endprodukt
-gestalten will, welche Features es haben soll, welche man besser wegläßt
-etc.
-
-
-Es ist in diesem Teil möglich, daß sich je <em> 2 2er-Gruppen zu einer
-Vierer-Arbeitsgemeinschaft zusammentun</em> um Arbeit zu sparen. Die
-Initiative muß aber von Euch ausgehen, wir teilen das nicht zwingend
-ein. (bei Bedarf: ich habe alle Mailadressen). Wenn man sich unter der
-Woche nicht trifft, kann man in der ersten Woche die Planung machen, was
-man sich vorstellt, dann in der nächsten Woche sich mit einer 2ten Gruppe
-abgleichen und besprechen, und die zweite Woche auf die Realisierung
-verwenden.
-
-<p> Hier die genauere Beschreibung des <a
-href="Prototyp/handout1.ps">Prototyps</a>.
-
-
-<h4> Pflichtenheft </h4>
-
-
-
-Folgende Liste enthält das Pflichtenheft. Die erste Eintrag ist
-jeweils der <em>aktuelle</em>.
-
-<TABLE WIDTH="80%" BORDER="0" CELLPADDING="4" CELLSPACING="0">
-  <!------------------------------------------------ -->
-
-  <!------------------------------------------------ -->
-<TR VALIGN="TOP">
-  <TD>  5.</TD>
-  <TD> <a href="Pflichtenheft5/handout1.html">  Pflichtenheft 5</a>
-  </TD>
-  <td>
-      Typen hinzugefügt, nach der Projektbesprechung am 10. Juli
-  </td>
-</TR>
-  <!------------------------------------------------ -->
-
-
-  <!------------------------------------------------ -->
-<TR VALIGN="TOP">
-  <TD>  4.</TD>
-  <TD> <a href="Pflichtenheft4/handout1.html">  Pflichtenheft 4</a>
-  </TD>
-  <td>
-      kleine Anpassungen nach der Besprechung vom 27. Juni.
-  </td>
-</TR>
-  <!------------------------------------------------ -->
-
-
-  <!------------------------------------------------ -->
-<TR VALIGN="TOP">
-  <TD>  3.</TD>
-  <TD> <a href="Pflichtenheft3/handout1.html">  Pflichtenheft 3</a>
-  </TD>
-  <td>
-      Positionen in Zuständern, Änderung der Klasse <tt>Process</tt>.
-  </td>
-</TR>
-  <!------------------------------------------------ -->
-
-
-  <!------------------------------------------------ -->
-<TR VALIGN="TOP">
-  <TD>  2.</TD>
-  <TD> <a href="Pflichtenheft2/handout1.html">  Pflichtenheft 2</a>
-  </TD>
-  <td>
-geringe Änderungen  an der
-      abstrakten Syntax, Einteilung der Teams
-  </td>
-</TR>
-  <!------------------------------------------------ -->
-
-
-  <!------------------------------------------------ -->
-<TR>
-  <TD>  1.</TD>
-  <TD> <a href="Pflichtenheft/handout1.html"> orig. Version, 22. Mai </a>
-  </TD>
-</TR>
-  <!------------------------------------------------ -->
-
-
-</table>
-
-
-<h4> Baselines </h4>
-
-Die Baselines sind hier zur schnelleren Referenz als <em>Java</em>archiv
-<tt>mist_v[x].jar</tt> festgehalten, wobei <tt>[x]</tt> die Nummber der
-Baseline ist). Als Entwickler mit Zugriff auf das Quellcoderepositorium
-kann man die Entwicklungsschritte sie natürlich mittels cvs wieder
-zurückholen. Zum Ausführen der Archivs speichere man die Datei
-<tt>mist_v[x].jar</tt> an einen geeigneten Platz, und setze
-
-<listing>
-   export CLASSPATH=[geeigneter_platz]/mist_v[x].jar
-</listing>
-
-<TABLE WIDTH="80%" BORDER="0" CELLPADDING="4" CELLSPACING="0">
-  <!------------------------------------------------ -->
-
-  <!------------------------------------------------ -->
-<TR VALIGN="TOP">
-  <TD>  4.</TD>
-  <TD> <a href="Baselines/mist_v4.jar">  Endbesprechung</a>
-  </TD>
-  <td>
-      20. Juli, nach der Endbesprechung
-  </td>
-</TR>
-  <!------------------------------------------------ -->
-
-  <!------------------------------------------------ -->
-<TR VALIGN="TOP">
-  <TD>  3.</TD>
-  <TD> <a href="Baselines/mist_v3.jar">  Baseline 3</a>
-      unwesentliche Fortschritte
-  </TD>
-  <td>
-      17. Juli, vormittags
-  </td>
-</TR>
-  <!------------------------------------------------ -->
-
-  <!------------------------------------------------ -->
-<TR VALIGN="TOP">
-  <TD>  2.</TD>
-  <TD> <a href="Baselines/mist_v2.jar">  Baseline 2</a> keine
-      wesentlichen Fortschritte in der Gesamtintegration
-  </TD>
-  <td>
-      10. Juli, vormittags
-  </td>
-</TR>
-  <!------------------------------------------------ -->
-
-
-  <!------------------------------------------------ -->
-<TR VALIGN="TOP">
-  <TD>  1.</TD>
-  <TD> <a href="Baselines/mist_v1.jar">  Baseline 1</a> (gif-Bilder noch nicht
-       richtig referenziert im Archiv, Grund: unbekannt)
-  </TD>
-  <td>
-      5.  Juli.
-  </td>
-</TR>
-  <!------------------------------------------------ -->
-</table>
-
-
-
-  
-<h4> HTML-Dokumentation </h4>
-
-Zur schnelleren Orientierung wird die mit javadoc dokumentierte
+<A NAME="sec:html-doc"></A>Zur schnelleren Orientierung wird die mit <FONT COLOR=navy>javadoc</FONT> dokumentierte
 Implementierung im Netz bereitgestellt. Die Seiten werden bei größeren
-Entwicklungsschritten aufgefrischt.
+Entwicklungsschritten aufgefrischt.<BR>
+<BR>
+<DIV ALIGN=center>
+ Dokumentation <A HREF="doc">Snot</A>: momentan leer (April 21, 2001)
+</DIV><BR>
+<!--TOC section Arbeitsgruppen-->
 
-<p>
+<H2>Arbeitsgruppen</H2><!--SEC END -->
 
-<center>
-   <b>Dokumentation <a href="Doc">Mist</a></b>: Stand: 28. Juli, morgens
-</center>
-
-
-
-<h3> Arbeitsgruppen </h3>
-
-Jede der Arbeitsgruppen bearbeitet i.d.R. ein Java-Paket. Die
-Beschreibung der Aufgabenstellung findet sich im Pflichtenheft.
-
-
-<TABLE WIDTH="80%" BORDER="2" CELLPADDING="4" CELLSPACING="10">
-  <!------------------------------------------------ -->
-
-  <!------------------------------------------------ -->
-<TR VALIGN="TOP">
-  <TD>  1.</TD>
-  <TD>
-      Gui
-  </TD>
-  <td>
-     Helge Kraas/ Broder Schümann 
-  </td>
-  <td>
-      unix22
-  </td>
+<A NAME="sec:gruppen"></A>Jedes der Teams bearbeitet i.d.R. ein Java-Paket. Die Beschreibung der
+Aufgabenstellung findet sich im Pflichtenheft.<BR>
+<BR>
+<BLOCKQUOTE><DIV ALIGN=center><DIV ALIGN=center><HR WIDTH="80%" SIZE=2></DIV>
+ <TABLE CELLSPACING=2 CELLPADDING=0>
+<TR><TD ALIGN=right NOWRAP>&nbsp;</TD>
+<TD VALIGN=top ALIGN=center NOWRAP>&nbsp;&nbsp;</TD>
+<TD ALIGN=left NOWRAP>Paket</TD>
+<TD VALIGN=top ALIGN=center NOWRAP>&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+<TD ALIGN=left NOWRAP>Gruppe</TD>
 </TR>
-  <!------------------------------------------------ -->
+<TR><TD BGCOLOR=black COLSPAN=5><TABLE BORDER=0 WIDTH="100%" CELLSPACING=0 CELLPADING=1><TR><TD></TD></TR></TABLE></TD>
+</TR></TABLE>
+ <BR>
+<DIV ALIGN=center>Table 1: Gruppen und Pakete</DIV><BR>
+
+ <A NAME="tab:gruppen"></A>
+<DIV ALIGN=center><HR WIDTH="80%" SIZE=2></DIV></DIV></BLOCKQUOTE>Die Mailadressen der Teilnehmner finden sich <EM>intern</EM> unter
+<PRE>
+      $WORKDIR/Snot/org/gruppen.txt
+</PRE><!--HTMLFOOT-->
+<FONT SIZE=2>Pages last (re-)generated April 21, 2001</FONT><!--ENDHTML-->
+
+<!--FOOTER-->
+<HR SIZE=2>
+<BLOCKQUOTE><EM>This document was translated from L<sup>A</sup>T<sub>E</sub>X by
+</EM><A HREF="http://pauillac.inria.fr/~maranget/hevea/index.html"><EM>H</EM><EM><FONT SIZE=2><sup>E</sup></FONT></EM><EM>V</EM><EM><FONT SIZE=2><sup>E</sup></FONT></EM><EM>A</EM></A><EM>.
+</EM></BLOCKQUOTE></BODY>
+</HTML>
 
-  <!------------------------------------------------ -->
-<TR VALIGN="TOP">
-  <TD>  2.
-  </TD>
-  <TD>
-      Editor
-  </TD>
-  <td>
-      Finn Jacobs/ Alexander Eckloff 
-  </td>
-  <td>
-      unix18
-  </td>
-</TR>
-  <!------------------------------------------------ -->
-
-  <!------------------------------------------------ -->
-<TR VALIGN="TOP">
-  <TD>  3.
-  </TD>
-  <TD>
-      Model-Checker
-  </TD>
-  <td>
-      Frank Neumann/Aneta Kümper/Eike Schulz 
-  </td>
-  <td>
-      unix19 
-  </td>
-</TR>
-  <!------------------------------------------------ -->
-
-  <!------------------------------------------------ -->
-<TR VALIGN="TOP">
-  <TD>  4.
-  </TD>
-  <TD>
-      Parser
-  </TD>
-  <td>
-      Andreas Scott/Alexander Hegegner
-  </td>
-  <td>
-      unix??
-  </td>
-</TR>
-  <!------------------------------------------------ -->
-
-  <!------------------------------------------------ -->
-<TR VALIGN="TOP">
-  <TD>  5.1
-  </TD>
-  <TD>
-      Graphlazierung
-  </TD>
-  <td>
-      Daniel Dietrich/Moritz Zahorsky/ Christian Buck
-  </td>
-  <td>
-      unix25
-  </td>
-</TR>
-  <!------------------------------------------------ -->
-
-
-  <!------------------------------------------------ -->
-<TR VALIGN="TOP">
-  <TD>  5.2
-  </TD>
-  <TD>
-      Graphlazierung
-  </TD>
-  <td>
-      Ralf Thöhle/Paul Mallach 
-  </td>
-  <td>
-     unix11
-  </td>
-</TR>
-  <!------------------------------------------------ -->
-
-  <!------------------------------------------------ -->
-<TR VALIGN="TOP">
-  <TD>  6.1
-  </TD>
-  <TD>
-      Checking
-  </TD>
-  <td>
-      André Nitsche
-  </td>
-  <td>
-     
-  </td>
-</TR>
-  <!------------------------------------------------ -->
-
-  <!------------------------------------------------ -->
-<TR VALIGN="TOP">
-  <TD>  6.2
-  </TD>
-  <TD>
-      [Checking]
-  </TD>
-  <td>
-      [Jonas Dageförde/Andreas Lukosch]
-  </td>
-  <td>
-     unix11
-  </td>
-</TR>
-  <!------------------------------------------------ -->
-
-  <!------------------------------------------------ -->
-<TR VALIGN="TOP">
-  <TD>  7
-  </TD>
-  <TD>
-      Utilities: Pretty-Printer
-  </TD>
-  <td>
-      Oliver Kraus, Holger Labenda
-  </td>
-  <td>
-     
-  </td>
-</TR>
-  <!------------------------------------------------ -->
-
-
-</table>
-
-<p>
-
-
-Die Mailadressen der Teilnehmner finden sich intern unter
-<listing>
-   [Arbeitsverzeichnis]/Mist/src/Org/gruppen.txt
-</listing>
-
-
-
-<h3> Das Repositorium </h3>
-
-
-<h4> Vorraussetzungen </h4>
-
-Man benötigt zwei Dinge, um <em>von Ferne</em> auf das gemeinsame
-Repositorium zugreifen zu können:
-
-<ol>
-  <li> ssh (secure shell) als sicherer Zugriff und
-  <li> cvs + rcs als Versionskontrolle
-</ol>
-
-Für den ersten Punkt bzw. ssh: so geht man vor:
-
-Den ssh-Schlüssel an <a
-href="mailto:unix01@ap.informatik.uni-kiel.de">unix01@ap.informatik.uni-kiel.de</a>
-mailen. Der Schlüssel liegt typischerweise unter
-<tt>~/.ssh/identity.pub</tt>, wer ihn bereits hat, soll mir dieses File
-schicken.
-
-
-
-Wer einen solchen Schlüssel nicht hat, muß ihn sich generieren und zwar
-mittels
-<center>
-     ssh-keygen
-</center>
-
-
-Für das das korrekte Funktionieren braucht man noch Folgendes (bash-Syntax): 
-<blockquote>
-<listing>
-
-export CVSROOT=unix01@gimli.ap.informatik.uni-kiel.de:/home/unix01/cvsroot 
-export CVS_RSH=ssh
-export CVSEDITOR=emacsclient
-
-export CLASSPATH=[workingdirectory]/Mist/src:
-
-</listing>
-</blockquote>
-
-wobei <tt>[workingdirectory]</tt> ein <em>Platzhalter</em> für das
-Verzeichnis ist, in dem man arbeiten will.  Die ersten drei Zeilen sind zum
-korrekten Steuern von cvs gedacht. (man kann cvs auch anders steuern,
-z.B. über <tt>.cvsrc</tt>, bei Bedarf bitte selbst im Manual
-nachschlagen). Anstelle <tt>emacs</tt> kann man auch <tt>emacsclient</tt>
-oder den editor seiner Wahl nehmen. <tt>emacsclient</tt> sollte man dann
-nehmen, wenn man ohnehin emacs verwendet und beim starten des emacs' ein
-<tt>(server-start)</tt> ausgeführt wird.
-
-
-Die letzte Zeile hat mit ssh/cvs nichts zu tun, sondern hat mit dem
-Java-Projekt selbst zu tun. 
-
-<p>
-
-<h4> Beispiel </h4>
-
-Im Beispiel findet alles im Verzeichnis <tt>~/Projekt</tt>
-statt, d.h. <tt>[workingdirectory]</tt> = <tt>~/Projekt</tt>).
-
-
-<ul>
-<li> <b>Auschecken:</b>
-
-So bekommt man zum ersten Mal seine Arbeitskopie des Mist-Projektes:
-
-<blockquote>
-<listing>
-cd ~
-mkdir Projekt
-cd Projekt
-cvs <b>checkout</b> Mist/src
-</listing>
-</blockquote>
-Macht man
-
-<blockquote>
-<listing>
-cvs checkout Mist/Org
-</listing>
-</blockquote>
-bekommt man die Gruppeneinteilung. Macht man nur
-
-<blockquote>
-<listing>
-cvs checkout Mist
-</listing>
-</blockquote>
-
-so bekommt man <em>alles</em> zum Mist-Projekt, einschließlich der Quellen
-des <em>Pflichtenheftes</em> und der <em>Web-seite</em>.
-<li>
-<b>Zurückspeichern:</b>
-
-Wenn man mit den Änderungen durch ist, kann man den gesamten <em>
-Verzeichnisbaum</em> zurückspeichern:
-
-
-<blockquote>
-<listing>
-cd [workingdirectory]/Mist
-cvs commit 
-</listing>
-</blockquote>
-
-Danach wird man aufgefordert, einen Kommentar bezüglich seiner Änderungen
-anzugeben.  Falls der Kommentar nur kurz ist, kann man schneller auch
-
-<blockquote>
-<listing>
-cvs commit -m"Anmerkungen zu den Änderungen"
-</listing>
-</blockquote>
-
-verwenden.
-
-
-
-<li><b>Updaten:</b>
-    Den Baum seines Arbeitsverzeichnisses auf den neuesten Stand bringen,
-    geht auf zweierlei Weise:
-
-    <blockquote>
-    <listing>
-    cd [workingdirectory]/Mist
-    cvs update
-    </listing>
-    </blockquote>
-
-    oder 
-    
-
-    <blockquote>
-    <listing>
-    cd [workingdirectory]
-    cvs checkout Mist
-    </listing>
-    </blockquote>
-
-    mit den Variante, wie oben geschildert. Man beachte den
-    <em>Unterschied</em> der <em>Verzeichnisse</em> bei beiden Varianten!
-    Das <tt> checkout</tt> geht weiter als ein bloßes Update, da es einem
-     auch <em>neu hinzugekommene Verzeichnisse</em> gibt.
-
-    <li><b>Neue Dateien + Verzeichnisse:</b>
-	Das geht mit
-	
-	<blockquote>
-	<listing>
-	cvs add [filename]
-	</listing>
-	</blockquote>
-	entfernen mit <tt>cvs remove [filename]</tt>. Anstelle eines
-        Filenames kann man auch ein Verzeichnis hinzufügen, oder auch
-	alle neuen java-files mit <tt>cvs add *.java</tt>.
-</ul>
-
-
-<h3> Strategie und Spielregeln </h3>
-
-Versionskontrolle garantiert kein reibungsloses Arbeiten, es unterstützt
-dies, wenn man gewisse Disziplin wahrt. Folgende Daumenregeln:
-
-<ul>
-  <li> Änderen von globalen Paketen/Paketen von anderen Gruppen: nur nach
-       reiflicher Überlegung/Rücksprache mit der betroffenen Gruppe.
-  <li> Nur <em>kompilierbare</em> Versionen einchecken, d.h. der eigene
-      Teil muß mittel <tt>make all</tt> ohne Fehlermeldungen sich kompilieren
-      lassen (dies gilt noch nicht für die Anlaufphase, bis es zum ersten Mal
-      integriert ist). Änderung, die die <b>Schnittstelle</b> mit einem
-      anderen Pakte betreffen (insbesondere mit der GUI) sollten
-      <em>angekündigt</em> werden, zum Beispiel in den Besprechungen.
-      Daneben sind die Mailadressen der einzelnen Gruppen unter
-<tt>Org/gruppen.txt</tt> vorhanden.
-  <li> Makefiles und Readmes sind hilfreich (im Paket <tt>absynt</tt>
-      finden sich Beispiele)
-  <li> bitte den Code sinnvoll mittels <em>Javadoc</em> kommentieren.
-      Zumindest der Author/die Autoren soll dokumentiert sein.
-      In Paket <tt>absynt</tt> kann man sich anschauen, wie man,
-      wenn man will, auch cvs-logs documentieren lassen kann (z.B. in dem
-      man das File <tt>absynt/template.txt</tt> verwendet/anpaßt.)
-
-</ul>      
-
-
-
-<ol>
-</ol>
-
-<h3> Information zu im Kurs verwendeter Software </h3>
-    Die primären Information finden sich auf der
-    <a href="http://www.informatik.uni-kiel.de/inf/deRoever/SS00/Java">Startseite</a>
-    des Kurses. Weitere für die Projektarbeit wichtige
-    Links hier:
-<ul>
-  <li> Lexer und Yaccer:
-      <ul>
-	<li> <a href="http://www.cs.princeton.edu/~appel/modern/java/JLex/">JLex</a>,
-	    <tt>CLASSPATH</tt> muß <tt>/home/unix01/jlex:</tt> (im A-Pool) enthalten!	    
-	<li> <a href="http://www.cs.princeton.edu/~appel/modern/java/CUP/">CUP</a>,
-	    <tt>CLASSPATH</tt> muß <tt>/home/unix01/cup:</tt> (im A-Pool) enthalten!
-	    <br>
-	    <em>Beachte:</em> zum kompilieren daheim: bitte die neueste
-            Version <b> <tt> cup1.0k </tt></b> installieren!
-      </ul>
-  <li> <em> Concurrent version control:</em>  die Verwendung von CVS ist
-  im zweiten Teil für alle verpflichtend! Eine gute, lokale Informationsquelle
-  sind die <em>Info-Seiten</em> im emacs.
-  <ul>
-  <li> <a href="http://www.loria.fr/~molli/cvs-index.html">CVS</a>
-  <li> eine <a
-      href="http://www.sourcegear.com/CVS/Docs/ref">Referenzliste</a>,
-      eine gute <a href="http://www.sourcegear.com/CVS/Docs/blandy">Kurzeinführung</a>
-  </ul>
-  <li> Informationen zu 
-       <a href="http://www.wi.leidenuniv.nl/home/afddoc/texi/make/make_toc.html">gnu make </a> 
-       (und weitere gnu-software
-        <a href="http://www.wi.leidenuniv.nl/home/afddoc/texi/"> 
-	hier</a>, beides ist wiederum auch innerhalb des Info-Systems des
-	Emacs zugänglich)
-</ul>
-<br>
-
-
-Bei Fragen, email an <TT>{mky|kst|ms}@informatik.uni-kiel.de</TT> 
-
-<hr>
-<address>
-<font size=1>
-Maintained by:
-<a href="http://www.informatik.uni-kiel.de/%7Ems">
-Martin Steffen</a>
-</font>
-</address>
-<!-- hhmts start -->
-<font size=1>
-Last modified: Wed Sep 13 15:01:23 MET DST 2000
-</font>
-<!-- hhmts end -->
-</body> </html>
-
-</BODY>
