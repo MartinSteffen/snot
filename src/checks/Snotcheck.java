@@ -10,7 +10,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.49 2001-07-18 12:37:30 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.50 2001-07-18 13:37:00 swprakt Exp $
  *
  */
 
@@ -42,7 +42,8 @@ public class Snotcheck{
 	    allesOk = isUExprOk(lUExpr);
 	    if (allesOk == false){return false;}
 	}
-	if (className == "absynt.Constval"){
+//	if (className == "absynt.Constval"){
+	if (lExpr instanceof Constval){
 	    String nameOfConstvalClass = (((Constval) lExpr).val.getClass()).getName();
 	    if (nameOfConstvalClass == "Boolean"){
 		lExpr.type = new BoolType();
@@ -170,27 +171,27 @@ public class Snotcheck{
 
 	//pruefen der Sub-Expression:
 	String className = (sExpr.getClass()).getName();
-	if (className == "absynt.B_expr"){
+	if (sExpr  instanceof B_expr){
 	    B_expr sBExpr = (B_expr) sExpr;
 	    allesOk = isBExprOk(sBExpr);
 	    if (allesOk == false){return false;}
 	}
-	if (className == "absynt.U_expr"){
+	if (sExpr  instanceof U_expr){
 	    U_expr sUExpr = (U_expr) sExpr;
 	    allesOk = isUExprOk(sUExpr);
 	    if (allesOk == false){return false;}
 	}
-	if (className == "absynt.Constval"){
+	if (sExpr  instanceof Constval){
 	    String nameOfConstvalClass = (((Constval) sExpr).val.getClass()).getName();
-	    if (nameOfConstvalClass == "Boolean"){
+	    if ((((Constval)sExpr).val) instanceof Boolean){
 		sExpr.type = new BoolType();
 	    } else {
 		sExpr.type = new IntType();
 	    }
 	}
-	if (className == "absynt.Variable"){
+	if (sExpr  instanceof Variable){
 	    String nameOfVariableType = (((Variable) sExpr).type.getClass()).getName();
-	    if (nameOfVariableType == "Boolean"){
+	    if ( ((Variable) sExpr).type instanceof BoolType){
 		sExpr.type = new BoolType();
 	    } else {
 		sExpr.type = new IntType();
@@ -202,7 +203,7 @@ public class Snotcheck{
 	typeName = (sExpr.type.getClass()).getName();   //
 	if (anUExpr.op == anUExpr.MINUS){
 	    //das MINUS kann nur auf Integerwerte angewendet werden
-	    if (typeName == "IntType"){
+	    if (sExpr.type instanceof IntType){
 		anUExpr.type = new IntType();
 		return true;
 	    } else {return false;}
@@ -210,7 +211,7 @@ public class Snotcheck{
 
 	if (anUExpr.op == anUExpr.NEG){
 	    //das NEG ist nur auf boolschen Expressions definiert
-	    if (typeName == "BoolType"){
+	    if (sExpr.type instanceof BoolType){
 		anUExpr.type = new BoolType();
 		return true;
 	    } else {return false;}
@@ -246,39 +247,40 @@ public class Snotcheck{
 
 	System.out.println(nameOfExprClass);
 
-	if (nameOfExprClass == "absynt.B_expr"){
+	if (anExpr instanceof B_expr){
 	    //Aufruf der Methode zum Pruefen einer binaeren Expression:
 	    B_expr bExpr = (B_expr) anExpr;
 	    allesOk = isBExprOk(bExpr);
 	    if (allesOk == false){return false;}
 	}
-	if (nameOfExprClass == "absynt.U_expr"){
+	if (anExpr instanceof U_expr){
 	    //Aufruf der Methode zum Pruefen einer unaeren Expression:
 	    U_expr uExpr = (U_expr) anExpr;
 	    allesOk = isUExprOk(uExpr);
 	    if (allesOk == false){return false;}
 	}
 
-	if (nameOfExprClass == "absynt.Constval"){
+//	if (nameOfExprClass == "absynt.Constval"){
+	if (anExpr instanceof Constval){
 	    //wenn die Expression ein konstanter Wert ist, so sind nur boolsche Werte erlaubt
 	    Constval constant = (Constval) anExpr;
 	    constvalClass = constant.val.getClass();
 	    nameOfConstvalClass = constvalClass.getName();
-	    if (nameOfConstvalClass != "Boolean"){
+	    if ((constant.val instanceof Boolean) == false){
 		anExpr.type = new IntType();
 		//wenn der konstante Wert nicht zu den Booleans gehoert, dann gebe ein false zurueck:
-		System.out.println("nicht Boolean"+nameOfConstvalClass);
+		System.out.println("nicht Boolean "+nameOfConstvalClass);
 		return false;
 	    } else {
 		anExpr.type = new BoolType();
-		System.out.println("Boolean"+nameOfConstvalClass);
+		System.out.println("Boolean "+nameOfConstvalClass);
 		return true;
 	    }
 	}
 
-	if (nameOfExprClass == "absynt.Variable"){
+	if (anExpr instanceof Variable){
 	    //wenn die Expression eine Variable ist, so muss diese vom Type BoolType sein:
-	    if (((anExpr.type.getClass()).getName()) == "BoolType"){
+	    if (anExpr.type instanceof BoolType){
 		anExpr.type = new BoolType();
 		return true;
 	    } else {
@@ -291,7 +293,7 @@ public class Snotcheck{
 	//wenn die Expression OK ist, dann pruefe noch, ob der Type der Expression BoolType ist, sonst gebe ein false zurueck:
 	System.out.println(((anExpr.type.getClass()).getName()));
 
-	if (((anExpr.type.getClass()).getName()) == "BoolType"){
+	if (anExpr.type instanceof BoolType){
 	    //alles ist OK
 	    return true;
 	} else {
@@ -676,9 +678,12 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.49 2001-07-18 12:37:30 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.50 2001-07-18 13:37:00 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.49  2001/07/18 12:37:30  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.48  2001/07/12 15:22:00  swprakt
 //	*** empty log message ***
 //	
