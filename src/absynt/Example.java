@@ -6,7 +6,7 @@ import utils.PrettyPrint;
  * 
  * The class offers an example for a program int abstract syntax.
  * @author Initially provided by Martin Steffen.
- * @version $Id: Example.java,v 1.9 2001-05-04 15:10:19 swprakt Exp $	
+ * @version $Id: Example.java,v 1.10 2001-05-08 08:22:11 swprakt Exp $	
  */
 
 
@@ -62,10 +62,13 @@ public class Example{
       Step s2      = new Step("S2",sal2);   // Step s2
 
       //   ------- Step 3
-      Assign stmt3 =                 
+      Assign stmt3_1 =                 
 	new Assign(v_x,                    // x := not x
 		   new U_expr(Expr.NEG, v_x));
-      StmtList sl3 = new StmtList(stmt3, null);
+      Assign stmt3_2 =                 
+	new Assign(v_y, v_x);             // y :=  x
+      StmtList sl3 = new StmtList(stmt3_1, 
+				  new StmtList(stmt3_2, null));
       Action a3 = 
 	new Action (new String("act3"),
 		    sl3);
@@ -150,9 +153,12 @@ public class Example{
 //	Abstract syntax for Snot programs
 //	------------------------------------
 //
-//	$Id: Example.java,v 1.9 2001-05-04 15:10:19 swprakt Exp $
+//	$Id: Example.java,v 1.10 2001-05-08 08:22:11 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.9  2001/05/04 15:10:19  swprakt
+//	changed actions in steps
+//	
 //	Revision 1.8  2001/05/04 09:14:13  swprakt
 //	Example compiles, action list of the
 //	SFC is empty still.

@@ -1,23 +1,24 @@
 
 \section{Übersetzung nach SMV}
 \label{sec:smv}
+\team{Tobias Kloss, Kevin Koeser}
 
 
 \SMV{} \cite{smv:gettingstarted,smv:language} ist ein weit verbreiteter
-symbolischer Model-Checker.  Model-Checker werden benutzt, um festzustellen,
-ob endliche Systeme bestimmte Eigenschaften besitzen.  Man könnte z.B.  die
-Airbag-Steuerung eines Autos prüfen wollen; ob es beispielsweise möglich ist,
-dass der Beifahrerairbag trotz vorheriger Deaktivierung unter bestimmten
-Umständen auslöst.
+symbolischer Model-Checker.  Model-Checker werden benutzt, um
+festzustellen, ob endliche Systeme bestimmte Eigenschaften besitzen.  Man
+könnte z.B.  die Airbag-Steuerung eines Autos prüfen wollen; ob es
+beispielsweise möglich ist, dass der Beifahrerairbag trotz vorheriger
+Deaktivierung unter bestimmten Umständen auslöst.
 
-Diese überprüften Eigenschaften werden üblicherweise in einer \emph{temporalen
-  Logik} beschrieben, in dieser ist es möglich Eigenschaften der Art
-"`immer/zu jeder Zeit gilt $a \lor b$ "' oder auch "`irgendwann gilt $a \land
-b \land c$"' zu spezifizieren.
+Diese überprüften Eigenschaften werden üblicherweise in einer
+\emph{temporalen Logik} beschrieben, in dieser ist es möglich Eigenschaften
+der Art "`immer/zu jeder Zeit gilt $a \lor b$ "' oder auch "`irgendwann
+gilt $a \land b \land c$"' zu spezifizieren.
 
-\SMV{} besitzt eine eigene Eingabesprache, in der auf unterschiedliche Art und
-Weise Systeme spezifiziert werden können.  Hier ein Beispiel, wie man eine
-sogenannte \emph{State machine} modellieren kann:
+\SMV{} besitzt eine eigene Eingabesprache, in der auf unterschiedliche Art
+und Weise Systeme spezifiziert werden können.  Hier ein Beispiel, wie man
+eine sogenannte \emph{State machine} modellieren kann:
 \begin{verbatim}
 MODULE main
 VAR
@@ -30,22 +31,24 @@ ASSIGN
                    1 : {ready,busy};
                  esac;
 \end{verbatim}
-Es werden zunächst zwei Variablen deklariert, eine boolesche \texttt{request}
-sowie eine enumerative \texttt{state}.  Letztere kann die Werte \texttt{ready}
-und \texttt{busy} annehmen.  Im \texttt{ASSIGN}-Part wird das Verhalten des
-Systems spezifiziert.  Initial wird die Variable \texttt{state} mit
-\texttt{ready} belegt.  Im \texttt{next(state)}-Teil wird beschrieben, wie
-sich der Wert von \texttt{state} abhängig vom aktuellen Zustand verändert.
-Wie man sieht ist nichts über \texttt{request} ausgesagt; folglich kann diese
-Variable in jedem Schritt einen beliebigen Wert annehmen.
+Es werden zunächst zwei Variablen deklariert, eine boolesche
+\texttt{request} sowie eine enumerative \texttt{state}.  Letztere kann die
+Werte \texttt{ready} und \texttt{busy} annehmen.  Im \texttt{ASSIGN}-Part
+wird das Verhalten des Systems spezifiziert.  Initial wird die Variable
+\texttt{state} mit \texttt{ready} belegt.  Im \texttt{next(state)}-Teil
+wird beschrieben, wie sich der Wert von \texttt{state} abhängig vom
+aktuellen Zustand verändert.  Wie man sieht ist nichts über
+\texttt{request} ausgesagt; folglich kann diese Variable in jedem Schritt
+einen beliebigen Wert annehmen.
 
-Die Aufgabe wird nun darin bestehen, ein SFC, welches ausschließlich boolesche
-Varibalen besitzt, in diese Eingabesprache zu übersetzen.  Diese Übersetzung
-soll natürlich die Semantik des SFC's erhalten.  Somit sollen alle
-Ausführungssequenzen und erreichbaren Zustände des SFC's auch in der
-Übersetzung vorhanden bzw. erreichbar sein.  Danach können dann Eigenschaften
-des erhaltenen SMV-Systems geprüft werden.  Da die Übersetzung die Semantik
-erhält, gelten diese Eigenschaften dann auch für das ursprüngliche SFC.
+Die Aufgabe wird nun darin bestehen, ein SFC, welches ausschließlich
+\emph{boolesche} Variablen besitzt, in diese Eingabesprache zu übersetzen.
+Diese Übersetzung soll natürlich die Semantik des SFC's erhalten.  Somit
+sollen alle Ausführungssequenzen und erreichbaren Zustände des SFC's auch
+in der Übersetzung vorhanden bzw. erreichbar sein.  Danach können dann
+Eigenschaften des erhaltenen SMV-Systems geprüft werden.  Da die
+Übersetzung die Semantik erhält, gelten diese Eigenschaften dann auch für
+das ursprüngliche SFC.
 
 %\cite{smv:manual}
 
