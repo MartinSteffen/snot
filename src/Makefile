@@ -1,6 +1,6 @@
 #----------------------------------------------------------------------
-# developers' top-level Makefile for the Siff project
-# $Id: Makefile,v 1.8 2001-05-16 07:13:17 swprakt Exp $
+# developers' top-level Makefile for the Snot project
+# $Id: Makefile,v 1.9 2001-05-22 06:43:04 swprakt Exp $
 #----------------------------------------------------------------------
 
 # The targets installing gobal web-infos can be executed only
@@ -17,7 +17,7 @@ LOCALDOCDIR   = doc
 PACKAGEDIRS   = absynt\
 	        utils\
 	        editor\
-	        smv
+	        smv\
 
 ################################################
 
@@ -39,23 +39,11 @@ packets:
 	(cd ./gui; make)
 	(cd ./checks; make)
 	(cd ./smv; make)
-       
-
-
+	(cd ./simulator; make)
 
 jar:
-	jar cvf mist.jar ./absynt/*.class \
+	jar cvf snot.jar ./absynt/*.class \
 	    ./utils/*.class \
-	    ./editor/*.class \
-	    ./editor/einterface/*.class\
-	    ./editor/images/*.gif\
-	    ./gui/*.class \
-	    ./checks1/*.class \
-	    ./parser/*.class \
-	    ./simulator/*.class \
-	    ./modcheck/*.class \
-	    ./position1/*.class \
-	    ./position2/*.class \
 
 jarinstall: 
 	cp mist_v*.jar $(BASELINESDIR)
@@ -67,12 +55,8 @@ clean:
 	(cd ./editor; make clean)
 	(cd ./gui; make clean)
 	(cd ./checks; make clean)
-	(cd ./parser; make clean)
-	(cd ./modcheck; make clean)
+	(cd ./smv; make clean)
 	(cd ./simulator; make clean)
-	(cd ./position; make clean)
-	(cd $(LOCALDOCDIR); make clean)
-
 
 
 
