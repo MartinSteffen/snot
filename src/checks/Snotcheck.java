@@ -9,7 +9,7 @@ import absynt.*;
  *-checken von SFCs
  *-und nat"urlich auch checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.8 2001-05-22 14:49:31 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.9 2001-05-22 14:50:36 swprakt Exp $
  *
  */
 
@@ -33,7 +33,7 @@ public class Snotcheck{
 	return true;
     }
 
-    public boolean onlyBool(SFC aSFCObject){
+    public boolean onlyBool(SFC aSFCObject) throws Exception {
 	return false;
     }
 
@@ -44,9 +44,12 @@ public class Snotcheck{
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.8 2001-05-22 14:49:31 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.9 2001-05-22 14:50:36 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.8  2001/05/22 14:49:31  swprakt
+//	alles ok
+//	
 //	Revision 1.7  2001/05/22 14:41:53  swprakt
 //	*** empty log message ***
 //	
