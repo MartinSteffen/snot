@@ -21,7 +21,7 @@
 
                expr       ::=               b_expr
                            |                u_expr
-                           |                constval
+                           |                Constval
                            |                variable
              b_expr       ::=  left_expr  : expr
                                right_expr : expr
@@ -33,5 +33,5 @@
                operand    ::=               PLUS | MINUS | TIMES | DIV  (* Operand als *)
                            |                AND | OR | NEG              (* Konstanten in expr *)
                            |                LESS | GREATER | LEQ | GEQ | EQ 
-                type      ::=               int
-                           |                bool
+                type      ::=               IntType
+                           |                BoolType
