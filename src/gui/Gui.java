@@ -12,9 +12,14 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.io.File;
+import java.lang.Integer;
 
 import absynt.*;
 import editor.*;
+import smv.*;
+//import simulator.*;
+//import checks.*;
+
 
 /**
  *
@@ -26,15 +31,19 @@ public class Gui extends javax.swing.JFrame {
     /** private declarations */
     private JOptionPane SnotOptionPane = null; // hierin werden jegliche popups dargestellt
     private Session session = null;
-    private int activeProject;  // index to an item in the session.project-Vector!
+    private int activeProject = 0;  // index to an item in the session.project-Vector!
     private boolean ready_to_exit = true;  // indicates whether exit Snot or not
 
+    private final String TITLE = "Snot";    // the Gui title
+    
+    
         /** Creates new form Gui */
 	public Gui(Session _session) {
             // preparing startup
             SnotOptionPane = new JOptionPane();
             session = _session;
-            activeProject = 0; // points to first item in the session.project-Vector
+            if (session==null)
+                disableSession();
             
             // set GUI L&F
             try {
@@ -46,9 +55,9 @@ public class Gui extends javax.swing.JFrame {
             
             // preparing visual components
             initComponents ();
-            jToolBarTools.setFloatable(true);
+            ToolBarTools.setFloatable(true);
             pack ();
- //           this.setResizable(false);
+            this.setResizable(false);
             setLocation(100,50);
 	}
 	
@@ -61,25 +70,32 @@ public class Gui extends javax.swing.JFrame {
             jMenuBar = new javax.swing.JMenuBar();
             FileMenu = new javax.swing.JMenu();
             OpenSession = new javax.swing.JMenuItem();
+            NewSession = new javax.swing.JMenuItem();
+            jSeparator2 = new javax.swing.JSeparator();
             SaveSession = new javax.swing.JMenuItem();
             SaveAsSession = new javax.swing.JMenuItem();
             CloseSession = new javax.swing.JMenuItem();
-            jSeparator2 = new javax.swing.JSeparator();
-            NewSFC = new javax.swing.JMenuItem();
-            ImportSFC = new javax.swing.JMenuItem();
-            ExportSFC = new javax.swing.JMenuItem();
             jSeparator3 = new javax.swing.JSeparator();
             ExitSnot = new javax.swing.JMenuItem();
             Edit = new javax.swing.JMenu();
+            NewSFC = new javax.swing.JMenuItem();
+            jSeparator4 = new javax.swing.JSeparator();
+            ImportSFC = new javax.swing.JMenuItem();
+            ExportSFC = new javax.swing.JMenuItem();
+            jSeparator5 = new javax.swing.JSeparator();
+            RenameSFC = new javax.swing.JMenuItem();
+            RemoveSFC = new javax.swing.JMenuItem();
             ToolsMenu = new javax.swing.JMenu();
             Editor = new javax.swing.JMenuItem();
             CheckSFC = new javax.swing.JMenuItem();
             Simulator = new javax.swing.JMenuItem();
             SMV = new javax.swing.JMenuItem();
             View = new javax.swing.JMenu();
+            SFCBrowser = new javax.swing.JCheckBoxMenuItem();
+            ShowToolBar = new javax.swing.JCheckBoxMenuItem();
             HelpMenu = new javax.swing.JMenu();
             About = new javax.swing.JMenuItem();
-            jToolBarTools = new javax.swing.JToolBar();
+            ToolBarTools = new javax.swing.JToolBar();
             ButtonEditor = new javax.swing.JButton();
             ButtonCheckSFC = new javax.swing.JButton();
             ButtonSimulator = new javax.swing.JButton();
@@ -88,8 +104,8 @@ public class Gui extends javax.swing.JFrame {
             Status = new javax.swing.JLabel();
             jSeparator1 = new javax.swing.JSeparator();
             
-            FileMenu.setActionCommand(null);
-              FileMenu.setText("File");
+            FileMenu.setLabel("File");
+              FileMenu.setActionCommand(null);
               
               OpenSession.setLabel("Open Session");
                 OpenSession.setName("openSession");
@@ -100,6 +116,12 @@ public class Gui extends javax.swing.JFrame {
                 }
                 );
                 FileMenu.add(OpenSession);
+                
+              NewSession.setLabel("New");
+                NewSession.setName("newSession");
+                FileMenu.add(NewSession);
+                
+              FileMenu.add(jSeparator2);
                 
               SaveSession.setLabel("Save Session");
                 SaveSession.setName("saveSession");
@@ -132,38 +154,6 @@ public class Gui extends javax.swing.JFrame {
                 );
                 FileMenu.add(CloseSession);
                 
-              FileMenu.add(jSeparator2);
-                
-              NewSFC.setLabel("New SFC");
-                NewSFC.setName("newSFC");
-                NewSFC.addActionListener(new java.awt.event.ActionListener() {
-                    public void actionPerformed(java.awt.event.ActionEvent evt) {
-                        NewSFCActionPerformed(evt);
-                    }
-                }
-                );
-                FileMenu.add(NewSFC);
-                
-              ImportSFC.setLabel("Import SFC");
-                ImportSFC.setName("importSFC");
-                ImportSFC.addActionListener(new java.awt.event.ActionListener() {
-                    public void actionPerformed(java.awt.event.ActionEvent evt) {
-                        ImportSFCActionPerformed(evt);
-                    }
-                }
-                );
-                FileMenu.add(ImportSFC);
-                
-              ExportSFC.setLabel("Export SFC");
-                ExportSFC.setName("exportSFC");
-                ExportSFC.addActionListener(new java.awt.event.ActionListener() {
-                    public void actionPerformed(java.awt.event.ActionEvent evt) {
-                        ExportSFCActionPerformed(evt);
-                    }
-                }
-                );
-                FileMenu.add(ExportSFC);
-                
               FileMenu.add(jSeparator3);
                 
               ExitSnot.setLabel("Exit");
@@ -180,7 +170,49 @@ public class Gui extends javax.swing.JFrame {
               
             Edit.setLabel("Edit");
               Edit.setName("Edit");
-              jMenuBar.add(Edit);
+              
+              NewSFC.setLabel("New SFC");
+                NewSFC.setName("newSFC");
+                NewSFC.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        NewSFCActionPerformed(evt);
+                    }
+                }
+                );
+                Edit.add(NewSFC);
+                
+              Edit.add(jSeparator4);
+                
+              ImportSFC.setLabel("Import");
+                ImportSFC.setName("importSFC");
+                ImportSFC.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        ImportSFCActionPerformed(evt);
+                    }
+                }
+                );
+                Edit.add(ImportSFC);
+                
+              ExportSFC.setLabel("Export");
+                ExportSFC.setName("exportSFC");
+                ExportSFC.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        ExportSFCActionPerformed(evt);
+                    }
+                }
+                );
+                Edit.add(ExportSFC);
+                
+              Edit.add(jSeparator5);
+                
+              RenameSFC.setLabel("Rename");
+                RenameSFC.setName("renameSFC");
+                Edit.add(RenameSFC);
+                
+              RemoveSFC.setLabel("Remove");
+                RemoveSFC.setName("removeSFC");
+                Edit.add(RemoveSFC);
+                jMenuBar.add(Edit);
               
             ToolsMenu.setText("Tools");
               
@@ -228,7 +260,28 @@ public class Gui extends javax.swing.JFrame {
               
             View.setLabel("View");
               View.setName("View");
-              jMenuBar.add(View);
+              
+              SFCBrowser.setLabel("SFC Browser");
+                SFCBrowser.setName("SFCBrowser");
+                SFCBrowser.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        SFCBrowserActionPerformed(evt);
+                    }
+                }
+                );
+                View.add(SFCBrowser);
+                
+              ShowToolBar.setLabel("Tool Bar");
+                ShowToolBar.setSelected(true);
+                ShowToolBar.setName("showToolBar");
+                ShowToolBar.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        ShowToolBarActionPerformed(evt);
+                    }
+                }
+                );
+                View.add(ShowToolBar);
+                jMenuBar.add(View);
               
             HelpMenu.setText("? (Help) ");
               
@@ -255,8 +308,8 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             
-            jToolBarTools.setName("ToolBarTools");
-            jToolBarTools.setMinimumSize(new java.awt.Dimension(378, 39));
+            ToolBarTools.setName("ToolBarTools");
+            ToolBarTools.setMinimumSize(new java.awt.Dimension(378, 39));
             
             ButtonEditor.setPreferredSize(new java.awt.Dimension(90, 35));
               ButtonEditor.setToolTipText("Launch editor");
@@ -269,7 +322,7 @@ public class Gui extends javax.swing.JFrame {
                   }
               }
               );
-              jToolBarTools.add(ButtonEditor);
+              ToolBarTools.add(ButtonEditor);
               
               
             ButtonCheckSFC.setPreferredSize(new java.awt.Dimension(90, 35));
@@ -282,7 +335,7 @@ public class Gui extends javax.swing.JFrame {
                   }
               }
               );
-              jToolBarTools.add(ButtonCheckSFC);
+              ToolBarTools.add(ButtonCheckSFC);
               
               
             ButtonSimulator.setPreferredSize(new java.awt.Dimension(90, 35));
@@ -295,7 +348,7 @@ public class Gui extends javax.swing.JFrame {
                   }
               }
               );
-              jToolBarTools.add(ButtonSimulator);
+              ToolBarTools.add(ButtonSimulator);
               
               
             ButtonSMV.setPreferredSize(new java.awt.Dimension(90, 35));
@@ -308,10 +361,10 @@ public class Gui extends javax.swing.JFrame {
                   }
               }
               );
-              jToolBarTools.add(ButtonSMV);
+              ToolBarTools.add(ButtonSMV);
               
               
-            getContentPane().add(jToolBarTools, java.awt.BorderLayout.NORTH);
+            getContentPane().add(ToolBarTools, java.awt.BorderLayout.NORTH);
             
             
             PanelStatus.setLayout(new java.awt.GridLayout(1, 1, 20, 0));
@@ -328,21 +381,39 @@ public class Gui extends javax.swing.JFrame {
             
             
             
-            getContentPane().add(jSeparator1, java.awt.BorderLayout.NORTH);
+            getContentPane().add(jSeparator1, java.awt.BorderLayout.CENTER);
             
             setJMenuBar(jMenuBar);
             
         }//GEN-END:initComponents
-
 /**********************************************************************************
  *
  *      Some ActionListeners
  *
  **********************************************************************************/
         
+  private void ShowToolBarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ShowToolBarActionPerformed
+      // switch the Tools ToolBar on and off in the Gui
+      if (ShowToolBar.isSelected())
+          ToolBarTools.setVisible(true);
+      else
+          ToolBarTools.setVisible(false);
+      this.pack();
+  }//GEN-LAST:event_ShowToolBarActionPerformed
+
+  private void SFCBrowserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SFCBrowserActionPerformed
+// Add your handling code here:
+  }//GEN-LAST:event_SFCBrowserActionPerformed
+
   private void SMVActionPerformed(java.awt.event.ActionEvent evt) {
-      SnotOptionPane.showMessageDialog(null, "SMV is not yet implemented!", 
-                                        "Error", JOptionPane.ERROR_MESSAGE); 
+      System.out.print("\nlaunching SMVTranslator ...");
+      try {
+          new SMVTranslator(session.getProject(activeProject).getSFC());
+      }
+      catch (Exception ex) {
+          SnotOptionPane.showMessageDialog(null, ex.getMessage(), //"SMV is not yet implemented!", 
+                                              "Error", JOptionPane.ERROR_MESSAGE); 
+      }
   }
 
   private void SimulatorActionPerformed(java.awt.event.ActionEvent evt) {
@@ -357,6 +428,7 @@ public class Gui extends javax.swing.JFrame {
 
   private void EditorActionPerformed(java.awt.event.ActionEvent evt) {
       NewSFCActionPerformed(null);
+      
 //      SnotOptionPane.showMessageDialog(null, "Editor call is not yet implemented!", 
 //                                        "Error", JOptionPane.ERROR_MESSAGE); 
   }
@@ -382,19 +454,16 @@ public class Gui extends javax.swing.JFrame {
       
       // initialize FileChooser
       JFileChooser chooser = new JFileChooser();
-      chooser.setFileFilter(new SnotFileFilter("sfc","Blubb"));
+      chooser.setFileFilter(new SnotFileFilter("sfc","Sequ.Func.Chart"));
       chooser.setDialogType(JFileChooser.CUSTOM_DIALOG);
       chooser.setApproveButtonToolTipText("Export SFC");
       chooser.setDialogTitle("Export SFC");
       
-      // set prefered output path and filename
-      if (session.getProject(activeProject).fileName != "") {
-          File output = new File(session.getProject(activeProject).fileName);
-          chooser.setCurrentDirectory(output);
-          chooser.setSelectedFile(output);
-      }
-      else if (session.fileName != "")
+      // set prefered Directory and filename
+      if (session.fileName != "")
           chooser.setCurrentDirectory(new File(session.fileName));
+      
+      chooser.setSelectedFile(new File(session.getProject(activeProject).name));
             
       // finaly display FileChooser
       int result = chooser.showDialog(null, "Export");
@@ -466,27 +535,32 @@ public class Gui extends javax.swing.JFrame {
            
       // add new Project to session
       try {
-          session.addProject(new Project());
-      }
-      catch (Exception ex) {
-           SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-      }
-      
-      // launch Editor with new SFC
-      activeProject = session.getIndexOfLastProject();
-      try {
-          editor = new Editor(session.getProject(activeProject).getSFC());
-          editor.setLocation(250, 250);
-          editor.show();
+          activeProject = session.addProject(new Project());
       }
       catch (Exception ex) {
            SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
            return;
       }
       
+      // launch Editor with new SFC
+      try {
+          editor = new Editor(session.getProject(activeProject).getSFC());
+      }
+      catch (Exception ex) {
+           SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+           session.removeProjectAt(activeProject);
+           return;
+      }
+      
       // set environmental parameters
       session.has_changed = true;
       session.getProject(activeProject).setEditor(editor);
+
+      // set editor parameters
+      editor.setLocation(250, 250);
+      editor.addWindowListener(new GuiWindowListener());
+      editor.setName(""+activeProject);
+      editor.show();
   }
 
   private void CloseSessionActionPerformed(java.awt.event.ActionEvent evt) {
@@ -507,7 +581,6 @@ public class Gui extends javax.swing.JFrame {
 
   private void OpenSessionActionPerformed(java.awt.event.ActionEvent evt) {
       int response;
-      File file = null;
       ready_to_exit = true;  // just in case ...
       
       // check for active session
@@ -536,18 +609,16 @@ public class Gui extends javax.swing.JFrame {
           if (!ready_to_exit)
               return;
              
-          if (session.fileName!="")
-              file = new File(session.fileName);
-               
 //          closeSession();  closing session as late as possible!! see below
       }
 
       JFileChooser chooser = new JFileChooser();
       chooser.setFileFilter(new SnotFileFilter("snot","Snot sessions"));
       chooser.setDialogTitle("Open session");
-      if (file != null)
-          chooser.setCurrentDirectory(file);
       
+      if (session != null && session.fileName != "")
+          chooser.setCurrentDirectory(new File(session.fileName));
+
       int result = chooser.showOpenDialog(null);
       if (result == JFileChooser.APPROVE_OPTION) {
           closeSession();          
@@ -557,12 +628,9 @@ public class Gui extends javax.swing.JFrame {
           catch (Exception ex) {
               SnotOptionPane.showMessageDialog(null, ex.getMessage(),
                                             "Error", JOptionPane.WARNING_MESSAGE);
+              session = null;
           }
       }
-      if (session == null)
-          disableSession(); // disable menues, buttons, ...
-      else 
-          enableSession();  // enable menues, buttons, ...
   }
 
   private void SaveAsSessionActionPerformed(java.awt.event.ActionEvent evt) {
@@ -600,22 +668,71 @@ public class Gui extends javax.swing.JFrame {
 
     private void disableSession() {
         // disable all relevant menus, buttons, ...
+        SaveSession.setEnabled(false);
+        SaveAsSession.setEnabled(false);
+        CloseSession.setEnabled(false);
+        
+        Edit.setEnabled(false);
+        ToolsMenu.setEnabled(false);
+        View.setEnabled(false);
+        
+        ToolBarTools.setEnabled(false);
     }
         
     private void enableSession() {
         // enable all relevant menus, buttons, ...
+        SaveSession.setEnabled(true);
+        SaveAsSession.setEnabled(true);
+        CloseSession.setEnabled(true);
+        
+        Edit.setEnabled(true);
+        ToolsMenu.setEnabled(true);
+        View.setEnabled(true);
+
+        ToolBarTools.setEnabled(true);    
     }
         
     private void closeSession() {
-        // do not check whether the session is saved or changed!
+        // do not check wether the session is saved or changed!
         // just close it and clean up the environment!
-        System.out.print("\n ... closing Session");
+        // close all pending editor-windows!
+//#########################################
+//      Please complete me !!!
+//#########################################
+        
+        if (session == null)
+            return; // just in case ...
+        
+        Frame[] frames = null;
+        frames = getFrames();
+        
+        // closing open frames: frames[0] is GuiFrame!!!!
+        for (int i=1; i<(frames.length-1); i++) {
+            frames[i].dispose();
+//            System.out.print("\n"+frames[i].getName());
+        }
+        
+        disableSession();
+        session = null;
+        this.setTitle(TITLE);
+        System.out.print("\nSession \""+session.name+"\" is closed!");
     }
     
     private Session openSession(File file) {
         // read session from file and load all environmental parameters and windows
-        System.out.print("\n ... opening new session from file \""+file+"\"");
-        return new Session();
+//#########################################
+//      Please complete me !!!
+//#########################################
+        
+        Session local_session = new Session();
+        local_session.fileName = file.toString();
+        local_session.name = file.getName().replace('.', '\0');
+        
+        this.setTitle(TITLE+"  "+session.name);
+        enableSession();
+        
+        System.out.print("\n ... opening new session from file \""+file+"\": name: "+file.getName()+", "+file.toString());
+        return local_session;
     }
     
 
@@ -623,6 +740,9 @@ public class Gui extends javax.swing.JFrame {
         int result = JOptionPane.CANCEL_OPTION;
         ready_to_exit = true;
 
+        if (session == null)
+            exitSnot();
+        
         if (session.has_changed) 
             result = SnotOptionPane.showConfirmDialog(null, "The session has changed!\n\nDo you want to save it?",
                                             "Alert!", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
@@ -646,6 +766,11 @@ public class Gui extends javax.swing.JFrame {
     private void exitSnot() {
         // function must terminate Snot!
         // collect all opened Frames/Windows and close em all!!! -> editor Windows need to be closed!!
+//#########################################
+//      Please complete me !!!
+//#########################################
+        
+// perhaps if session still active call closeSession()???        
         System.exit(0);
     }
         
@@ -661,37 +786,84 @@ public class Gui extends javax.swing.JFrame {
 		new Gui (new Session()).show ();
 	}
 	
+/*******************************************************************************
+ *
+ *      The subclass GuiWindowListener 
+ *
+ *******************************************************************************/
+
+    class GuiWindowListener implements WindowListener {
+    
+        public void windowActivated(java.awt.event.WindowEvent evt) {
+            // set the active Project
+            activeProject = Integer.valueOf(evt.getComponent().getName()).intValue();
+            System.out.print("\n Window "+activeProject+" Activated");
+        }
+        
+        public void windowDeactivated(java.awt.event.WindowEvent evt) {
+//            System.out.print("\n Window Deactivated");
+        }        
 	
-        // Variables declaration - do not modify//GEN-BEGIN:variables
-        private javax.swing.JMenuBar jMenuBar;
-        private javax.swing.JMenu FileMenu;
-        private javax.swing.JMenuItem OpenSession;
-        private javax.swing.JMenuItem SaveSession;
-        private javax.swing.JMenuItem SaveAsSession;
-        private javax.swing.JMenuItem CloseSession;
-        private javax.swing.JSeparator jSeparator2;
-        private javax.swing.JMenuItem NewSFC;
-        private javax.swing.JMenuItem ImportSFC;
-        private javax.swing.JMenuItem ExportSFC;
-        private javax.swing.JSeparator jSeparator3;
-        private javax.swing.JMenuItem ExitSnot;
-        private javax.swing.JMenu Edit;
-        private javax.swing.JMenu ToolsMenu;
-        private javax.swing.JMenuItem Editor;
-        private javax.swing.JMenuItem CheckSFC;
-        private javax.swing.JMenuItem Simulator;
-        private javax.swing.JMenuItem SMV;
-        private javax.swing.JMenu View;
-        private javax.swing.JMenu HelpMenu;
-        private javax.swing.JMenuItem About;
-        private javax.swing.JToolBar jToolBarTools;
-        private javax.swing.JButton ButtonEditor;
-        private javax.swing.JButton ButtonCheckSFC;
-        private javax.swing.JButton ButtonSimulator;
-        private javax.swing.JButton ButtonSMV;
-        private javax.swing.JPanel PanelStatus;
-        private javax.swing.JLabel Status;
-        private javax.swing.JSeparator jSeparator1;
-        // End of variables declaration//GEN-END:variables
+        public void windowClosed(java.awt.event.WindowEvent evt) {
+            System.out.print("\n Window Closed");            
+        }
+        
+        public void windowDeiconified(java.awt.event.WindowEvent evt) {
+            System.out.print("\n Window Deiconified");
+        }
+        
+        public void windowOpened(java.awt.event.WindowEvent evt) {
+            session.getProject(activeProject).is_active = false;
+            System.out.print("\n Window Opened");
+        }
+        
+        public void windowIconified(java.awt.event.WindowEvent evt) {
+            System.out.print("\n Window Iconified");
+        }
+        
+        public void windowClosing(java.awt.event.WindowEvent evt) {
+            session.getProject(activeProject).is_active = false;
+            System.out.print("\n Window Closing");
+        }
+    }
+        
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuBar jMenuBar;
+    private javax.swing.JMenu FileMenu;
+    private javax.swing.JMenuItem OpenSession;
+    private javax.swing.JMenuItem NewSession;
+    private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JMenuItem SaveSession;
+    private javax.swing.JMenuItem SaveAsSession;
+    private javax.swing.JMenuItem CloseSession;
+    private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JMenuItem ExitSnot;
+    private javax.swing.JMenu Edit;
+    private javax.swing.JMenuItem NewSFC;
+    private javax.swing.JSeparator jSeparator4;
+    private javax.swing.JMenuItem ImportSFC;
+    private javax.swing.JMenuItem ExportSFC;
+    private javax.swing.JSeparator jSeparator5;
+    private javax.swing.JMenuItem RenameSFC;
+    private javax.swing.JMenuItem RemoveSFC;
+    private javax.swing.JMenu ToolsMenu;
+    private javax.swing.JMenuItem Editor;
+    private javax.swing.JMenuItem CheckSFC;
+    private javax.swing.JMenuItem Simulator;
+    private javax.swing.JMenuItem SMV;
+    private javax.swing.JMenu View;
+    private javax.swing.JCheckBoxMenuItem SFCBrowser;
+    private javax.swing.JCheckBoxMenuItem ShowToolBar;
+    private javax.swing.JMenu HelpMenu;
+    private javax.swing.JMenuItem About;
+    private javax.swing.JToolBar ToolBarTools;
+    private javax.swing.JButton ButtonEditor;
+    private javax.swing.JButton ButtonCheckSFC;
+    private javax.swing.JButton ButtonSimulator;
+    private javax.swing.JButton ButtonSMV;
+    private javax.swing.JPanel PanelStatus;
+    private javax.swing.JLabel Status;
+    private javax.swing.JSeparator jSeparator1;
+    // End of variables declaration//GEN-END:variables
 	
 }

@@ -6,8 +6,8 @@
       <SubComponents>
         <Menu class="javax.swing.JMenu" name="FileMenu">
           <Properties>
+            <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="File"/>
             <Property name="actionCommand" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="null"/>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="File"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="OpenSession">
@@ -19,6 +19,14 @@
               <Events>
                 <EventHandler event="actionPerformed" handler="OpenSessionActionPerformed"/>
               </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="NewSession">
+              <Properties>
+                <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="New"/>
+                <Property name="name" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="newSession"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JSeparator" name="jSeparator2">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="SaveSession">
               <Properties>
@@ -51,38 +59,6 @@
                 <EventHandler event="actionPerformed" handler="CloseSessionActionPerformed"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JSeparator" name="jSeparator2">
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="NewSFC">
-              <Properties>
-                <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="New SFC"/>
-                <Property name="name" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="newSFC"/>
-              </Properties>
-
-              <Events>
-                <EventHandler event="actionPerformed" handler="NewSFCActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="ImportSFC">
-              <Properties>
-                <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="Import SFC"/>
-                <Property name="name" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="importSFC"/>
-              </Properties>
-
-              <Events>
-                <EventHandler event="actionPerformed" handler="ImportSFCActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="ExportSFC">
-              <Properties>
-                <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="Export SFC"/>
-                <Property name="name" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="exportSFC"/>
-              </Properties>
-
-              <Events>
-                <EventHandler event="actionPerformed" handler="ExportSFCActionPerformed"/>
-              </Events>
-            </MenuItem>
             <MenuItem class="javax.swing.JSeparator" name="jSeparator3">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="ExitSnot">
@@ -103,6 +79,54 @@
             <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="Edit"/>
             <Property name="name" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="Edit"/>
           </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="NewSFC">
+              <Properties>
+                <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="New SFC"/>
+                <Property name="name" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="newSFC"/>
+              </Properties>
+
+              <Events>
+                <EventHandler event="actionPerformed" handler="NewSFCActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JSeparator" name="jSeparator4">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="ImportSFC">
+              <Properties>
+                <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="Import"/>
+                <Property name="name" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="importSFC"/>
+              </Properties>
+
+              <Events>
+                <EventHandler event="actionPerformed" handler="ImportSFCActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="ExportSFC">
+              <Properties>
+                <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="Export"/>
+                <Property name="name" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="exportSFC"/>
+              </Properties>
+
+              <Events>
+                <EventHandler event="actionPerformed" handler="ExportSFCActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JSeparator" name="jSeparator5">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="RenameSFC">
+              <Properties>
+                <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="Rename"/>
+                <Property name="name" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="renameSFC"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="RemoveSFC">
+              <Properties>
+                <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="Remove"/>
+                <Property name="name" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="removeSFC"/>
+              </Properties>
+            </MenuItem>
+          </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="ToolsMenu">
           <Properties>
@@ -157,6 +181,29 @@
             <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="View"/>
             <Property name="name" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="View"/>
           </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="SFCBrowser">
+              <Properties>
+                <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="SFC Browser"/>
+                <Property name="name" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="SFCBrowser"/>
+              </Properties>
+
+              <Events>
+                <EventHandler event="actionPerformed" handler="SFCBrowserActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="ShowToolBar">
+              <Properties>
+                <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="Tool Bar"/>
+                <Property name="selected" type="boolean" editor="sun.beans.editors.BoolEditor" value="true"/>
+                <Property name="name" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="showToolBar"/>
+              </Properties>
+
+              <Events>
+                <EventHandler event="actionPerformed" handler="ShowToolBarActionPerformed"/>
+              </Events>
+            </MenuItem>
+          </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="HelpMenu">
           <Properties>
@@ -213,7 +260,7 @@
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
   <SubComponents>
-    <Container class="javax.swing.JToolBar" name="jToolBarTools">
+    <Container class="javax.swing.JToolBar" name="ToolBarTools">
       <Properties>
         <Property name="name" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="ToolBarTools"/>
         <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -345,7 +392,7 @@
     <Component class="javax.swing.JSeparator" name="jSeparator1">
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
-          <BorderConstraints direction="North"/>
+          <BorderConstraints direction="Center"/>
         </Constraint>
       </Constraints>
     </Component>
