@@ -1,41 +1,39 @@
-function_block_body = string
+sequential_function_chart ::=  istep      : step
+                               steps      : step list
+                               trans      : transition list
+                               actions    : action   list
+                     step ::=  a_name     : string
+                               actions    : action list
 
-sequential_function_chart ::=  istep   : step
-                               steps   : step list
-			       trans   : transition list
-			       actions : action   list
-                     step ::=  a_name:  string
-	                       actions : action list
-
-                   action ::=  qualifier: action_qualifier
-		               sap      : sap   (* simple assignement program *)
-                     sap  ::=             stmt list
-                   stmt   ::=             skip
-                           |              assign
-                   assign ::=             variable * expr
-                   variable ::=  name   : string
-                                 type   : type
+                   action ::=  qualifier  : action_qualifier
+                               sap        : sap                      (* simple assignement program *)
+                     sap  ::=              stmt list
+                    stmt  ::=              skip
+                           |               assign
+                   assign ::=              variable * expr
+                 variable ::=  name      : string
+                               type      : type
          action_qualifier ::=  Nqual
 
-               transition ::=  source :   step list
-	                       guard  :   expr
-			       target :   step list
+               transition ::=  source    : step list
+                               guard     : expr
+                               target    : step list
 
-               expr       ::=  b_expr
-                           |   u_expr
-                           |   constval
-			   |   variable
-             b_expr       ::=  left_expr :  expr
-                              right_expr :  expr
-                                     op  :  operand
-                                 type    :  type
-             u_expr      ::=   sub_expr  :  expr
-                                    op   :  operand             
-                                  type   :  type
-               operand   ::=     PLUS |MINUS |TIMES |DIV  (Operand als Konstanten in expr)
-                          |      AND |OR |NEG
-                          |      LESS |GREATER |LEQ |GEQ | EQ 
-                type     ::=     int
-		          |      bool
+               expr       ::=              b_expr
+                           |               u_expr
+                           |               constval
+                           |               variable
+             b_expr       ::= left_expr  : expr
+                              right_expr : expr
+                              op         : operand
+                              type       : type
+             u_expr       ::= sub_expr   : expr
+                              op         : operand             
+                             type        : type
+               operand   ::=               PLUS | MINUS | TIMES | DIV  (* Operand als Konstanten in expr *)
+                          |                AND | OR | NEG
+                          |                LESS | GREATER | LEQ | GEQ | EQ 
+                type     ::=               int
+                          |                bool
 
 
