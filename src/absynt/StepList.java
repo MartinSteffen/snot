@@ -8,7 +8,7 @@ import java.io.Serializable;
  * To iterate through the list, the steps adhere to the
  * ``Enumaration''-interface
  * @author Initially provided by Martin Steffen.
- * @version $Id: <dollar>	
+ * @version $Id: StepList.java,v 1.2 2001-05-02 06:34:16 swprakt Exp $
  */
 
 
@@ -39,9 +39,12 @@ public class StepList
 //	Abstract syntax for Snot programs
 //	------------------------------------
 //
-//	$Id: StepList.java,v 1.1 2001-05-02 06:32:37 swprakt Exp $
+//	$Id: StepList.java,v 1.2 2001-05-02 06:34:16 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.1  2001/05/02 06:32:37  swprakt
+//	Initial proposal according the the req. spec.
+//	
 //	
 //---------------------------------------------------------------------
 
