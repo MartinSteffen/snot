@@ -710,7 +710,7 @@ public class Editor extends JFrame implements ActionListener {
     public Object getCellEditorValue() {
       // *** dazu muss Editor modal sein:
       LinkedList ll = new LinkedList();
-      ll.add(new Assign(null, ExprEditor.get__expr()));
+      ll.add(new Assign(null, (ExprEditor.get_assign()).val));
       return (ll); 
     }
 
