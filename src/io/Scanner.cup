@@ -10,7 +10,7 @@ import java.io.*;
  * Offers the methods  parseFile and parseExpression 
  *
  * @author Martin Steffen
- * @version $Id: Scanner.cup,v 1.3 2001-06-13 15:07:05 swprakt Exp $
+ * @version $Id: Scanner.cup,v 1.4 2001-06-13 15:25:40 swprakt Exp $
  *
  * */
 
@@ -100,7 +100,7 @@ parser code {:
  */ 
 terminal         SFC, LBRACKET, RBRACKET, ASSIGN;
 terminal         LPAREN, RPAREN,  COMMA, SEM, FROMTO;  
-terminal         INIT, WHEN, ACTIONS, BEGIN, STEPS, TRANSITIONS;
+terminal         INIT, WHEN, ACTIONS, BEGIN, VARS, STEPS, TRANSITIONS;
 terminal         INT, BOOL, GET, NEQ, OR, PLUS, TIMES;
 terminal         AND, DIV, EQ, GEQ, GREATER, LEQ, LESS, MINUS, NEG;
 terminal         TRUE, FALSE;
@@ -120,7 +120,7 @@ non terminal    input, output, assertion, var_dec, assignment;
  * Nichtterminale mit Typ
  */ 
 non terminal    absynt.SFC        sfc;
-non terminal    absynt.SFC    program;
+non terminal    absynt.SFC        program;
 non terminal    absynt.Expr       expr;
 non terminal    Integer           op;
 
@@ -150,12 +150,14 @@ sfc          ::= program:p {: RESULT=p; :}
  */
 program      ::= SFC IDENT:name LBRACKET
                  {: System.out.println ("Programm \""+name+"\"{"); more(); :}
+                 INTEGER:i
+                 VARS:v
                  RBRACKET
                  {: 
 	    	    less();
                     System.out.println ("\n} /* Ende "+name+" */"); 
                     // p.name = name; 
-		    // RESULT = p; 
+		    RESULT = new absynt.SFC(); 
                  :} 
 
              ;

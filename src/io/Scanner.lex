@@ -20,6 +20,7 @@ name    = ({letter}({letter}|{digit})*)
 {comment}             { }
 {space}               { }
 "begin"               { return new Symbol(sym.BEGIN);           }
+"begin"               { return new Symbol(sym.VARS);            }
 "actions"             { return new Symbol(sym.ACTIONS);         }
 "steps"               { return new Symbol(sym.STEPS);           }
 "init"                { return new Symbol(sym.INIT);            }

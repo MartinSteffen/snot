@@ -1,11 +1,18 @@
 ##########################################################
-# $Id: Readme,v 1.1 2001-06-13 14:41:07 swprakt Exp $
+# $Id: Readme,v 1.2 2001-06-13 15:25:40 swprakt Exp $
 ##########################################################
 
 
 
 The package does basic i/o for a textual representation
 of snot files.
+
+	
+
+To test it:
+
+	make all
+	
 
 
 
