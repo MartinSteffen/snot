@@ -3,10 +3,13 @@
                                transs     : transition list
                                actions    : action   list
                      step ::=  a_name     : string
-                               actions    : action list
+                               actions    : stepaction list
+               stepaction ::=  
 
-                   action ::=  qualifier  : action_qualifier
-                               sap        : stmt list           (* simple assignment program *)
+               stepaction ::=  qualifier  : action_qualifier
+                               a_name     : string  (* simple assignment program *)
+                  action ::=   a_name     : string
+                               sap        : stmt list  (* simple assignment program *)
                     stmt  ::=               skip
                            |                assign
                    assign ::=  var        : variable
