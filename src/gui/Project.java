@@ -24,17 +24,17 @@ public class Project extends java.lang.Object implements Serializable {
     private static SFC sfc = null;
     private static Editor editor = null;
     public static String name;
-    public static String fileName;
-    public static boolean is_checked;
-    public static boolean is_well_defined;
-    public static boolean is_active;
-    public static boolean has_changed;
+//    public static String fileName;  is not really needed!!!
+    public static boolean is_checked;   // indicates if it is checked
+    public static boolean is_well_defined;  
+    public static boolean is_active;    // indicates whether the Project is opened in the Editor
+    public static boolean has_changed;  // indicates whether the Project has been edited and needs to be saved
     
     /** constructor */
     public Project () {
         sfc = new SFC(null, null, null, null, null);
-        name = " unknown ";
-        fileName = "";
+        name = "unknown";
+//        fileName = "";
         is_checked = false;
         is_well_defined = false;
         is_active = true;   // on creation Project is opened in Editor!

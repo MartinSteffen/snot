@@ -27,7 +27,7 @@ public class Session extends java.lang.Object implements Serializable {
     /** Creates new Session */
     public Session() {
         projects = new Vector();
-        name = " unknown ";
+        name = "unknown";
         fileName = "";
         is_saved = false;
         has_changed = false;
@@ -56,8 +56,19 @@ public class Session extends java.lang.Object implements Serializable {
         return (Project)projects.get(index);
     }
     
-    public void addProject(Project project) {
+    /**
+     *  Function addProject
+     *  @param project Specifies the Object to be added to the project-vector
+     *  @return index The index of the added object in the project-vector
+     */
+    
+    public int addProject(Project project) {
         projects.add((Object)project);
+        return projects.size()-1; 
+    }
+    
+    public void removeProjectAt(int index) {
+        projects.removeElementAt(index);
     }
     
     public boolean noProjects() {
