@@ -664,7 +664,7 @@ public class Expression_Parser extends JDialog implements ActionListener{
              
        Object   element;
        int      i  = 0;
-       int      bright = 12 ,high = 8;          
+       int      bright = 12 ,high = 8;       
 
        expression_to_linkedList(_expr,expr_lList);              
        drawObject_List(expr_lList,expr_drawObject,bright);
@@ -684,7 +684,45 @@ public class Expression_Parser extends JDialog implements ActionListener{
               G2D.drawString(((drawObject)element).get_Content(),((drawObject)element).get_x(),y_a+letter_high);
             }
         }
-    }   
+    }
+
+    public void paint_Statement(Assign _ass, Graphics expPan){
+       Graphics2D G2D = (Graphics2D)expPan;
+       super.paint(G2D);
+        
+       LinkedList    expr_lList      = new LinkedList();
+       LinkedList    expr_drawObject = new LinkedList();        
+             
+       Object   element;
+       int      i  = 0;
+       int      y_a = 2, bright = 12 ,high = 8;
+       Expr     _expr = _ass.val;
+
+       expression_to_linkedList(_expr,expr_lList);              
+       drawObject_List(expr_lList,expr_drawObject,bright);
+       Iterator expr_List = expr_drawObject.iterator();       
+       
+
+       G2D.drawString(_ass.var.name,2,y_a+letter_high);
+       G2D.drawString("=",16,y_a+letter_high);
+
+       while (expr_List.hasNext()){
+          element = expr_List.next();
+          if ((((((drawObject)element).get_Content()).equals(String.valueOf('('))) | 
+               ((((drawObject)element).get_Content()).equals(String.valueOf(')')))) != true)  i += 1;          
+          if (((drawObject)element).get_Content() == "" )
+            { if ((index != 0) & (i == index)) {G2D.setColor(Color.gray);}
+              else G2D.setColor(Color.cyan);
+              G2D.fill3DRect(((drawObject)element).get_x()+26, y_a,bright-2,y_a+high,true);
+            }
+            else
+            { G2D.setColor(Color.black);
+              G2D.drawString(((drawObject)element).get_Content(),((drawObject)element).get_x()+26,y_a+letter_high);
+            }
+       }
+    }
+
+    
 // --------------------------------------------------------------------------------------------------------------
 
     private class MouseEventHandleAdapter extends MouseInputAdapter{

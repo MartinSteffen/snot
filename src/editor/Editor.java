@@ -919,7 +919,7 @@ public class Editor extends JFrame implements ActionListener {
           super.paint(g2d);
         else {          
           super.paint(g2d);
-          ExprEditor.paint_Expression_Panel(((Assign)stmt).val, g2d);	    
+          ExprEditor.paint_Statement(((Assign)stmt), g2d);	    
         }
       }    
 

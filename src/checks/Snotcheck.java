@@ -10,7 +10,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.53 2001-07-20 09:02:04 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.54 2001-07-24 15:39:32 swprakt Exp $
  *
  */
 
@@ -147,7 +147,7 @@ public class Snotcheck{
 		return true;
 	    }
 	}
-	System.out.println("Die Typen wurden durchgejagt!");
+	// System.out.println("Die Typen wurden durchgejagt!");
 
 	//wenn keiner der ganzen Faelle eintrat, dann ist die Expression ungueltig:
 	return false;
@@ -353,7 +353,7 @@ public class Snotcheck{
 		    throw new DecListFailure(decl, "This Variable has no name!");}
 		if (var2.name == null){
 		    throw new DecListFailure(decl2, "This Variable has no name!");}
-		if (var.name == var2.name){                 //vergleich aller Variablennamen
+		if (var.name.equals(var2.name)){                 //vergleich aller Variablennamen
 		    throw new DecListFailure(decl, "This variable is declared twice!");
 		}
 	    }
@@ -361,7 +361,7 @@ public class Snotcheck{
 
 	//Pr"ufung auf Typgleichheit:
 
-	for (int i=1; i < decList.size(); i++){
+	for (int i=0; i < decList.size(); i++){
 	    decl = (Declaration)decList.get(i);
 	    var = decl.var;
 	    typeClass1 = decl.type.getClass();
@@ -370,6 +370,8 @@ public class Snotcheck{
 		throw new DecListFailure(decl, "Variable has no Type!");}
 	    typeClass2 = var.type.getClass();
 	    className2 = typeClass2.getName();
+	    System.out.println(className1);
+	    System.out.println(className2);
 	    if (className1 != className2){
 		throw new DecListFailure(decl, "Type Error! Variable and Declaration must have the same type.");}   //Der Typ der Variable stimmt nicht mit dem Typ der Deklaration "uberein
 	}
@@ -412,7 +414,7 @@ public class Snotcheck{
 	    for (int j=i+1; j < actionList.size(); j++){
 		action2 = (Action)actionList.get(j);
 		name2 = action2.a_name;
-		if (name1 == name2){throw new ActionFailure(action, "Action with a name, which is already used.");}
+		if (name1.equals(name2)){throw new ActionFailure(action, "Action with a name, which is already used.");}
 	    }
 	}
 
@@ -439,8 +441,9 @@ public class Snotcheck{
 			ass = (Assign) stmt1;
 
 			//pruefen, ob var und val vernuenftig sind (d.h. ungleich null)
-			if (ass.var == null){throw new ActionFailure(action, "This statement has no var.");}
 			if (ass.val == null){throw new ActionFailure(action, "This statement has no val.");}
+			if (ass.var == null){throw new ActionFailure(action, "This statement has no var.");}
+
 			
 
 			/////////////////////////////////////////////////////////////////////
@@ -531,7 +534,7 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 		anAction = (StepAction)actionList.get(j);//ohne cast
 		for (int k=(j+1); k < actionList.size(); k++){
 		    bAction = (StepAction)actionList.get(k);//ohne cast
-		    if (anAction.a_name == bAction.a_name){throw new StepFailure(aStep,"The Actionname in Step is not unique!");}
+		    if (anAction.a_name.equals(bAction.a_name)){throw new StepFailure(aStep,"The Actionname in Step is not unique!");}
 		}
 	    }
 	}
@@ -541,7 +544,7 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 	    
 	    for (int j=(i+1); j < stepListSize; j++){
 		bStep = (Step)stepList.get(j);
-		if (aStep.name == bStep.name){throw new StepFailure(aStep,"The Stepname is not unique!");}
+		if (aStep.name.equals(bStep.name)){throw new StepFailure(aStep,"The Stepname is not unique!");}
 	    }
 	}
 
@@ -668,15 +671,15 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 	boolean test;
 
 	test = isThereAnIStep(aSFCObject);
-	System.out.println(test);
+//	System.out.println(test);
 	test = isDeclarationOk(aSFCObject);
-	System.out.println(test);
+//	System.out.println(test);
 	test = isAllActionOk(aSFCObject);
-	System.out.println(test);
+//	System.out.println(test);
 	test = isAllStepOk(aSFCObject);
-	System.out.println(test);
+//	System.out.println(test);
 	test = isAllTransitionOk(aSFCObject);
-	System.out.println(test);
+//	System.out.println(test);
 	return test;
     }
 
@@ -688,9 +691,12 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.53 2001-07-20 09:02:04 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.54 2001-07-24 15:39:32 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.53  2001/07/20 09:02:04  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.52  2001/07/20 08:56:05  swprakt
 //	*** empty log message ***
 //	
