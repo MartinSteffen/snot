@@ -4,7 +4,7 @@
 
 Dieser
 Abschnitt beschreibt informell die Bedeutung der Sequential Function Charts
-(SFC's), für die das Tool \Snot entwickelt werden soll. Die
+(SFC's), für die das Tool \Snot{} entwickelt werden soll. Die
 Semantik ist nur für \emph{gecheckte} SFC's definiert (s.\ 
 Abschnitt~\ref{sec:checks}); nicht-gecheckte SFC's sind bedeutungslos.
 Insbesondere können der Simulator und der Model-Checker
@@ -154,7 +154,7 @@ diese Transition genommen, so wird $s_1$ deaktiviert und $s_2$ sowie $s_3$
 aktiviert.
 
 Der oberste speziell markierte Step ist initial.  Das "`N"' vor den Aktionen
-ist ein \emph{Qualifier}, er besagt dass die Aktion in jedem Arbeitszyklus
+ist ein \emph{Qualifier}, er besagt, dass die Aktion in jedem Arbeitszyklus
 ausgeführt werden soll, in dem der Step aktiv ist.  Es gibt noch weitere
 Qualifier, die wir aber erst einmal vernachlässigen.
 
@@ -162,7 +162,8 @@ Der Ablauf eines SFC's (ein \emph{Zyklus}) ist wie folgt:
 \begin{itemize}
 \item Inputs lesen von der Umgebung
 \item Aktionen der aktiven Steps ausführen
-\item Guards auswerten und Transitionen nehmen (wenn möglich)
+\item Guards auswerten
+\item Transitionen nehmen (wenn möglich)
 \item Outputs schreiben
 \end{itemize}
 Dieser Zyklus wird immer wieder abgearbeitet.  Die Schritte \emph{Inputs
@@ -170,68 +171,31 @@ Dieser Zyklus wird immer wieder abgearbeitet.  Die Schritte \emph{Inputs
 wir nur abgeschlossene Systeme betrachten, d.h.  Systeme, deren Variablen nur
 durch das System selbst verändert werden.
 
+Die Transitionen sind mit einem \emph{Guard} ausgestattet sein, einem
+\emph{booleschen Ausdruck.}  Eine Transition kann nur genommen werden,
+falls sich der Guard zu \emph{true} evaluiert.
+
+Sind aufgrund einer parallelen Verzweigung \emph{mehrere} Steps aktiv, so
+erfolgt die Ausführung der zugehörigen Aktionen nichtdeterministisch, d.h. sie
+sind in beliebiger Reihenfolge möglich (\emph{Interleaving-Semantik}).
+Folglich gibt es unter Umständen eine Vielzahl verschiedener Läufe eines
+SFC's, abhängig von diesen Ausführungsreihenfolgen.  Der Simulator soll dies
+dadurch realisieren, dass er nach Wahl des Benutzers diesen fragt in welcher
+Reihenfolge die Aktionen ausgeführt werden sollen, oder aber die Reihenfolge
+per Zufallsgenerator festlegt.
+
+Die Transition von $s_4$ und $s_5$ zu $s_8$ schließt die paralelle Verzweigung
+wieder.  Solche Transitionenen können nur genommen werden, wenn \emph{alle}
+Quell-Steps aktiv sind.  Folglich kann diese Transition nur genommen werden
+kann, wenn ihr Guard zu \emph{true} evaluiert wird, und ferner die beiden
+Steps $s_4$ und $s_5$ aktiv sein.
+
 
 \subsection{Zustände}
 
 
 Der globale Zustand eines Programmes ist gegeben durch die Variablenbelegungen
 und die Menge der aktiven Steps.  
-
-
-
-\subsection{Kommunikationsmodell und Schritte}
-
-Die Bedeutung der Konstrukte wie Wertzuweisung, Anfangszustand etc., sollte
-unstrittig sein. Interpretationsspielraum gibt es für die
-Kommunikationskonstrukte und das Wesen der Parallelität.
-
-Aufgrund der informellen Diskussion haben wir uns auf folgendes Modell
-geeinigt:
-
-\begin{itemize}
-\item Interleaving-Parallelität
-\item zwei-Weg Kommnuikation (kein Broadcast)
-\item synchroner Nachrichtenaustausch
-\end{itemize}
-Das heißt genauer folgendes: Der Zustand des Programmes ändert sich in
-den \emph{Transitionen}. Es gibt 4 Arten davon
-\begin{enumerate}
-\item interne Aktionen (``tau'')
-\item Zuweisung
-\item Input
-\item Output
-\end{enumerate}
-Die ersten beiden Aktionen werden von einem einzigen Prozeß \emph{alleine}
-ausgeführt, d.h., wir haben eine
-\emph{Interleaving}-Interpretation.\footnote{Nicht-Interleaving wäre, wenn
-  mehrere gleichzeitig Wertzuweisungen und $\tau$-Aktionen machen
-  könnten.} Die $\tau$-Aktion läßt die Variablenbelegung unverändert,
-die Verwertzuweisung ändert sie. Daneben wechselt der Betroffene Prozess
-von einem \textit{state} und einen Nachfolgezustand entsprechend der
-Transition.
-
-
-Daneben gibt es zwei Arten von \emph{Kommunikationstransitionen} (input und
-output) die immer \emph{komplementär und gleichzeitig} ausgeführt werden
-(synchones Modell) und bei der immer genau zwei Partner beteiligt sind
-(zwei-Wege Kommunikation).\footnote{Falls es ``grundsätzlich'' keinen
-  Kommunikationspartner gibt, wird anngenommen, daß Kommunikation mit der
-  \emph{Umgebung} gemeint ist. Das ist für den Simulator von Bedeutung,
-  bei dem der Benutzer die Rolle der Umgebung spielen kann. Siehe die
-  Diskussion dort.} Eine Kommunikation zwischen zwei Prozessen kann dann
-stattfinden, wenn sich beide in einem Zustand befinden, bei dem der eine
-eine Eingabe-, der andere eine Ausgabeaktion durchführen können (d.h.
-auch, ihre Guards evaluieren zu \emph{true}). Falls daß der Fall ist,
-wechseln \emph{beide synchron} in ihren Nachfolge-state, wobei der
-Empfängerprozeß auch noch seine Variablenbelegung durch den empfangenen
-Wert ändert. 
-
-
-
-
-Die Transitionen können mit einem \textit{Guard} ausgestattet sein, einem
-\emph{booleschen Ausdruck.}  Eine Transition kann nur genommen werden,
-falls der Guard sich zu \emph{true} evaluiert.
 
 
 
