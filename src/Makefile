@@ -1,6 +1,6 @@
 #----------------------------------------------------------------------
 # developers' top-level Makefile for the Siff project
-# $Id: Makefile,v 1.7 2001-05-05 10:14:20 swprakt Exp $
+# $Id: Makefile,v 1.8 2001-05-16 07:13:17 swprakt Exp $
 #----------------------------------------------------------------------
 
 # The targets installing gobal web-infos can be executed only
@@ -15,7 +15,9 @@ WEBDOCDIR     = $(WEBDIR)/doc
 SNAPSHOTSDIR  = $(WEBDIR)/snapshots
 LOCALDOCDIR   = doc
 PACKAGEDIRS   = absynt\
-	        utils
+	        utils\
+	        editor\
+	        smv
 
 ################################################
 
