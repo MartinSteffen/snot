@@ -18,6 +18,12 @@ import java.util.Enumeration;
 import java.util.Vector;
 import editor.Editor;
 
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.event.*;
+
+
 /**
  *  Class Session.
  *  The Session object keeps all information of a program execution. It keeps track of all SFCs and their status,
@@ -25,7 +31,7 @@ import editor.Editor;
  *  create new, import or export Projects.
  *
  * @author  Hans Theman and Ingo Schiller
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 
 public class Session extends java.lang.Object implements Serializable {
@@ -252,7 +258,7 @@ public class Session extends java.lang.Object implements Serializable {
         
         ObjectInputStream inStream = new ObjectInputStream(new FileInputStream(_file));
         try {
-            s = (Session)inStream.readObject(); 
+           s = (Session)inStream.readObject(); 
         }
         finally {
             inStream.close();
@@ -288,4 +294,65 @@ public class Session extends java.lang.Object implements Serializable {
             }
     return Projects;        
     }
-}
+    
+    
+    
+/*    public void showlist(Vector Projects){
+       JList list;
+       JButton ShowButton;
+   
+        //Create the list and put it in a scroll pane
+        list = new JList(Projects);
+        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        list.setSelectedIndex(0);
+        //list.addListSelectionListener(this);
+        JScrollPane listScrollPane = new JScrollPane(list);
+
+        ShowButton = new JButton("Show");
+        ShowButton.setActionCommand("Show");
+        //ShowButton.addActionListener(new ShowListener());
+
+        
+        //Create a panel that uses FlowLayout (the default).
+        JFrame ProjectPane = new JFrame();
+        ProjectPane.add(ShowButton);
+        Container projectcontentPane = getContentPane();
+        projectcontentPane.add(listScrollPane, BorderLayout.CENTER);
+        projectcontentPane.add(ProjectPane, BorderLayout.SOUTH);
+        
+        ProjectPane.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                dispose(0);
+            }
+        }
+
+        ProjectPane.pack();
+        ProjectPane.setVisible(true);
+       
+        
+    }
+
+    class ShowListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            //This method can be called only if
+            //there's a valid selection
+            //so go ahead and remove whatever's selected.
+            int index = list.getSelectedIndex();
+            System.out.println(index);
+
+            int size = list.getSize();
+
+            if (size == 0) {
+            //Nobody's left, disable firing.
+                ShowButton.setEnabled(false);
+
+            } else {
+            //Adjust the selection.
+                if (index == listModel.getSize())//removed item in last position
+                    index--;
+                list.setSelectedIndex(index);   //otherwise select same index
+            }
+        }
+    }*/
+ }  
+

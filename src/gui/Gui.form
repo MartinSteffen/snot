@@ -22,7 +22,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="NewSession">
               <Properties>
-                <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="New"/>
+                <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value=" New Session"/>
                 <Property name="name" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="newSession"/>
               </Properties>
 
@@ -44,7 +44,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="SaveAsSession">
               <Properties>
-                <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="Save as"/>
+                <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="Save Session as"/>
                 <Property name="name" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="saveAsSession"/>
               </Properties>
 
@@ -56,7 +56,6 @@
               <Properties>
                 <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="Close Session"/>
                 <Property name="name" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="closeSession"/>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="Close"/>
               </Properties>
 
               <Events>

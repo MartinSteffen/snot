@@ -26,7 +26,7 @@ import checks.*;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -121,7 +121,7 @@ public class Gui extends javax.swing.JFrame {
             );
             FileMenu.add(OpenSession);
             
-          NewSession.setLabel("New");
+          NewSession.setLabel(" New Session");
             NewSession.setName("newSession");
             NewSession.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -143,7 +143,7 @@ public class Gui extends javax.swing.JFrame {
             );
             FileMenu.add(SaveSession);
             
-          SaveAsSession.setLabel("Save as");
+          SaveAsSession.setLabel("Save Session as");
             SaveAsSession.setName("saveAsSession");
             SaveAsSession.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -155,7 +155,6 @@ public class Gui extends javax.swing.JFrame {
             
           CloseSession.setLabel("Close Session");
             CloseSession.setName("closeSession");
-            CloseSession.setText("Close");
             CloseSession.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     CloseSessionActionPerformed(evt);
