@@ -31,7 +31,7 @@ import javax.swing.event.*;
  *  create new, import or export Projects.
  *
  * @author  Hans Theman and Ingo Schiller
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 
 public class Session extends java.lang.Object implements Serializable {
@@ -235,11 +235,13 @@ public class Session extends java.lang.Object implements Serializable {
             this.setFile(_file); // ... else use the old file
         }
 
-        ObjectOutputStream outStream = new ObjectOutputStream(new FileOutputStream(file));
+        ObjectOutputStream outStream = new ObjectOutputStream(new FileOutputStream(this.file));
         try {
+	    System.out.println("vor writeObject.......");
             outStream.writeObject(this); // throws IOException!!!!
         }
-        finally {
+        catch (Exception ex){ex.printStackTrace();}
+	finally {
             outStream.close(); // throws IOException!!!!
         }
         outStream.flush(); // throws IOException!!!!
