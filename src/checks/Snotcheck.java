@@ -9,7 +9,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.26 2001-06-13 13:34:30 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.27 2001-06-14 11:52:23 swprakt Exp $
  *
  */
 
@@ -128,12 +128,10 @@ public class Snotcheck{
 	    
 	}
 
-
-	
 	LinkedList stmtList;
 	Stmt stmt1;
-	Class class1;
-	String class1Name;
+	Class class1,valClass,varClass,varTypeClass,valTypeClass;
+	String class1Name,valClassName,varTypeName,valTypeName;
 	Assign ass;
 	
 	
@@ -163,17 +161,19 @@ public class Snotcheck{
 			varTypeName = varTypeClass.getName();
 
 			//1.Fall: der Ausdruck von val ist ein constval:
-			if (valClassName == "constval"){
-			    if ((ass.val == true || ass.val == false) && varTypeName != "BoolType"){
+			if (valClassName == "Constval"){
+
+			   /* if ((((Constval)ass.val).val == true || ass.val.val == false) && varTypeName != "BoolType"){
 				throw new ActionFailure(action, "This statement tries to assign a Boolean to an Integer.");
-			    }
+			    }*/
+
 			} else {
 
 			    //2.Fall: der AUsdruck von val ist kein constval, hat also einen Typ, den man abfragen kann
 			    valTypeClass = ass.val.type.getClass();
 			    valTypeName = valTypeClass.getName();
 
-			    if (varClassName != valTypeName){
+			    if (varTypeName != valTypeName){
 				throw new ActionFailure(action, "This statement tries to assign a Boolean to an Interger or an Interger to a Boolean.");
 			    }
 			}
@@ -182,14 +182,14 @@ public class Snotcheck{
 
 
 		    }
-		}
-	    } else {throw new ActionFailure(null, "Error, that can`t be solved.");}
-	}
+		} else {throw new ActionFailure(null, "Error, that can`t be solved.");}
+	    }        //Ende der inneren for-Schleife
+	}            //Ende der ausseren for-Schleife
+	
+
+	return true;
 	
 	
-    }
-    
-    return true;
 }
 
 
@@ -203,10 +203,25 @@ public class Snotcheck{
 
     /**Diese Funktion prueft alle Steps(vollstaendig, korrekt)
      */
-    private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
-	//Quellcode fehlt
-	return true;
-    }
+private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
+
+    LinkedList stepList = aSFCObject.steps;	
+    String stepName;
+    Step aStep;
+    
+    if (stepList != null){
+       
+        //Pruefung auf Null-Werte von Stepparameter
+	for (int i=0; i < stepList.size(); i++){
+	    aStep = (Step)stepList.get(i);
+	    if (aStep.name == null){throw new StepFailure(aStep, "Stepname not found!");}
+	    if (aStep.actions == null){throw new StepFailure(aStep, "No actions in step!");}
+	}
+
+    }else throw new StepFailure(null,"Where are the steps?!!");
+       
+    return true; 
+}
 
 
 
@@ -305,9 +320,12 @@ public class Snotcheck{
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.26 2001-06-13 13:34:30 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.27 2001-06-14 11:52:23 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.26  2001/06/13 13:34:30  swprakt
+//	g
+//	
 //	Revision 1.25  2001/06/12 15:14:25  swprakt
 //	I removed a file
 //	
