@@ -10,7 +10,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.37 2001-07-03 14:57:34 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.38 2001-07-03 15:06:30 swprakt Exp $
  *
  */
 
@@ -75,8 +75,12 @@ public class Snotcheck{
 	
 	if (anExpr == null){return false;}
 
+	System.out.println("jjbfsvjhlhd");
+
 	exprClass = anExpr.getClass();
 	nameOfExprClass = exprClass.getName();
+
+	System.out.println("jjbfsvjhlhd");
 
 	if (nameOfExprClass != "B_expr"){return false;}     //ist es eine BinaryExpr, wenn nicht, dann gebe false zurueck
 
@@ -434,9 +438,9 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 		    throw new TransitionFailure(trans, "Missing argument(s) in transition.");
 		}
 		//Pruefen der Guard:
-		if (isGuardOk(trans.guard) == false){
+		/*if (isGuardOk(trans.guard) == false){
 		    throw new TransitionFailure(trans, "Failure in Expression.");
-		}
+		}*/
 
 	    }
 	}
@@ -505,9 +509,12 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.37 2001-07-03 14:57:34 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.38 2001-07-03 15:06:30 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.37  2001/07/03 14:57:34  swprakt
+//	guards werden gecheckt (zumindest ein wenig)
+//	
 //	Revision 1.36  2001/07/03 14:47:00  swprakt
 //	*** empty log message ***
 //	
