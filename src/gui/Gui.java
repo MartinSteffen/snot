@@ -17,14 +17,15 @@ import java.lang.Integer;
 import absynt.*;
 import editor.*;
 import smv.*;
+import checks.*;
 //import simulator.*;
-//import checks.*;
 
 
 /**
+ *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version 1.0
+ * @version $Revision: 1.10 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -32,34 +33,33 @@ public class Gui extends javax.swing.JFrame {
     private JOptionPane SnotOptionPane = null; // hierin werden jegliche popups dargestellt
     private Session session = null;
     private Project activeProject = null;  // referes to the focosed Project
-    private boolean ready_to_exit = true;  // indicates whether exit Snot or not
 
     private final String TITLE = "Snot";    // the Gui title
     
     
-        /** Creates new form Gui */
-	public Gui(Session _session) {
-            // preparing startup
-            SnotOptionPane = new JOptionPane();
-            session = _session;
-            if (session==null)
-                enableSession(false);
-            
-            // set GUI L&F
-            try {
-                // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName()); // the standard
-            } catch (Exception exc) {
-                System.err.println("Error loading L&F: " + exc);
-            }
-            
-            // preparing visual components
-            initComponents ();
-            ToolBarTools.setFloatable(true);
-            pack ();
-            this.setResizable(false);
-            setLocation(100,50);
-	}
+    /** Creates new form Gui */
+    public Gui(Session _session) {
+        // preparing startup
+        SnotOptionPane = new JOptionPane();
+        session = _session;
+
+        // set GUI L&F
+        try {
+            // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName()); // the standard
+        } catch (Exception exc) {
+            System.err.println("Error loading L&F: " + exc);
+        }
+
+        // preparing visual components
+        initComponents ();
+        ToolBarTools.setFloatable(true);
+        if (session == null)
+            enableSession(false);
+        pack ();
+        this.setResizable(false);
+        setLocation(100,50);
+    }
 	
 	/** This method is called from within the constructor to
 	 * initialize the form.
@@ -480,34 +480,31 @@ public class Gui extends javax.swing.JFrame {
 
   private void NewSessionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NewSessionActionPerformed
       int response;
-      ready_to_exit = true;  // just in case ...
       
       // check for active session
       if (session != null) {
-          if (session.is_modified) {
+          if (session.isModified()) {
               response = SnotOptionPane.showConfirmDialog(null, "There already is an active unsaved session!\n Without saving the changes will be lost!\n\nDo you want to save the changes before opening a new session?\n",
                                             "Alert", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
           }
-          else if (session.is_saved) {
+          else if (session.isSaved()) {
               response = SnotOptionPane.showConfirmDialog(null, "There already is an active session!\nOpening a new once will close the current session.\n\n Do you wish to proceed?\n",
                                             "Alert", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
           }
           else {
-              response = SnotOptionPane.showConfirmDialog(null, "The active session is not saved!\n Without saving its contents will be lost!\n\nDo you want to save it before opening a new session?\n",
+              response = SnotOptionPane.showConfirmDialog(null, "The active session is not saved!\n Without saving its content will be lost!\n\nDo you want to save it before opening a new session?\n",
                                             "Alert", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
           }
               
           switch (response) {
-              case JOptionPane.YES_OPTION: SaveSessionActionPerformed(null); break;
+              case JOptionPane.YES_OPTION: if(!SaveSessionActionPerformed(null))
+                                                return; 
+                                           break;
               case JOptionPane.NO_OPTION: break;
               case JOptionPane.CANCEL_OPTION:
               case JOptionPane.CLOSED_OPTION: return;
           }
 
-          // check if SaveSessionActionPerformed was aborted
-          if (!ready_to_exit)
-              return;
-             
           closeSession();  
       }
 
@@ -522,6 +519,7 @@ public class Gui extends javax.swing.JFrame {
       }
       
       enableSession(true);
+      setTitle(TITLE+"  "+session.getName());
   }//GEN-LAST:event_NewSessionActionPerformed
 
   private void ShowToolBarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ShowToolBarActionPerformed
@@ -540,15 +538,36 @@ public class Gui extends javax.swing.JFrame {
 
   private void SMVActionPerformed(java.awt.event.ActionEvent evt) {
       Project project = activeProject;
-      System.out.print("\nlaunching SMVTranslator ...");
+      int response;
+      
+      if (project == null) {
+          SnotOptionPane.showMessageDialog(null, "Please select a SFC first!\n", "Error: no SFC", JOptionPane.ERROR_MESSAGE); 
+          return;
+      }
+          
+      if (!project.isChecked()) {
+          response = SnotOptionPane.showConfirmDialog(null, "The SFC \""+project.getName()+"\" needs to be checked\nbefore the SMV translator can be run!\n\nDo you want to check the SFC now?\n",
+                                            "Warning: SFC is not checked", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE); 
+          if (response == JOptionPane.OK_OPTION)
+              CheckSFCActionPerformed(null);
+          
+          if (!project.isChecked()) {
+              SnotOptionPane.showMessageDialog(null, "The SFC \""+project.getName()+"\" is buggy!\n Aborting SMV translation",
+                                            "Error: SFC is buggy", JOptionPane.ERROR_MESSAGE); 
+              return;
+          }
+      }
       
       try {
           new SMVTranslator(project.getSFC());
       }
+//      catch (SMVException ex) {
+//          SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
+//      }
       catch (Exception ex) {
-          SnotOptionPane.showMessageDialog(null, ex.getMessage(), //"SMV is not yet implemented!", 
-                                              "Error", JOptionPane.ERROR_MESSAGE); 
+          SnotOptionPane.showMessageDialog(null, "Whatever:\n"+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
       }
+System.out.print("\nlaunching SMVTranslator ...");
   }
 
   private void SimulatorActionPerformed(java.awt.event.ActionEvent evt) {
@@ -557,8 +576,33 @@ public class Gui extends javax.swing.JFrame {
   }
 
   private void CheckSFCActionPerformed(java.awt.event.ActionEvent evt) {
-      SnotOptionPane.showMessageDialog(null, "Check is not yet implemented!", 
-                                        "Error", JOptionPane.ERROR_MESSAGE); 
+      Project project = activeProject;
+      boolean status = false;
+      
+      if (project == null) {
+          SnotOptionPane.showMessageDialog(null, "Please select a SFC first!\n", "Error: no SFC", JOptionPane.ERROR_MESSAGE); 
+          return;
+      }
+      
+      try {
+          status = Snotcheck.isWellDefined(project.getSFC());
+      }
+      catch (CheckException checkEx) {
+          SnotOptionPane.showMessageDialog(null, checkEx.getMessage(), 
+                                        "Check error", JOptionPane.ERROR_MESSAGE); 
+      }
+      catch (Exception ex) {
+          SnotOptionPane.showMessageDialog(null, ex.getMessage(),
+                                        "Check error", JOptionPane.ERROR_MESSAGE); 
+      }
+      
+      project.setWellDefined(status);
+// ?????????????????
+project.setChecked(status);
+// ?????????????????
+
+//      SnotOptionPane.showMessageDialog(null, "Check is not yet implemented!", 
+//                                        "Error", JOptionPane.ERROR_MESSAGE); 
   }
 
   private void EditorActionPerformed(java.awt.event.ActionEvent evt) {
@@ -594,8 +638,8 @@ public class Gui extends javax.swing.JFrame {
       chooser.setDialogTitle("Export SFC");
       
       // set prefered Directory and filename
-      if (session.fileName != "")
-          chooser.setCurrentDirectory(new File(session.fileName));
+      if (session.isSaved())
+          chooser.setCurrentDirectory(session.getFileName());
       
       chooser.setSelectedFile(new File(project.getName()));
             
@@ -635,8 +679,8 @@ public class Gui extends javax.swing.JFrame {
       chooser.setDialogTitle("Import SFC");
       
       // set prefered Directory
-      if (session.fileName != "")
-          chooser.setCurrentDirectory(new File(session.fileName));
+      if (session.isSaved())
+          chooser.setCurrentDirectory(session.getFileName());
       
       // show FileChooser
       int result = chooser.showDialog(null, "Import");
@@ -670,12 +714,16 @@ public class Gui extends javax.swing.JFrame {
       }
            
       // launch Editor with new SFC
+      project = new Project();
       try {
-          project = new Project();
           editor = new Editor(project.getSFC());
       }
+      catch (EditorException editorEx) {
+           SnotOptionPane.showMessageDialog(null, editorEx.getMessage(), "Editor error", JOptionPane.ERROR_MESSAGE);
+           return;
+      }
       catch (Exception ex) {
-           SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+           SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Editor error", JOptionPane.ERROR_MESSAGE);
            return;
       }
 
@@ -693,39 +741,44 @@ public class Gui extends javax.swing.JFrame {
            return;
       }
       // set environmental parameters
-      session.is_modified = true;
+//      session.setModified(true); this is set by addProject()!!!
       editor.show();
  }      
 
 
 
   private void CloseSessionActionPerformed(java.awt.event.ActionEvent evt) {
-      prepareForExitSnot(false);
-      if (!ready_to_exit)
+      if (!prepareForExitSnot(false))
           return;
       closeSession();
   }
 
-  private void SaveSessionActionPerformed(java.awt.event.ActionEvent evt) {
-      ready_to_exit = true;  // global exit state
-      
-      if (session.fileName!="")
-            session.save();
+  private boolean SaveSessionActionPerformed(java.awt.event.ActionEvent evt) {
+      if (session.isSaved()) {
+          try {
+              session.save(null);
+          }
+          catch (Exception ex) {
+              SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
+              return false;
+          }
+          return true;
+      }
       else
-          SaveAsSessionActionPerformed(null);
+          return SaveAsSessionActionPerformed(null);
   }
 
   private void OpenSessionActionPerformed(java.awt.event.ActionEvent evt) {
       int response;
-      ready_to_exit = true;  // just in case ...
+      boolean state = false;
       
       // check for active session
       if (session != null) {
-          if (session.is_modified) {
+          if (session.isModified()) {
               response = SnotOptionPane.showConfirmDialog(null, "There already is an active unsaved session!\n Without saving the changes will be lost!\n\nDo you want to save the changes before opening a new session?\n",
                                             "Alert", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
           }
-          else if (session.is_saved) {
+          else if (session.isSaved()) {
               response = SnotOptionPane.showConfirmDialog(null, "There already is an active session!\nOpening a new once will close the current session.\n\n Do you wish to proceed?\n",
                                             "Alert", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
           }
@@ -735,16 +788,14 @@ public class Gui extends javax.swing.JFrame {
           }
               
           switch (response) {
-              case JOptionPane.YES_OPTION: SaveSessionActionPerformed(null); break;
+              case JOptionPane.YES_OPTION: if(!SaveSessionActionPerformed(null)) 
+                                              return; 
+                                           break;
               case JOptionPane.NO_OPTION: break;
               case JOptionPane.CANCEL_OPTION:
               case JOptionPane.CLOSED_OPTION: return;
           }
 
-          // check if SaveSessionActionPerformed was aborted
-          if (!ready_to_exit)
-              return;
-             
 //          closeSession();  closing session as late as possible!! see below
       }
 
@@ -752,8 +803,8 @@ public class Gui extends javax.swing.JFrame {
       chooser.setFileFilter(new SnotFileFilter("snot","Snot sessions"));
       chooser.setDialogTitle("Open session");
       
-      if (session != null && session.fileName != "")
-          chooser.setCurrentDirectory(new File(session.fileName));
+      if (session != null && session.isSaved())
+          chooser.setCurrentDirectory(session.getFileName());
 
       int result = chooser.showOpenDialog(null);
       if (result == JFileChooser.APPROVE_OPTION) {
@@ -769,20 +820,23 @@ public class Gui extends javax.swing.JFrame {
       }
   }
 
-  private void SaveAsSessionActionPerformed(java.awt.event.ActionEvent evt) {
-      ready_to_exit = true; // setting global exit state
-      
+  private boolean SaveAsSessionActionPerformed(java.awt.event.ActionEvent evt) {
       JFileChooser chooser = new JFileChooser();
       chooser.setFileFilter(new SnotFileFilter("snot","Snot sessions"));
       chooser.setDialogTitle("Save session as");
       int result = chooser.showDialog(null, "Save as");
       if (result == JFileChooser.APPROVE_OPTION) {
-         System.out.print("\n Save Session As: Session would be saved as \""+chooser.getSelectedFile()+"\"");
-//          saveSession(chooser.getSelectedFile());
-         session.is_saved = true;   // ... ??? what ever!
+          try {
+              session.save(chooser.getSelectedFile());
+          }
+          catch (Exception ex) {
+              SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+              return false;
+          }
+          return true;
       }
       else 
-          ready_to_exit = false;
+          return false;
   }
 			  
   private void AboutActionPerformed(java.awt.event.ActionEvent evt) {
@@ -843,7 +897,7 @@ public class Gui extends javax.swing.JFrame {
         enableSession(false);
         session = null;
         this.setTitle(TITLE);
-        System.out.print("\nSession is closed!");
+System.out.print("\nSession is closed!");
     }
     
     private Session openSession(File file) {
@@ -852,48 +906,61 @@ public class Gui extends javax.swing.JFrame {
 //      Please complete me !!!
 //#########################################
         
-        Session local_session = new Session();
-        local_session.fileName = file.toString();
-        local_session.name = file.getName().replace('.', '\0');
-        
-        setTitle(TITLE+"  "+local_session.name);
+        Session local_session = new Session(file);
+/*        try {
+            local_session.setFileName(file);
+        }
+        catch (Exception ex) {
+            SnotOptionPane.showMessageDialog(null, ex.getMessage(),
+                                        "Error", JOptionPane.ERROR_MESSAGE); 
+        }
+ */       
+        setTitle(TITLE+"  "+local_session.getName());
         enableSession(true);
         
-        System.out.print("\n ... opening new session from file \""+file+"\": name: "+file.getName()+", "+file.toString());
+System.out.print("\n ... opening new session from file \""+file+"\": name: "+file.getName()+", "+file.toString());
         return local_session;
     }
     
 
-    private void prepareForExitSnot(boolean exit) {
+    /** Prepares the program for exit.
+     *  Checks the session states and i.g. forces to save before exit.
+     *  @param exit Defines whether to exit or just to close the session without exiting Snot.
+     */
+    private boolean prepareForExitSnot(boolean exit) {
         int result = JOptionPane.CANCEL_OPTION;
-        ready_to_exit = true;
 
+        // check for active session: if no one found, just exit.
         if (session == null)
             exitSnot();
         
-        if (session.is_modified) 
-            result = SnotOptionPane.showConfirmDialog(null, "The session has changed!\n\nDo you want to save it?",
-                                            "Alert!", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-        else if (!session.is_saved)  
-            result = SnotOptionPane.showConfirmDialog(null, "The session is not saved!\n\nDo you want to save it now?",
-                                            "Alert!", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+        // session found: check its status
+        if (session.isModified()) 
+            result = SnotOptionPane.showConfirmDialog(null, "The session has changed!\nWithout saving the changes will be lost!\n\nDo you want to save it?",
+                                            "Alert: session is not saved!", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+        else if (!session.isSaved())  
+            result = SnotOptionPane.showConfirmDialog(null, "The session is not saved!\nIf exiting its contents will be lost.\n\nDo you want to save it now?",
+                                            "Alert: session will be lost!", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
         else if (exit) 
                 exitSnot();
             else 
-                return;
+                return true; // simulates a successful exit state
 
         switch (result) {
-            case JOptionPane.YES_OPTION: SaveSessionActionPerformed(null);
-            case JOptionPane.NO_OPTION: if (exit && ready_to_exit) exitSnot(); break;
+            case JOptionPane.YES_OPTION: return(SaveSessionActionPerformed(null));
+            case JOptionPane.NO_OPTION: if (exit) exitSnot(); else return true;
             case JOptionPane.CANCEL_OPTION:
-            case JOptionPane.CLOSED_OPTION: ready_to_exit = false; break;
+            case JOptionPane.CLOSED_OPTION: return false; // do not exit!
         }
+        
+        // this line should never be reached but just in case ...
+        return false;
     }
         
 
     private void exitSnot() {
         // function must terminate Snot!
-        // collect all opened Frames/Windows and close em all!!! -> editor Windows need to be closed!!
+        // collect all opened Frames/Windows and close em all!!!
 //#########################################
 //      Please complete me !!!
 //#########################################
@@ -911,7 +978,7 @@ public class Gui extends javax.swing.JFrame {
 	 */
 	public static void main (String args[]) {
                 
-		new Gui (new Session()).show ();
+		new Gui (null).show ();
 	}
 	
 /*******************************************************************************
@@ -929,7 +996,9 @@ public class Gui extends javax.swing.JFrame {
         }
         
         public void windowDeactivated(java.awt.event.WindowEvent evt) {
-//            System.out.print("\n Window Deactivated");
+            if (activeProject != null && !session.isModified())
+                session.setModified(activeProject.getEditor().isModified());
+            System.out.print("\n Window "+activeProject+" Deactivated and session modified is "+session.isModified());
         }        
 	
         public void windowClosed(java.awt.event.WindowEvent evt) {
@@ -942,7 +1011,7 @@ public class Gui extends javax.swing.JFrame {
         
         public void windowOpened(java.awt.event.WindowEvent evt) {
             if (activeProject!=null)
-                activeProject.is_active = true;
+                activeProject.setActive(true);
             System.out.print("\n Window "+activeProject+" Opened");
         }
         
@@ -952,7 +1021,7 @@ public class Gui extends javax.swing.JFrame {
         
         public void windowClosing(java.awt.event.WindowEvent evt) {
             if (activeProject!=null)
-                activeProject.is_active = false;
+                activeProject.setActive(false);
             System.out.print("\n Window "+activeProject+" Closing");
             activeProject = null;
         }
