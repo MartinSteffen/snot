@@ -10,7 +10,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.39 2001-07-10 14:00:01 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.40 2001-07-10 14:07:13 swprakt Exp $
  *
  */
 
@@ -470,7 +470,10 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 	    decl = (Declaration)decList.get(i);
 	    typeClass = decl.type.getClass();
 	    nameOfClass = typeClass.getName();
-	    if(nameOfClass != "BoolType"){nurBool = false;}
+	    if(nameOfClass != "BoolType"){
+		nurBool = false;
+		i = decList.size();
+	    }
 	}
 	return nurBool;
     }
@@ -510,9 +513,12 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.39 2001-07-10 14:00:01 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.40 2001-07-10 14:07:13 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.39  2001/07/10 14:00:01  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.38  2001/07/03 15:06:30  swprakt
 //	*** empty log message ***
 //	
