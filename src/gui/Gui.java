@@ -35,7 +35,7 @@ import checks.*;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.48 $
+ * @version $Revision: 1.49 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -1443,6 +1443,7 @@ ex.printStackTrace();
       try {
           editor = new Editor(project.getSFC());
 	  editor.setLocation(EditorLocation);
+	  //editor.setSize(800,420);
       }
       catch (EditorException editorEx) {
            SnotOptionPane.showMessageDialog(null, editorEx.getMessage(), "Editor error", JOptionPane.ERROR_MESSAGE);
@@ -1470,8 +1471,7 @@ ex.printStackTrace();
       }
       // set environmental parameters
       updateProjectList();
-      activeProject = project;
-      editor.setSize(600,420);
+      activeProject = project;    
       setStatusLine(true, " New SFC created.");
  }
 
@@ -1595,7 +1595,7 @@ System.out.print(ex.getClass());
   }
 
   private void AboutActionPerformed(java.awt.event.ActionEvent evt) {
-      SnotOptionPane.showMessageDialog(null, "Snot\n Still in experimental phase 0.1\n Please hang on for later versions ...", "About", JOptionPane.INFORMATION_MESSAGE);
+      SnotOptionPane.showMessageDialog(null, "Snot v1.0\nDeveloped: summer term 2001\nat the CAU Kiel.\n\nProject coordination and Parser:\nMartin Steffen, Karsten Stahl.\n\nAuthors:\n Andreas Lukosch, Natalia Freudenberg (Editor)\nKevin Koeser, Tobias Kloss (SMV - Translation)\nCarsten Heine,  Joern Fiebelkorn (Simulator)\nTobias Pugatschov, Dimitri Schultheis (Checks)\nHans Theman, Ingo Schiller (Gui)", "About", JOptionPane.INFORMATION_MESSAGE);
   }
 
 
