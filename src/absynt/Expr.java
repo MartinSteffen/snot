@@ -3,17 +3,19 @@ import java.io.Serializable;
 
 
 /**
- * Abstrakte Klasse f"ur Ausdr"ucke
+ * Abstract class for simple expressions
  * 
  * @author Initially provided by Martin Steffen.
- * @version $Id: Expr.java,v 1.1 2001-04-27 07:34:37 swprakt Exp $
+ * @version $Id: Expr.java,v 1.2 2001-04-27 08:04:13 swprakt Exp $
  */
 
 
 
 public abstract class Expr extends Absyn implements Serializable{ 
 
-  public M_AtomType type;;     // expressions are typed.
+  public Type type;;     // expressions are typed.
+    /* The operators are encoded as ``constants'' in the
+       class's fields. The intended meaning is implied by the name. */
 
   public final  static int PLUS  = 0;
   public final  static int MINUS = 1;
@@ -39,9 +41,12 @@ public abstract class Expr extends Absyn implements Serializable{
 //	Abstract Syntax for Mist Programs
 //	------------------------------------
 //
-//	$Id: Expr.java,v 1.1 2001-04-27 07:34:37 swprakt Exp $
+//	$Id: Expr.java,v 1.2 2001-04-27 08:04:13 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.1  2001/04/27 07:34:37  swprakt
+//	First proposal according to the requirement spec
+//	
 //	
 //	
 //---------------------------------------------------------------------
