@@ -9,7 +9,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.34 2001-07-03 14:36:33 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.35 2001-07-03 14:40:04 swprakt Exp $
  *
  */
 
@@ -76,8 +76,6 @@ public class Snotcheck{
 
 	exprClass = anExpr.getClass();
 	nameOfExprClass = exprClass.getName();
-
-	System.out.println(nameOfExprClass);
 
 	if (nameOfExprClass != "B_expr"){return false;}     //ist es eine BinaryExpr, wenn nicht, dann gebe false zurueck
 
@@ -293,7 +291,6 @@ public class Snotcheck{
 
 		//	class1 = stmt1.getClass();
 		class1Name = class1.getName();
-		System.out.println(class1Name);
 		//	if (stmt1 == null){throw new ActionFailure(action, "neuer fehler.");}
 		if (class1Name == "absynt.Assign" || class1Name == "absynt.Skip"){
 		    if (class1Name == "Assign"){             //wenn das statement eine Zuweisung ist, dann muessen noch einige Dinge geprueft werden, naehmlich:
@@ -496,9 +493,12 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.34 2001-07-03 14:36:33 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.35 2001-07-03 14:40:04 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.34  2001/07/03 14:36:33  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.33  2001/06/27 13:12:42  swprakt
 //	*** empty log message ***
 //	
