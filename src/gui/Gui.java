@@ -14,7 +14,7 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.Integer;
-
+import java.util.*;
 import absynt.*;
 import editor.*;
 import smv.*;
@@ -26,7 +26,7 @@ import checks.*;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -449,6 +449,7 @@ public class Gui extends javax.swing.JFrame {
      // removing SFC from session
      session.removeProject(project);
      activeProject = null;
+     updateProjectList();
   }//GEN-LAST:event_RemoveSFCActionPerformed
 
   private void RenameSFCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RenameSFCActionPerformed
@@ -481,6 +482,7 @@ public class Gui extends javax.swing.JFrame {
           project.setName(input);
           session.setModified(true);
      }
+     updateProjectList();
   }//GEN-LAST:event_RenameSFCActionPerformed
 
   private void NewSessionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NewSessionActionPerformed
@@ -676,7 +678,8 @@ System.out.print(ex.getClass());
           // set name out ouf filename
           project.setName(file.getName().replace('.','\0'));
           return;
-      }
+        }
+      updateProjectList();
   }
 
   /**
@@ -730,6 +733,7 @@ ex.printStackTrace();
                SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
           }
       }
+  updateProjectList();
   }
 
   /**
@@ -781,6 +785,7 @@ ex.printStackTrace();
       // set environmental parameters
 //      session.setModified(true); this is set by addProject()!!!
       editor.show();
+      updateProjectList();
  }
 
 
@@ -897,18 +902,49 @@ System.out.print(ex.getClass());
    */
   private void showProjectList(){
     System.out.println("The Project-List should appear.");
-    projectFrame = new JFrame("Project-Bowser");
+    projectFrame = new JFrame("SFC - Browser");
     projectFrame.setResizable(true);
-    projectFrame.setSize(100,200);
-    projectFrame.setLocation(70,170);
-    JList list = new JList(session.getProjectList());
+    projectFrame.setSize(250,200);
+    projectFrame.setLocation(100,170);
+
+    //On close the window will be disposed.
+    projectFrame.addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent e){SFCBrowser.setState(false);
+					       projectFrame.dispose();}});
+
+    list = new JList(session.getNamesList());
+    list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    list.setSelectedIndex(0);
+
+    // A mouselistener to determine the doubleclicked Project and to show it.
+    MouseListener mouseListener = new MouseAdapter() {
+       public void mouseClicked(MouseEvent e) {
+           if (e.getClickCount() == 2) {
+               int index = list.locationToIndex(e.getPoint());
+               System.out.println("Double clicked on Item " + index);
+	       Vector p = session.getProjectList();
+	       ((Project)p.elementAt(index)).getEditor().show();
+
+	   }
+       }
+    };
+
+    list.addMouseListener(mouseListener);
+    JScrollPane scrollpane = new JScrollPane(list);
+
     Container pane = projectFrame.getContentPane();
-    pane.add(list);
+    pane.add(scrollpane);
 
     projectFrame.show();
     pack();
     }
 
+    private void updateProjectList(){
+      if(SFCBrowser.isSelected()) {
+        projectFrame.dispose();
+        showProjectList();
+      }
+    }
 
 
 	/** Exit the Application */
@@ -981,7 +1017,8 @@ System.out.print("\nSession is closed!");
         enableSession(true);
 
 System.out.print("\n ... opening new session from file \""+file+"\": name: "+file.getName()+", "+file.toString());
-        return newSession;
+
+	return newSession;
     }
 
 
@@ -1025,9 +1062,6 @@ System.out.print("\n ... opening new session from file \""+file+"\": name: "+fil
         int result;
         // function must terminate Snot!
         // collect all opened Frames/Windows and close em all!!!
-//#########################################
-//      Please complete me !!!
-//#########################################
 
         if (remind) {
             result = SnotOptionPane.showConfirmDialog(null, "You are about to leave Snot!\nDo you wish to exit?",
@@ -1099,7 +1133,9 @@ System.out.print("\n ... opening new session from file \""+file+"\": name: "+fil
         }
     }
 
-/*******************************************************************************
+
+
+ /*******************************************************************************
  *
  *      The subclass GuiUtilities
  *
@@ -1195,6 +1231,7 @@ System.out.print("\nerr  "+nullEx.toString());
         }
     }
 
+    private javax.swing.JList list;
     private javax.swing.JFrame projectFrame;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuBar jMenuBar;
