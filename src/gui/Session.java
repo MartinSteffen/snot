@@ -31,7 +31,7 @@ import javax.swing.event.*;
  *  create new, import or export Projects.
  *
  * @author  Hans Theman and Ingo Schiller
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 
 public class Session extends java.lang.Object implements Serializable {
@@ -285,14 +285,14 @@ public class Session extends java.lang.Object implements Serializable {
      * to get the projectvector to display the list
      */
 
-    public Vector getprojectlist(){
-        Vector Projects = new Vector(); // vector to save the projects to displaz in the jList
+    public Vector getProjectList(){
+        Vector projects = new Vector(); // vector to save the projects to displaz in the jList
         Enumeration e = table.elements();
 
         while(e.hasMoreElements()){
-            Projects.add(e.nextElement());
+            projects.add(e.nextElement());
             }
-    return Projects;
+    return projects;
     }
 
 

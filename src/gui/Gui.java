@@ -26,7 +26,7 @@ import checks.*;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -537,10 +537,11 @@ public class Gui extends javax.swing.JFrame {
   }//GEN-LAST:event_ShowToolBarActionPerformed
 
   private void SFCBrowserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SFCBrowserActionPerformed
-      SnotOptionPane.showMessageDialog(null, "SFC browser not yet implemented!\n",
-                                       "Error", JOptionPane.ERROR_MESSAGE);
+      //SnotOptionPane.showMessageDialog(null, "SFC browser not yet implemented!\n",
+        //                               "Error", JOptionPane.ERROR_MESSAGE);
       if (SFCBrowser.isSelected())
-          SFCBrowser.setSelected(false);
+          {showProjectList();}
+      else projectFrame.dispose();
 
   }//GEN-LAST:event_SFCBrowserActionPerformed
 
@@ -891,6 +892,25 @@ System.out.print(ex.getClass());
   }
 
 
+  /**
+   * Method to show the ProjektList.
+   */
+  private void showProjectList(){
+    System.out.println("The Project-List should appear.");
+    projectFrame = new JFrame("Project-Bowser");
+    projectFrame.setResizable(true);
+    projectFrame.setSize(100,200);
+    projectFrame.setLocation(70,170);
+    JList list = new JList(session.getProjectList());
+    Container pane = projectFrame.getContentPane();
+    pane.add(list);
+
+    projectFrame.show();
+    pack();
+    }
+
+
+
 	/** Exit the Application */
 	private void exitForm(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_exitForm
             prepareForExitSnot(true);
@@ -1175,6 +1195,7 @@ System.out.print("\nerr  "+nullEx.toString());
         }
     }
 
+    private javax.swing.JFrame projectFrame;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuBar jMenuBar;
     private javax.swing.JMenu FileMenu;
