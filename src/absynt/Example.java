@@ -3,46 +3,36 @@ package absynt;
 
 /**
  * 
- * Die Klasse soll ein Beispiel fuer ein Programm
- * int abstrakter Syntax bereitstellen.
+ * The class offers an example for a program int abstract syntax.
  * @author Initially provided by Martin Steffen.
- * @version $Id: Example.java,v 1.3 2001-04-27 08:52:37 swprakt Exp $	
+ * @version $Id: Example.java,v 1.4 2001-05-02 07:24:51 swprakt Exp $	
  */
+
 
 public class Example{
   /**
-   * Methode, die ein Beispielprogramm konstruiert und liefert.  Das
-   * Beispiel enthaelt so gut wie alle in der Absrakten Syntax vorkommenden
-   * Konstrukte. Das Beispiel ist semantisch nicht sinnvoll. Auch
-   * ist _nicht_ sichergestellt, dass das Beispiel gemaess der
-   * Tests des Paketes ``check'' korrekt ist.
+   * The following method gives back an example program, containing 
+   * most constructs of the abstract syntax. The example is not
+   * really meaningful.
    */
-    public static Program getExample1(){}}
+    public static SFC getExample1(){
   /*
-   * Zur besseren Ubersichtlichkeit
-   * wird das Beispiel  Schritt fuer Schritt aufgebaut, mit Variablen
-   * zum Zwischenspeichern, nicht als einziger grosser Term.  
-   * Werden spaeter Terme automatisch erzeugt (z.B. durch den 
-   * Parser, wird die ``Termdarstellung'' evtl. vorzuziehen sein.
-   *
+   * For enhanced readability, the example is built stp-byte-step.
    */
-
+      return null;
+    };
+}
 
 
 
 
 //----------------------------------------------------------------------
-//	Abstract Syntax for Mist Programs
+//	Abstract syntax for Snot programs
 //	------------------------------------
 //
-//	$Id: Example.java,v 1.3 2001-04-27 08:52:37 swprakt Exp $
+//	$Id: Example.java,v 1.4 2001-05-02 07:24:51 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
-//	Revision 1.2  2001/04/27 05:57:49  swprakt
-//	*** empty log message ***
-//	
-//	Revision 1.1  2001/04/20 17:29:11  swprakt
-//	ok
 //	
 //---------------------------------------------------------------------
 
