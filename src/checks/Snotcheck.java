@@ -9,11 +9,37 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.28 2001-06-19 13:30:35 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.29 2001-06-19 14:34:55 swprakt Exp $
  *
  */
 
 public class Snotcheck{
+
+
+    private static boolean isExprOk(Expr anExpr){
+	//Diese Methode "uberpr"uft rekursiv, ob der angegebene Ausdruck ein korrekter Ausdruck ist.
+
+	//Folgende Dinge sollen gepr"uft werden:
+	// a)wenn expr=b_expr:
+	//   -Operator darf nur sein:AND, OR, NEG
+	//   -beide Operanden m"ussen vom Typ Boolean sein
+	//
+	// b)wenn expr=u_expr:
+	//   -Operator darf nur sein:PLUS, MINUS, TIMES, DIV, LESS, GREATER, LEQ, GEQ, EQ
+
+	int i=anExpr.AND;
+
+	return true;
+
+    }
+
+
+
+
+
+
+
+
 
 
 
@@ -185,12 +211,12 @@ public class Snotcheck{
 		} else {throw new ActionFailure(null, "Error, that can`t be solved.");}
 	    }        //Ende der inneren for-Schleife
 	}            //Ende der ausseren for-Schleife
-
-
+	
+	
+	
+	
 	return true;
-
-
-}
+    }
 
 
 
@@ -320,9 +346,12 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.28 2001-06-19 13:30:35 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.29 2001-06-19 14:34:55 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.28  2001/06/19 13:30:35  swprakt
+//	nix
+//	
 //	Revision 1.27  2001/06/14 11:52:23  swprakt
 //	*** empty log message ***
 //
