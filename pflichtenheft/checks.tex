@@ -29,9 +29,38 @@ Parameter eines Objektes der abstrakten Syntax.
 Überprüfte Eigenschaften:
 \begin{itemize}
 \item Wohlgeformtheit (was das genau ist, bleibt festzulegen)
+\item wohltypisiertheit der Aussdrücke. Wir gehen davon aus, das die
+  Sprache stark typisiert ist. Die Typen der Operatoren sind in
+  Tabelle~\ref{tab:types} festgehalten.
 \item Die Verwendung von ausschließlich \emph{booleschen} Variablen (dies
   ist für die SMV-Gruppe wichtig.)
 \end{itemize}
+
+\begin{table}[htbp]
+  \centering
+  \begin{displaymath}
+    \begin{array}{rl}
+      \text{operator/constant} & \text{type(s)}
+      \\\hline
+      \mathit{true},\mathit{false}
+      & \Bool
+      \\
+      0,1,\ldots & \Int
+      \\
+      +,*,/ & \Int \times \Int \to \Int
+      \\
+      -     & \Int \times \Int \to \Int, \Int\to\Int
+      \\
+      <,>,\leq,\geq & \Int \times\Int \to \Bool
+      \\
+      =, \not= & \Int\times\Int \to \Bool, \Bool\times\Bool\to\Bool
+      \\
+      \neg & \Bool\times\Bool
+    \end{array}
+  \end{displaymath}
+  \caption{Typen}
+  \label{tab:types}
+\end{table}
 
 
 

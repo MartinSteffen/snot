@@ -1,5 +1,5 @@
 ########################################################
-## $Id: Makefile,v 1.9 2001-05-28 06:20:32 swprakt Exp $
+## $Id: Makefile,v 1.10 2001-07-01 09:06:35 swprakt Exp $
 ########################################################
 
 
@@ -10,7 +10,7 @@ HACHA       = hacha
 DOC         = main
 CODEDIR     = 
 ############# Achtung: die Versionen ändern sich!
-WWWDIR      = /home/info/www/inf/deRoever/SS01/Java/Snot/pflichtenheft4
+WWWDIR      = /home/info/www/inf/deRoever/SS01/Java/Snot/pflichtenheft5
 
 main.dvi: main.tex
 	latex main
