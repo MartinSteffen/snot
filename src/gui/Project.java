@@ -25,7 +25,7 @@ import editor.Editor;
  *  It also keeps the name and status flags of the SFC.
  *
  * @author  Hans Theman and Ingo Schiller
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class Project extends java.lang.Object implements Serializable {
 
@@ -49,7 +49,7 @@ public class Project extends java.lang.Object implements Serializable {
      *  Its active flag is set to true by default, because it is opened in the Editor.
      */
     public Project () {
-        sfc = new SFC(null, null, null, null, null);
+        sfc = new SFC();
         name = "unknown";
         is_named = false;
         is_checked = false;
