@@ -73,6 +73,10 @@ public class PrettyPrint {
 		output((ActionQualifier)absynt);
 	    if(absynt instanceof Step)
 		output((Step)absynt);
+	    if(absynt instanceof DeclarationList)
+		output((DeclarationList)absynt);
+	    if(absynt instanceof Declaration)
+		output((Declaration)absynt);
 	    if(absynt instanceof Skip)
 		output((Skip)absynt);
 	    if(absynt instanceof Stmt)
@@ -110,6 +114,7 @@ public class PrettyPrint {
 	pp_long.print(sfc.steps);
 	prettyprint.print(sfc.transs);
 	prettyprint.print(sfc.actions);
+	prettyprint.print(sfc.declist);
     }
     
     public void output(StepList steplist) {
@@ -185,6 +190,22 @@ public class PrettyPrint {
 	    PrettyPrint prettyprint = new PrettyPrint(column + tab, tab);
 	    prettyprint.print(step.actions);
 	}
+    }
+
+    public void output(DeclarationList declist) {
+	System.out.println(whiteSpace(column) + "[DeclarationList] ");
+	PrettyPrint prettyprint =
+	    new PrettyPrint(column + tab, tab, steps_long);
+	for(; declist != null; declist = declist.next)
+	    prettyprint.print(declist.head);
+    }
+
+    public void output(Declaration dec) {
+	System.out.println(whiteSpace(column) + "[Declaration] ");
+	PrettyPrint prettyprint = new PrettyPrint(column + tab, tab);
+	prettyprint.print(dec.var);
+	prettyprint.print(dec.type);
+	prettyprint.print(dec.val);
     }
     
     public void output(Skip skip){

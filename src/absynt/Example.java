@@ -6,7 +6,7 @@ import utils.PrettyPrint;
  * 
  * The class offers an example for a program int abstract syntax.
  * @author Initially provided by Martin Steffen.
- * @version $Id: Example.java,v 1.10 2001-05-08 08:22:11 swprakt Exp $	
+ * @version $Id: Example.java,v 1.11 2001-05-10 06:59:52 swprakt Exp $	
  */
 
 
@@ -27,14 +27,22 @@ public class Example{
   /*
    * For enhanced readability, the example is built step-by-step.
    */
-      Variable v_x = new Variable ("x");   
-      Variable v_y = new Variable ("y");   
+      BoolType btype = new BoolType();
+      Variable v_x = new Variable ("x", btype);
+      Variable v_y = new Variable ("y", btype);
+      Variable v_z = new Variable ("z", btype);
       Constval c5  = new Constval (5);
+      Constval cfalse = new Constval (false);
       Skip     stmt_skip = new Skip();
+
+      //   ------- Variable-Declarations
+      Declaration dec_x = new Declaration(v_x, btype, cfalse);
+      Declaration dec_y = new Declaration(v_y, btype, cfalse);
+      Declaration dec_z = new Declaration(v_z, btype, cfalse);
 
       //   ------- Step 1
       Assign stmt1 =                 
-	new Assign(v_x,                    // x := not x
+	new Assign(v_x,                    // x := false
 		   new Constval(false));
       StmtList sl1 = new StmtList(stmt1, null);
       Action a1 = 
@@ -135,8 +143,10 @@ public class Example{
 		 new TransitionList(t8,null)))))))),
 		 new ActionList(a1,
 		 new ActionList(a2,
-                 new ActionList(a3,null))));
-                 
+ 		 new ActionList(a3,null))),
+                 new DeclarationList(dec_x,
+                 new DeclarationList(dec_y,
+	         new DeclarationList(dec_z,null))));
 
       //new Constval(true)));
 			
@@ -153,9 +163,17 @@ public class Example{
 //	Abstract syntax for Snot programs
 //	------------------------------------
 //
-//	$Id: Example.java,v 1.10 2001-05-08 08:22:11 swprakt Exp $
+//	$Id: Example.java,v 1.11 2001-05-10 06:59:52 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.10  2001/05/08 08:22:11  swprakt
+//	Extended the example, such that there is a non-trivial list
+//	of statements associated with an action.
+//	
+//	Added the names of the teams to the packages
+//	
+//	[Steffen]
+//	
 //	Revision 1.9  2001/05/04 15:10:19  swprakt
 //	changed actions in steps
 //	

@@ -2,6 +2,7 @@
                                steps      : step list
                                transs     : transition list
                                actions    : action list
+                               declist    : declaration list
                      step ::=  name       : string
                                actions    : stepaction list
                stepaction ::=  qualifier  : action_qualifier
@@ -19,6 +20,11 @@
                transition ::=  source     : step list
                                guard      : expr
                                target     : step list
+
+              declaration ::=  var        : variable
+                               type       : type
+                               val        : constval
+
                expr       ::=               b_expr
                            |                u_expr
                            |                constval

@@ -3,11 +3,11 @@ import java.io.Serializable;
 
 
 /**
- * Class for sfc actions. An action consists of a qualifier
- * and the name of  program to be executed.
+ * Class for sfc actions associated with a step. An action consists of a
+ * qualifier and the name of a program to be executed.
  *
  * @author Initially provided by Martin Steffen.
- * @version $Id: StepAction.java,v 1.3 2001-05-05 10:14:21 swprakt Exp $
+ * @version $Id: StepAction.java,v 1.4 2001-05-10 06:59:52 swprakt Exp $
  */
 
 
@@ -28,9 +28,14 @@ public class StepAction  extends Absynt implements Serializable {
 //	Abstract syntax for Snot programs
 //	------------------------------------
 //
-//	$Id: StepAction.java,v 1.3 2001-05-05 10:14:21 swprakt Exp $
+//	$Id: StepAction.java,v 1.4 2001-05-10 06:59:52 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.3  2001/05/05 10:14:21  swprakt
+//	Requirement spec. adapted to the implementation
+//	
+//	[Steffen]
+//	
 //	Revision 1.2  2001/05/05 09:45:56  swprakt
 //	I adapted the comment [Steffen]
 //	

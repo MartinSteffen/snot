@@ -7,7 +7,7 @@ import java.io.Serializable;
  * Class for sfc-programs, the top level syntactic construct,
  * i.e., the entry point.
  * @author Initially provided by Martin Steffen.
- * @version $Id: SFC.java,v 1.3 2001-05-02 07:03:37 swprakt Exp $
+ * @version $Id: SFC.java,v 1.4 2001-05-10 06:59:52 swprakt Exp $
  */
 
 
@@ -16,6 +16,7 @@ public class SFC extends Absynt implements Serializable{
   public StepList steps;
   public TransitionList transs;
   public ActionList actions;
+  public DeclarationList declist;
   // -------------------
   /** 
    * Constructor just stores the arguments into the fields
@@ -23,11 +24,13 @@ public class SFC extends Absynt implements Serializable{
   public SFC (Step _istep,
 	      StepList _steps, 
 	      TransitionList _transs,
-	      ActionList _actions) {
+	      ActionList _actions,
+	      DeclarationList _declist) {
     istep  = _istep;
     steps  = _steps;
     transs = _transs;
     actions = _actions;
+    declist = _declist;
   }
 }
 
@@ -38,9 +41,12 @@ public class SFC extends Absynt implements Serializable{
 //	Abstract Syntax for Snot Programs
 //	------------------------------------
 //
-//	$Id: SFC.java,v 1.3 2001-05-02 07:03:37 swprakt Exp $
+//	$Id: SFC.java,v 1.4 2001-05-10 06:59:52 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.3  2001/05/02 07:03:37  swprakt
+//	Abstract syntax compiles.
+//	
 //	Revision 1.2  2001/05/02 04:40:19  swprakt
 //	ok
 //	
