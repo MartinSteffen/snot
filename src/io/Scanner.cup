@@ -10,7 +10,7 @@ import java.io.*;
  * Offers the methods  parseFile and parseExpression 
  *
  * @author Martin Steffen
- * @version $Id: Scanner.cup,v 1.5 2001-06-29 13:17:00 swprakt Exp $
+ * @version $Id: Scanner.cup,v 1.6 2001-06-29 13:58:10 swprakt Exp $
  *
  * */
 
@@ -166,8 +166,20 @@ program      ::= BEGIN
 declist      ::= VARS EQ LBRACKET
 		 declarations
 		 RBRACKET SEM
+		 ;
 
-declarations ::= IDENT:
+declist      ::= VARS EQ LBRACKET
+		 RBRACKET SEM
+		 ;
+
+declarations ::= declaration
+		 ;
+
+declarations ::= declaration SEM declarations
+		 ;
+
+declaration  ::= IDENT:var COLON IDENT:type EQ IDENT:val SEM
+		 ;
 
 istep	     ::= INIT EQ IDENT:stepname SEM
 
