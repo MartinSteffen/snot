@@ -21,6 +21,8 @@ import editor.*;
  */
 public class Gui extends javax.swing.JFrame {
 
+private PopUpFrame poppen;
+    
     /** Creates new form Gui */
     public Gui() {
         initComponents ();
@@ -271,7 +273,10 @@ public class Gui extends javax.swing.JFrame {
 // Add your handling code here:
       System.out.println("Checker Starting...");
       
-      new PopUpPanel().show();       
+      poppen = new PopUpFrame("Schicken ist Foen!", "error");
+      poppen.show();
+      
+      
   }//GEN-LAST:event_jButton2ActionPerformed
 
   private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
