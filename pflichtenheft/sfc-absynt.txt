@@ -1,13 +1,16 @@
-type function_block_body = string
+function_block_body = string
 
-sequential_function_chart ::=  sfc_component list
-sfc_components            ::=  sfc_component list
-sfc_component             ::=  Step of step        
-                           |   Transition of transition  
-                           |   Action of action    
-                     step ::=  SimpleStep of string
-                           |   ActionStep of string * action_association
+sequential_function_chart ::=  steps  : step list
+			       trans  : transition list
+			       action : action     list
+                     step ::=           simplestep
+                           |            actionstep 
+               actionstep ::=  xxx    : string
+                               yyy    : action_association
              initial_step ::=  step
+
+
+
                     steps ::=  string list 
                more_steps ::=  string list
                 step_name ::=  string
