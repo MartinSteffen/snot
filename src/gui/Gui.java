@@ -29,7 +29,7 @@ import simulator.Simulator;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.25 $
+ * @version $Revision: 1.26 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -95,6 +95,7 @@ public class Gui extends javax.swing.JFrame {
         jSeparator5 = new javax.swing.JSeparator();
         RenameSFC = new javax.swing.JMenuItem();
         RemoveSFC = new javax.swing.JMenuItem();
+        ImportExample1 = new javax.swing.JMenuItem();
         ToolsMenu = new javax.swing.JMenu();
         Editor = new javax.swing.JMenuItem();
         CheckSFC = new javax.swing.JMenuItem();
@@ -253,6 +254,16 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             Edit.add(RemoveSFC);
+            
+          ImportExample1.setLabel("Import Example1 SFC");
+            ImportExample1.setText("Import Example1 SFC");
+            ImportExample1.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    ImportExample1ActionPerformed(evt);
+                }
+            }
+            );
+            Edit.add(ImportExample1);
             jMenuBar.add(Edit);
           
         ToolsMenu.setText("Tools");
@@ -430,6 +441,40 @@ public class Gui extends javax.swing.JFrame {
         setJMenuBar(jMenuBar);
         
     }//GEN-END:initComponents
+
+  private void ImportExample1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ImportExample1ActionPerformed
+// Add your handling code here:
+      Project project = null;
+      Editor editor = null;
+      if (session == null) {
+           SnotOptionPane.showMessageDialog(null, "Importing the Example1 SFC failed!\nCannot import a SFC without an active session.\nPlease open or create a new session first!",
+                                            "Error", JOptionPane.ERROR_MESSAGE);
+           return;
+      }
+      
+      SFC sfc1 = Example.getExample1(); 
+       try {
+              project = new Project();
+              project.setSFC(sfc1);
+              editor = new Editor(sfc1);
+              editor.setLocation(EditorLocation);
+              editor.addWindowListener(new GuiWindowListener());
+              project.setEditor(editor);
+              session.addProject(project);
+          }
+          catch (EditorException edex){
+	      SnotOptionPane.showMessageDialog(null, edex.getMessage(), "Editor-Error", JOptionPane.ERROR_MESSAGE);
+          }
+	  catch (Exception ex) {
+               SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+          }
+          
+          project.setChecked(true);
+          project.setActive(false);
+          project.setName("Example1");
+          activeProject = project;
+          updateProjectList();
+  }//GEN-LAST:event_ImportExample1ActionPerformed
 
   private void FileMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FileMenuActionPerformed
 // Add your handling code here:
@@ -612,12 +657,18 @@ public class Gui extends javax.swing.JFrame {
 System.out.print("\nlaunching SMVTranslator ...");
   }
 
+  /**
+   *The Simulator
+   */
+  
   private void SimulatorActionPerformed(java.awt.event.ActionEvent evt) {
-      //Just an Example
-      //activeProject.getSFC();                           //Damit den simulator aufrufen
-      SFC sfc1 = Example.getExample1(); 		// SFC erzeugen
-      try{
-		Simulator sim = new Simulator(sfc1);	// Simulator erzeugen
+      int response = 0;
+      Project project = activeProject;
+      SFC _sfc = project.getSFC();
+      if (activeProject.isChecked())
+      {    
+        try{
+		Simulator sim = new Simulator(_sfc);	// Simulator erzeugen
 
 		sim.Initialize();						// Simulator initialisieren
 
@@ -632,14 +683,23 @@ System.out.print("\nlaunching SMVTranslator ...");
 
 			sim.PrintConfiguration(System.out);
 		}
-      }catch(Exception e){System.out.println("Error while translating the SFC"+e.getMessage());
+        }catch(Exception e){System.out.println("Error while simulating the SFC"+e.getMessage());
                           SnotOptionPane.showMessageDialog(null, "Simulator execution aborted, an error occured.",
                           "Error", JOptionPane.ERROR_MESSAGE);}
-
-      //SnotOptionPane.showMessageDialog(null, "Simulator is not yet implemented!",
-        //                                "Error", JOptionPane.ERROR_MESSAGE);
+      }
+      else {
+          response = SnotOptionPane.showConfirmDialog(null, "The SFC \""+project.getName()+"\" needs to be checked\nbefore the SMV translator can be run!\n\nDo you want to check the SFC now?\n",
+                                            "Warning: SFC is not checked", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+          if (response == JOptionPane.OK_OPTION)
+              CheckSFCActionPerformed(null);
+          else
+              return;
+      }
   }
-
+      
+  /**
+   *The Checker Routine
+   */   
   private void CheckSFCActionPerformed(java.awt.event.ActionEvent evt) {
       Project project = activeProject;
       boolean status = false;
@@ -1028,7 +1088,7 @@ System.out.print(ex.getClass());
 	       try {
                     activeProject = (Project)p.elementAt(index);
                     activeProject.getEditor().show();
-//                    (((Project)p.elementAt(index)).getEditor()).show();
+
 	       }catch(Exception ex){System.out.println("Daneben!!");}
                                                      // hihi! Daneben!! so, so ...
 	   }
@@ -1042,7 +1102,6 @@ System.out.print(ex.getClass());
     pane.add(scrollpane);
 
     projectFrame.show();
-    //projectFrame.pack();
     }
 
     private void updateProjectList(){
@@ -1351,6 +1410,7 @@ System.out.print("\nerr  "+sEx.toString());
     private javax.swing.JSeparator jSeparator5;
     private javax.swing.JMenuItem RenameSFC;
     private javax.swing.JMenuItem RemoveSFC;
+    private javax.swing.JMenuItem ImportExample1;
     private javax.swing.JMenu ToolsMenu;
     private javax.swing.JMenuItem Editor;
     private javax.swing.JMenuItem CheckSFC;
