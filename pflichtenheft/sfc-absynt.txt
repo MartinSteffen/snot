@@ -4,7 +4,6 @@
                                actions    : action   list
                      step ::=  a_name     : string
                                actions    : stepaction list
-               stepaction ::=  
 
                stepaction ::=  qualifier  : action_qualifier
                                a_name     : string  (* simple assignment program *)
@@ -36,6 +35,7 @@
                operand    ::=               PLUS | MINUS | TIMES | DIV  (* Operand als *)
                            |                AND | OR | NEG              (* Konstanten in expr *)
                            |                LESS | GREATER | LEQ | GEQ | EQ 
+                constval  ::=               ...| -2 | -1 | 0 | 1 | ... | true | false
                 type      ::=               inttype
                            |                booltype
 
