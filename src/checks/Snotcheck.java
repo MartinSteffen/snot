@@ -10,7 +10,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.40 2001-07-10 14:07:13 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.41 2001-07-10 14:10:35 swprakt Exp $
  *
  */
 
@@ -196,6 +196,9 @@ public class Snotcheck{
 	}
 
 
+
+
+
 	//Pr"ufung, ob Variable doppelt vorkommt:
 
 	if (decList != null){
@@ -215,6 +218,9 @@ public class Snotcheck{
 	}
 
 
+
+
+
 	//Pr"ufung auf Typgleichheit:
 
 	if (decList != null){
@@ -224,7 +230,8 @@ public class Snotcheck{
 		typeClass1 = decl.type.getClass();
 		className1 = typeClass1.getName();
 		if (var != null){
-		    if (var.type == null) throw new DecListFailure(decl, "Variable has no Type!");}
+		    if (var.type == null){
+			throw new DecListFailure(decl, "Variable has no Type!");}
 		    typeClass2 = var.type.getClass();
 		    className2 = typeClass2.getName();
 		    if (className1 != className2){
@@ -232,15 +239,10 @@ public class Snotcheck{
 		}
 	    }
 	}
-
-
-
-
-
 	return true;
-
+	
     }
-
+    
 
 
 
@@ -513,9 +515,12 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.40 2001-07-10 14:07:13 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.41 2001-07-10 14:10:35 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.40  2001/07/10 14:07:13  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.39  2001/07/10 14:00:01  swprakt
 //	*** empty log message ***
 //	
