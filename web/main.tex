@@ -149,14 +149,19 @@ Die \emph{Baselines} sind hier zur schnelleren Referenz als
 die Nummber des Schnappschusses ist. Als Entwickler mit Zugriff auf das
 Quellcoderepositorium kann man die Entwicklungsschritte sie natürlich
 mittels \cvs{} wieder zurückholen. Zum Ausführen der Archivs speichere man
-die Datei \texttt{snot\_v[x].jar} an einen geeigneten Platz, und setze
+die Datei \texttt{snot\_v[x].jar} an einen geeigneten Platz, und rufe
 
+\begin{verbatim}
+  java -classpath [geeigneter_platz]/snot_v[x].jar gui.Gui
+\end{verbatim}
+auf; alternativ kann man auch fest
 \begin{verbatim}
  export CLASSPATH=[geeigneter_platz]/snot_v[x].jar
 \end{verbatim}
+setzen, dann kann man sich die option \texttt{-classpath} schenken.
 
 
-
+\medskip
 
 \begin{tabular}{llll}
   1. & \url{baselines/snot\_v1.0.jar}{Baseline 1}
