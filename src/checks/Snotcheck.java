@@ -9,7 +9,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.17 2001-06-07 11:00:12 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.18 2001-06-07 11:24:00 swprakt Exp $
  *
  */
 
@@ -19,28 +19,113 @@ public class Snotcheck{
 
     /**Diese Funktion prueft Deklarationsliste
      */
-    private static boolean isDeclarationOk(SFC aSFCObject){
-	//Quellcode fehlt
-	return true;
+
+
+    private static boolean isDeclarationOk(SFC aSFCObject) throws DecListFailure {
+	//Diese Methode prueft, ob in den Dekarationen keine NULL-Werte stehen, ob keine Variable doppelt deklariert ist und ob der in der Keklaration angegebene Typ gleich dem Typ der Variable ist.
+	
+	
+	//Pruefung auf NULL-Werte:
+	
+	LinkedList decList = aSFCObject.declist;
+	Declaration decl,decl2;
+	Variable var,var2;
+	
+	if (decList != null){
+	    for (int i=0; i < decList.size(); i++){
+		decl = (Declaration)decList.get(i);
+		if (decl.var == null || decl.type == null || decl.val == null){
+		    //Wenn einer dieser Eintr"age fehlt, dann werfe eine Exception (DeclarationFailure) mit der entsprechenden Declaration als Argument
+		    throw new DecListFailure(decl, "Missing argument(s) in declaration.");
+			}
+	    }
+	}
+	
+	
+	//Pr"ufung, ob Variable doppelt vorkommt:
+	
+	if (decList != null){
+	    for (int i=0; i < decList.size(); i++){
+		decl = (Declaration)decList.get(i);                          //durchgehen aller Deklarationen
+		var = decl.var;                                 //auslesen der entsprechenden Variable
+		if (var != null){
+		    for (int j=i+1; j < decList.size(); j++){
+			decl2 = (Declaration)decList.get(j);                 //durchgehen aller nachfolgenden Deklarationen
+			var2 = decl2.var;
+			if (var.name == var2.name){            //vergleich aller Variablennamen
+			    throw new DecListFailure(decl, "This variable is declared twice!");
+			}
+		    }
+		}
+	    }	
+	}
+	
+	
+	//Pr"ufung auf Typgleichheit:
+	
+	if (decList != null){
+	    for (int i=1; i < decList.size(); i++){
+		decl = (Declaration)decList.get(i);
+		var = decl.var;
+		if (var != null){
+		    if (decl.type != var.type){
+			throw new DecListFailure(decl, "Type Error!");}   //Der Typ der Variable stimmt nicht mit dem Typ der Deklaration "uberein
+		}
+	    }
+	}
+	
+	
+	
+	
+	
+	return true;	
+	
     }
+    
+    
+
+
+
+
+
+
 
     /**Diese Funktion prueft, ob alle Actions vollstaendig und korrekt sind
      */
-    private static boolean isAllActionOk(SFC aSFCObject){
-	//Quellcode fehlt
+    private static boolean isAllActionOk(SFC aSFCObject) throws ActionFailure {
+	
+	LinkedList actionList = aSFCObject.actions;
+	Action action;
+	
+	for (int i=0; i < actionList.size(); i++){
+	    action = (Action)actionList.get(i);
+	    if (action.sap == null){throw new ActionFailure(action, "Missing sap in this Action.");}
+	    if (action.a_name == null){throw new ActionFailure(action, "Action without a name.");}
+	}
+
+
 	return true;
     }
 
+
+
+
+
+
+
+
+
+
     /**Diese Funktion prueft alle Steps(vollstaendig, korrekt)
      */
-    private static boolean isAllStepOk(SFC aSFCObject){
+    private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 	//Quellcode fehlt
 	return true;
     }
 
     /**Diese Funktion prueft, ob der istep vorhanden ist
      */
-    private static boolean isThereAnIStep(SFC aSFCObject){
+    private static boolean isThereAnIStep(SFC aSFCObject) throws IStepException{
 	if (aSFCObject.istep == null) {return false;}
 	return true;
     }
@@ -54,23 +139,13 @@ public class Snotcheck{
 
 	LinkedList translist = aSFCObject.transs;
 	Transition trans;
-	boolean allesOK = true;
 	
 	if (translist!=null){
 	    for (int i=0; i < translist.size(); i++){
 		trans = (Transition)translist.get(i);
 		if (trans.source == null || trans.target == null || trans.guard == null){
-		    //Wenn einer der Werte fehlt, dann:
-		    // - setze das Flag (wenn es implementiert wurde) und merke dir, dass ein Fehler auftrat
-		    //oder
-		    // - werfe eine Exception (TransitionFailure) mit der entsprechenden Transition als Argument
-		    throw new TransitionFailure(trans, "Bei der angegebenen Transition fehlt mindestens eines der Argumente.");
-		    
-		    /*Hier steht der Programmtext, der verwendet werden sollte,
-		      wenn sog. Flags implementiert sind:
-		      trans.setFlag(1);  //Flag besagt, dass ein Fehler auftrat
-		      allesOK = false;
-		    */
+		    //Wenn einer der Werte fehlt, dann werfe eine Exception (TransitionFailure) mit der entsprechenden Transition als Argument
+		    throw new TransitionFailure(trans, "Missing argument(s) in transition.");
 		}
 	    }
 	}
@@ -119,9 +194,12 @@ public class Snotcheck{
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.17 2001-06-07 11:00:12 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.18 2001-06-07 11:24:00 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.17  2001/06/07 11:00:12  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.16  2001/06/05 14:42:17  swprakt
 //	*** empty log message ***
 //	
