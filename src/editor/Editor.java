@@ -134,8 +134,8 @@ public class Editor extends JFrame {
   }
 
   private void setSFC(SFC anSFC) throws EditorException {
-    if (sfc != null) 
-      sfc = anSFC;
+    if (anSFC != null) 
+	sfc = anSFC;
     else       
       throw new EditorException("Anwendungsfehler: SFC = null");
   }
