@@ -3,6 +3,7 @@
 \newcommand{\Snot}{\textsc{Snot}}
 \newcommand{\cvs}{cvs}
 \newcommand{\Java}{\textsc{Java}}
+\newcommand{\Cplusplus}{C$^{++}$}
 \newcommand{\javadoc}{\textsc{javadoc}}
 
 
@@ -29,14 +30,14 @@
 
 
 
-%\renewcommand{\inputcode}[2][Code]{
-%  {\small
-%  \mbox{}
-%  \newline\nopagebreak{}
-%  \mbox{}
-%  \hrulefill
-%  \lstinputlisting{#1/#2.java}
-%  \hrulefill}}
+\newcommand{\inputcode}[2][.]{
+  {\small
+  \mbox{}
+  \newline\nopagebreak{}
+  \mbox{}
+  \hrulefill
+  \lstinputlisting{#1/#2}
+  \hrulefill}}
 
 \newenvironment{code}{%
 %  \small\mbox{}\nopagebreak{}\mbox\hrulefill{}

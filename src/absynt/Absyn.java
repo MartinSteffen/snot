@@ -1,8 +1,6 @@
 package absynt;
 import java.io.Serializable;
 
-
-
 /**
  * Abstract class to provide coordinates and locations.
 
@@ -11,7 +9,7 @@ import java.io.Serializable;
  * so in most cases, the code is self-explanatory.
  * 
  * @author Initially provided by Martin Steffen.
- * @version  $Id: Absyn.java,v 1.2 2001-04-20 05:36:14 swprakt Exp $
+ * @version  $Id: Absyn.java,v 1.3 2001-04-27 08:52:37 swprakt Exp $
  */
 
 
@@ -28,9 +26,12 @@ abstract public class Absyn implements Serializable {
 //	Abstract Syntax for Mist programs
 //	------------------------------------
 //
-//	$Id: Absyn.java,v 1.2 2001-04-20 05:36:14 swprakt Exp $
+//	$Id: Absyn.java,v 1.3 2001-04-27 08:52:37 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.2  2001/04/20 05:36:14  swprakt
+//	OK
+//	
 //	Revision 1.1  2001/04/19 12:21:13  swprakt
 //	*** empty log message ***
 //	
