@@ -35,7 +35,7 @@ import simulator.Simulator;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.39 $
+ * @version $Revision: 1.40 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -81,7 +81,7 @@ public class Gui extends javax.swing.JFrame {
 
         this.setResizable(false);
 	this.pack();
-	//this.setSize(700,200);
+	//this.setSize(1000,170);
         setLocation(GuiLocation);
     }
 
@@ -147,7 +147,17 @@ public class Gui extends javax.swing.JFrame {
           FileMenu.setText("Session");
 
 
-          OpenSession.setLabel("Open Session");
+          NewSession.setLabel("New Session");
+          NewSession.setName("newSession");
+          NewSession.addActionListener(new java.awt.event.ActionListener() {
+              public void actionPerformed(java.awt.event.ActionEvent evt) {
+                  NewSessionActionPerformed(evt);
+              }
+          }
+          );
+          FileMenu.add(NewSession);
+
+	  OpenSession.setLabel("Open Session");
             OpenSession.setName("openSession");
             OpenSession.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -157,15 +167,18 @@ public class Gui extends javax.swing.JFrame {
             );
             FileMenu.add(OpenSession);
 
-          NewSession.setLabel("New Session");
-            NewSession.setName("newSession");
-            NewSession.addActionListener(new java.awt.event.ActionListener() {
+
+	 CloseSession.setLabel("Close Session");
+            CloseSession.setName("closeSession");
+            CloseSession.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    NewSessionActionPerformed(evt);
+                    CloseSessionActionPerformed(evt);
                 }
             }
             );
-            FileMenu.add(NewSession);
+            FileMenu.add(CloseSession);
+
+
 
           FileMenu.add(jSeparator2);
 
@@ -189,15 +202,6 @@ public class Gui extends javax.swing.JFrame {
             );
             FileMenu.add(SaveAsSession);
 
-          CloseSession.setLabel("Close Session");
-            CloseSession.setName("closeSession");
-            CloseSession.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    CloseSessionActionPerformed(evt);
-                }
-            }
-            );
-            FileMenu.add(CloseSession);
 
           FileMenu.add(jSeparator3);
 
@@ -530,7 +534,9 @@ public class Gui extends javax.swing.JFrame {
           ButtonNewSession.setToolTipText("New Session");
           ButtonNewSession.setMaximumSize(new java.awt.Dimension(180, 35));
           ButtonNewSession.setName("buttonNewSession");
-          ButtonNewSession.setText("New Session");
+          //ButtonNewSession.setText("New Session");
+	  ImageIcon nsicon = new ImageIcon("gui/icons/newsession.gif");
+	  ButtonNewSession.setIcon((Icon)nsicon);
           ButtonNewSession.addActionListener(new java.awt.event.ActionListener() {
               public void actionPerformed(java.awt.event.ActionEvent evt) {
                   NewSessionActionPerformed(evt);
@@ -545,7 +551,9 @@ public class Gui extends javax.swing.JFrame {
           ButtonOpenSession.setToolTipText("Open Session");
           ButtonOpenSession.setMaximumSize(new java.awt.Dimension(180, 35));
           ButtonOpenSession.setName("buttonOpenSession");
-	  ButtonOpenSession.setText("Open Session");
+	  //ButtonOpenSession.setText("Open Session");
+	  ImageIcon osicon = new ImageIcon("gui/icons/openSession.gif");
+	  ButtonOpenSession.setIcon((Icon)osicon);
           ButtonOpenSession.addActionListener(new java.awt.event.ActionListener() {
               public void actionPerformed(java.awt.event.ActionEvent evt) {
                   OpenSessionActionPerformed(evt);
@@ -554,13 +562,31 @@ public class Gui extends javax.swing.JFrame {
           );
           ToolBarFiles.add(ButtonOpenSession);
 
+	  // The CloseSession Button
+       ButtonCloseSession.setPreferredSize(new java.awt.Dimension(90, 35));
+          ButtonCloseSession.setToolTipText("Close Session");
+          ButtonCloseSession.setMaximumSize(new java.awt.Dimension(180, 35));
+          ButtonCloseSession.setName("buttonCloseSession");
+          //ButtonCloseSession.setText("Close Session");
+	  ImageIcon csicon = new ImageIcon("gui/icons/closesession.gif");
+	  ButtonCloseSession.setIcon((Icon)csicon);
+          ButtonCloseSession.addActionListener(new java.awt.event.ActionListener() {
+              public void actionPerformed(java.awt.event.ActionEvent evt) {
+                  CloseSessionActionPerformed(evt);
+              }
+          }
+          );
+          ToolBarFiles.add(ButtonCloseSession);
+
 
 	// The SaveSession Button
        ButtonSaveSession.setPreferredSize(new java.awt.Dimension(90, 35));
           ButtonSaveSession.setToolTipText("Save Session");
           ButtonSaveSession.setMaximumSize(new java.awt.Dimension(180, 35));
           ButtonSaveSession.setName("buttonSaveSession");
-          ButtonSaveSession.setText("Save Session");
+          //ButtonSaveSession.setText("Save Session");
+	  ImageIcon ssicon = new ImageIcon("gui/icons/savesession.gif");
+	  ButtonSaveSession.setIcon((Icon)ssicon);
           ButtonSaveSession.addActionListener(new java.awt.event.ActionListener() {
               public void actionPerformed(java.awt.event.ActionEvent evt) {
                   SaveSessionActionPerformed(evt);
@@ -574,7 +600,9 @@ public class Gui extends javax.swing.JFrame {
           ButtonSaveAsSession.setToolTipText("Save Session As");
           ButtonSaveAsSession.setMaximumSize(new java.awt.Dimension(180, 35));
           ButtonSaveAsSession.setName("buttonSaveAsSession");
-          ButtonSaveAsSession.setText("Save Session As");
+          //ButtonSaveAsSession.setText("Save Session As");
+	  ImageIcon ssaicon = new ImageIcon("gui/icons/savesessionas.gif");
+	  ButtonSaveAsSession.setIcon((Icon)ssaicon);
           ButtonSaveAsSession.addActionListener(new java.awt.event.ActionListener() {
               public void actionPerformed(java.awt.event.ActionEvent evt) {
                   SaveAsSessionActionPerformed(evt);
@@ -583,19 +611,7 @@ public class Gui extends javax.swing.JFrame {
           );
           ToolBarFiles.add(ButtonSaveAsSession);
 
-       // The CloseSession Button
-       ButtonCloseSession.setPreferredSize(new java.awt.Dimension(90, 35));
-          ButtonCloseSession.setToolTipText("Close Session");
-          ButtonCloseSession.setMaximumSize(new java.awt.Dimension(180, 35));
-          ButtonCloseSession.setName("buttonCloseSession");
-          ButtonCloseSession.setText("Close Session");
-          ButtonCloseSession.addActionListener(new java.awt.event.ActionListener() {
-              public void actionPerformed(java.awt.event.ActionEvent evt) {
-                  CloseSessionActionPerformed(evt);
-              }
-          }
-          );
-          ToolBarFiles.add(ButtonCloseSession);
+
 
 
 	 // The ImportSFC Button
@@ -603,7 +619,9 @@ public class Gui extends javax.swing.JFrame {
           ButtonImportSFC.setToolTipText("Import SFC");
           ButtonImportSFC.setMaximumSize(new java.awt.Dimension(180, 35));
           ButtonImportSFC.setName("buttonImportSFC");
-          ButtonImportSFC.setText("Import SFC");
+          //ButtonImportSFC.setText("Import SFC");
+	  ImageIcon isfcicon = new ImageIcon("gui/icons/importsfc.gif");
+	  ButtonImportSFC.setIcon((Icon)isfcicon);
           ButtonImportSFC.addActionListener(new java.awt.event.ActionListener() {
               public void actionPerformed(java.awt.event.ActionEvent evt) {
                   ImportSFCActionPerformed(evt);
@@ -617,7 +635,9 @@ public class Gui extends javax.swing.JFrame {
           ButtonExportSFC.setToolTipText("Export SFC");
           ButtonExportSFC.setMaximumSize(new java.awt.Dimension(180, 35));
           ButtonExportSFC.setName("buttonExportSFC");
-          ButtonExportSFC.setText("Export SFC");
+          //ButtonExportSFC.setText("Export SFC");
+	  ImageIcon esfcicon = new ImageIcon("gui/icons/exportsfc.gif");
+	  ButtonExportSFC.setIcon((Icon)esfcicon);
           ButtonExportSFC.addActionListener(new java.awt.event.ActionListener() {
               public void actionPerformed(java.awt.event.ActionEvent evt) {
                   ExportSFCActionPerformed(evt);
