@@ -2,6 +2,7 @@ package utils;
 
 import absynt.*;
 import java.io.PrintStream;
+import java.util.*;
 
 public class PrettyPrint {
 
@@ -53,28 +54,14 @@ public class PrettyPrint {
 	if(absynt != null) {
 	    if(absynt instanceof SFC)
 		output((SFC)absynt);
-	    if(absynt instanceof StepList)
-		output((StepList)absynt);
-	    if(absynt instanceof TransitionList)
-		output((TransitionList)absynt);
-	    if(absynt instanceof ActionList)
-		output((ActionList)absynt);
-	    if(absynt instanceof StepActionList)
-		output((StepActionList)absynt);
-	    if(absynt instanceof StmtList)
-		output((StmtList)absynt);
 	    if(absynt instanceof Transition)
 		output((Transition)absynt);
 	    if(absynt instanceof Action)
 		output((Action)absynt);
 	    if(absynt instanceof StepAction)
 		output((StepAction)absynt);
-	    if(absynt instanceof ActionQualifier)
-		output((ActionQualifier)absynt);
 	    if(absynt instanceof Step)
 		output((Step)absynt);
-	    if(absynt instanceof DeclarationList)
-		output((DeclarationList)absynt);
 	    if(absynt instanceof Declaration)
 		output((Declaration)absynt);
 	    if(absynt instanceof Skip)
@@ -111,62 +98,40 @@ public class PrettyPrint {
 	PrettyPrint prettyprint = new PrettyPrint(column + tab, tab);
 	prettyprint.print(sfc.istep);
 	PrettyPrint pp_long = new PrettyPrint(column + tab, tab, true);
-	pp_long.print(sfc.steps);
-	prettyprint.print(sfc.transs);
-	prettyprint.print(sfc.actions);
-	prettyprint.print(sfc.declist);
+	System.out.println(whiteSpace(column) + "[StepList] ");
+	for (Iterator i = sfc.steps.iterator(); i.hasNext();)
+	    pp_long.print((Step)i.next());
+	System.out.println(whiteSpace(column) + "[TransitionList] ");
+	for (Iterator i = sfc.transs.iterator(); i.hasNext();)
+	    prettyprint.print((Transition)i.next());
+	System.out.println(whiteSpace(column) + "[ActionList] ");
+	for (Iterator i = sfc.actions.iterator(); i.hasNext();)
+	    prettyprint.print((Action)i.next());
+	System.out.println(whiteSpace(column) + "[DeclarationList] ");
+	for (Iterator i = sfc.declist.iterator(); i.hasNext();)
+	    prettyprint.print((Declaration)i.next());
     }
     
-    public void output(StepList steplist) {
-	System.out.println(whiteSpace(column) + "[StepList] ");
-	PrettyPrint prettyprint =
-	    new PrettyPrint(column + tab, tab, steps_long);
-	for(; steplist != null; steplist = steplist.next)
-	    prettyprint.print(steplist.head);
-    }
-
-    public void output(TransitionList transitionlist){
-	System.out.println(whiteSpace(column) + "[TransitionList] ");
-	PrettyPrint prettyprint = new PrettyPrint(column + tab, tab);
-	for(; transitionlist != null; transitionlist = 
-		transitionlist.next)
-	    prettyprint.print(transitionlist.head);
-    }
-
-    public void output(ActionList actionlist) {
-	System.out.println(whiteSpace(column) + "[ActionList] ");
-	PrettyPrint prettyprint = new PrettyPrint(column + tab, tab);
-	for(; actionlist != null; actionlist = actionlist.next)
-	    prettyprint.print(actionlist.head);
-    }
-
-    public void output(StepActionList stepactionlist) {
-	System.out.println(whiteSpace(column) + "[StepActionList] ");
-	PrettyPrint prettyprint = new PrettyPrint(column + tab, tab);
-	for(; stepactionlist != null; stepactionlist = stepactionlist.next)
-	    prettyprint.print(stepactionlist.head);
-    }
-
-    public void output(StmtList stmtlist) {
-	System.out.println(whiteSpace(column) + "[StmtList] ");
-	PrettyPrint prettyprint = new PrettyPrint(column + tab, tab);
-	for(; stmtlist != null; stmtlist = stmtlist.next)
-	    prettyprint.print(stmtlist.head);
-    }
-
     public void output(Transition transition){
 	System.out.println(whiteSpace(column) + "[Transition] " );
-	PrettyPrint prettyprint = new PrettyPrint(column + tab, tab);
-	prettyprint.print(transition.source);
-	prettyprint.print(transition.guard);
-	prettyprint.print(transition.target);
+	PrettyPrint pp = new PrettyPrint(column + tab, tab);
+	PrettyPrint prettyprint = new PrettyPrint(column + 2*tab, tab);
+	pp.print("[SourceSteps]");
+	for (Iterator i = transition.source.iterator(); i.hasNext();)
+	    prettyprint.print((Step)i.next());
+	pp.print(transition.guard);
+	pp.print("[TargetSteps] ");
+	for (Iterator i = transition.target.iterator(); i.hasNext();)
+	    prettyprint.print((Step)i.next());
     }
 
     public void output(Action action){
 	System.out.println(whiteSpace(column) + "[Action] "
 			   + action.a_name);
-	PrettyPrint prettyprint = new PrettyPrint(column + tab, tab);
-	prettyprint.print(action.sap);
+	PrettyPrint prettyprint = new PrettyPrint(column + 2*tab, tab);
+	System.out.println(whiteSpace(column+tab) + "[StmtList] ");
+	for (Iterator i = action.sap.iterator(); i.hasNext();)
+	    prettyprint.print((Stmt)i.next());
     }
 
     public void output(StepAction stepaction){
@@ -188,16 +153,9 @@ public class PrettyPrint {
 	System.out.println(whiteSpace(column) + "[Step] " + step.name);
 	if (steps_long) {
 	    PrettyPrint prettyprint = new PrettyPrint(column + tab, tab);
-	    prettyprint.print(step.actions);
+	    for (Iterator i = step.actions.iterator(); i.hasNext();)
+		prettyprint.print((StepAction)i.next());
 	}
-    }
-
-    public void output(DeclarationList declist) {
-	System.out.println(whiteSpace(column) + "[DeclarationList] ");
-	PrettyPrint prettyprint =
-	    new PrettyPrint(column + tab, tab, steps_long);
-	for(; declist != null; declist = declist.next)
-	    prettyprint.print(declist.head);
     }
 
     public void output(Declaration dec) {
