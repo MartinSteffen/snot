@@ -1,0 +1,48 @@
+     Parser
+     ******
+
+The parser is used to read a SFC given as a file in an ascii representation.
+It creates an abstract SFC from this representation.  The correct syntax is
+given below:
+
+
+begin
+ vars =
+ [
+    var1 : bool = false;
+    var2 : int  = 5;
+    ...
+    varn : bool = false
+ ];
+
+ steps =
+ [
+   (s1,[]);
+   (s2,[(N,act1)]);
+   (s3,[(N,act2); (N,act3)]);
+   (s4,[]);
+   ...
+   (sn,[])
+ ];
+
+ init = s1;
+
+ actions =
+ [
+    act1 = [var1:=true];
+    act2 = [var2:=2; var1:=false];
+    ...
+    actn = [var1:=true]
+ ];
+
+ transitions =
+ [
+    [ s1 ] -> [ s2; s3 ];
+    [ s2; s3 ] -> [ s4 ] when (not var1);
+    [ s1; s4 ] -> [ s2; s3 ] when (var2 = 4);
+    ...
+    [ s4 ] -> [ s1 ]
+ ]
+
+end
+
