@@ -9,7 +9,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.23 2001-06-12 14:55:02 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.24 2001-06-12 15:05:00 swprakt Exp $
  *
  */
 
@@ -107,7 +107,7 @@ public class Snotcheck{
 	String name1,name2;
 	Action action,action2;
 	
-	if (actionList = null){return true;}    //wenn in der actionList keine Eintraege vorhanden sind, kann auch kein Eintrag fehlerhaft sein, also sind alle Eintraege korrekt
+	if (actionList == null){return true;}    //wenn in der actionList keine Eintraege vorhanden sind, kann auch kein Eintrag fehlerhaft sein, also sind alle Eintraege korrekt
 
 	//Pruefung auf Null-Werte
 	for (int i=0; i < actionList.size(); i++){
@@ -129,6 +129,14 @@ public class Snotcheck{
 	}
 
 
+	/*Sap sap1;
+	Stmt stmt1;
+	Class class1;
+	String class1Name;
+
+
+
+
 	//nun muessen nur noch die einzelnen sap`s ueberprueft werden:
 	for (int i=0; i < actionList.size(); i++){
 	    action = (Action)actionList.get(i);
@@ -140,14 +148,14 @@ public class Snotcheck{
 		if (class1Name == "Assign" || class1Name == "Skip"){
 		    if (class1Name == "Assign"){
 			//pruefen, ob var und val vernuenftig sind
-			if (stmt1.var == null){throw new ActionFailure(action, "This statement has no var.")}
-			if (stmt1.val == null){throw new ActionFailure(action, "This statement has no val.")}
+			if (stmt1.var == null){throw new ActionFailure(action, "This statement has no var.");}
+			if (stmt1.val == null){throw new ActionFailure(action, "This statement has no val.");}
 		    }
-		} else {throw new ActionFailure(null, "Error, that can`t be solved."}
+		} else {throw new ActionFailure(null, "Error, that can`t be solved.");}
 	    }
 
 
-	}
+	}*/
 
 	return true;
     }
@@ -265,9 +273,12 @@ public class Snotcheck{
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.23 2001-06-12 14:55:02 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.24 2001-06-12 15:05:00 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.23  2001/06/12 14:55:02  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.21  2001/06/08 09:00:56  swprakt
 //	*** empty log message ***
 //	
