@@ -1,5 +1,5 @@
 ###########################################################
-## $Id: Errors.txt,v 1.4 2001-05-30 05:36:49 swprakt Exp $
+## $Id: Errors.txt,v 1.5 2001-05-30 05:37:47 swprakt Exp $
 ###########################################################
 
 
@@ -12,7 +12,7 @@
 // Muster
 //
 // #Number: 	<Error number> 
-// #Autor: 	<name> <e-mail>
+// #Reporter: 	<name> <e-mail>
 // #Subject: 	<short title>
 // #Status: 	reported | processing | fixed (by whom) | confirmed
 // #Description: 
@@ -25,7 +25,7 @@
 
 
 #Number: 	2
-#Autor:   	Martin Steffen (ms)
+#Reporter:   	Martin Steffen (ms)
 #Subject:	Verletzung der Coding Conventions in editor
 #Status:        reported
 #Description:   vermutlich nicht kritisch.
@@ -35,7 +35,7 @@
 
 
 #Number: 	1
-#Autor:   	Martin Steffen (ms)
+#Reporter:   	Martin Steffen (ms)
 #Subject:	Kompilationsfehler editor
 #Status:        reported
 #Description:   cd $SNOT/src/editor; make  
