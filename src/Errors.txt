@@ -1,5 +1,5 @@
 ###########################################################
-## $Id: Errors.txt,v 1.12 2001-07-13 07:42:49 swprakt Exp $
+## $Id: Errors.txt,v 1.13 2001-07-13 07:45:15 swprakt Exp $
 ###########################################################
 
 
@@ -30,7 +30,7 @@
 #number: 	8
 #reporter: 	Karsten (kst)
 #where:         checks
-#subject: 	vermutlich runtime error
+#subject: 	runtime error
 #status: 	reported  
 #description:   bei allen mit Parser eingelesenen SFC's steigt check aus mit:
 java.lang.NullPointerException
