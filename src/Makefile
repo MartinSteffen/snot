@@ -1,6 +1,6 @@
 #----------------------------------------------------------------------
 # developers' top-level Makefile for the Siff project
-# $Id: Makefile,v 1.5 2001-05-04 08:59:35 swprakt Exp $
+# $Id: Makefile,v 1.6 2001-05-04 09:00:08 swprakt Exp $
 #----------------------------------------------------------------------
 
 # The targets installing gobal web-infos can be executed only
@@ -65,13 +65,11 @@ clean:
 	(cd ./utils; make clean)
 	(cd ./editor; make clean)
 	(cd ./gui; make clean)
-	(cd ./checks1; make clean) 
-#	(cd ./checks2; make clean) 
+	(cd ./checks; make clean)
 	(cd ./parser; make clean)
 	(cd ./modcheck; make clean)
 	(cd ./simulator; make clean)
-	(cd ./position1; make clean)
-	(cd ./position2; make clean)
+	(cd ./position; make clean)
 	(cd $(LOCALDOCDIR); make clean)
 
 
