@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.font.*;
+import java.awt.event.*;
 import javax.swing.*;
 import absynt.*;
 import editor.StepPosition;
@@ -18,36 +19,58 @@ import editor.StepPosition;
      final static public int INSERT_STEP = 1;
      final static public int INSERT_TRANS = 2;
      final static public int DELETE = 3;
+     
+     private Step SourceStep;
 
      private void paintTrans(Transition Trans, Graphics2D G2D) { 
       Step step; 
       LinkedList stepLL = Trans.source; 
-      float minX = 10000.0f, maxX = 0.0f; 
+      Step SourceStep = (Step)Trans.source.get(0), DestStep = (Step)Trans.target.get(0);
+      Rectangle2D SourceRect = ((StepPosition)(SourceStep.pos)).Bounds, DestRect = ((StepPosition)(DestStep.pos)).Bounds;
+      double deltaX, deltaY;
+      GeneralPath TransLine = new GeneralPath();
       int i; 
  
+      deltaX = SourceRect.getCenterX() - DestRect.getCenterX();
+      deltaY = SourceRect.getCenterY() - DestRect.getCenterY();
+      
+      TransLine.moveTo((new Double(SourceRect.getCenterX())).floatValue(), (new Double(SourceRect.getCenterY())).floatValue());
+      TransLine.lineTo((new Double(SourceRect.getCenterX())).floatValue(), (new Double(SourceRect.getCenterY() - deltaY/2)).floatValue());
+      TransLine.lineTo((new Double(DestRect.getCenterX())).floatValue(), (new Double(SourceRect.getCenterY() - deltaY/2)).floatValue());
+      TransLine.lineTo((new Double(DestRect.getCenterX())).floatValue(),(new Double(DestRect.getCenterY())).floatValue());
+      G2D.draw(TransLine);
+      
+      /*
       if (stepLL != null) { 
         for (i=0; i < stepLL.size(); i++) { 
-          step = (Step)stepLL.get(i); 
-          G2D.draw(new Rectangle2D.Float(step.pos.x*30f, step.pos.y*30f, 30.0f, 30.0f)); 
-          G2D.drawString(step.name, step.pos.x*30f, (step.pos.y+1)*30f); 
-          if (step.pos.x < minX) minX=step.pos.x; 
-          if (step.pos.x > maxX) maxX=step.pos.x; 
+          step = (Step)stepLL.get(i);           
         } 
       } 
  
       stepLL = Trans.target; 
       if (stepLL != null) { 
-        for (i=0; i < stepLL.size(); i++) { 
-          step = (Step)stepLL.get(i); 
-          G2D.draw(new Rectangle2D.Float(step.pos.x*30f, step.pos.y*30f, 30.0f, 30.0f)); 
-          G2D.drawString(step.name, step.pos.x*30f, (step.pos.y+1)*30f); 
+        for (i=0; i < stepLL.size(); i++) {           
         } 
       } 
+       */
     } 
  
+    private void paintStep(Step step, Graphics2D G2D) { 
+      StepPosition StepPos = (StepPosition)(step.pos);
+      Rectangle2D StrBounds = G2D.getFontMetrics().getStringBounds(step.name, G2D);
+      LineMetrics LnMetrics = G2D.getFontMetrics().getLineMetrics(step.name, G2D);
+      StepPos.Bounds.setFrame(StepPos.Bounds.getX(), StepPos.Bounds.getY(), StrBounds.getWidth(), StrBounds.getHeight());
+      G2D.draw(StepPos.Bounds); 
+      G2D.drawString(step.name, 
+        (new Double(StepPos.Bounds.getX())).floatValue(), (new Double(StepPos.Bounds.getMaxY() - LnMetrics.getDescent())).floatValue()); 
+    }
+      
+    
     private void paintSFC(Graphics2D G2D) { 
       Transition Trans; 
+      Step       step;
       LinkedList transLL = sfc.transs; 
+      LinkedList stepsLL = sfc.steps;
  
       if (transLL != null) { 
         for (int i=0; i < transLL.size(); i++) { 
@@ -55,6 +78,12 @@ import editor.StepPosition;
           paintTrans(Trans, G2D); 
         } 
       } 
+      if (stepsLL != null) {
+        for (int i=0; i < stepsLL.size(); i++) { 
+          step = (Step)stepsLL.get(i); 
+          paintStep(step, G2D); 
+        }   
+      }
  
     } 
  
@@ -75,14 +104,58 @@ import editor.StepPosition;
       enableEvents(AWTEvent.MOUSE_EVENT_MASK);
     } 
 
-    protected void processMouseEvent(MouseEvent e) {
+    private Step checkStepHit(double PosX, double PosY) {
+      LinkedList stepsLL = sfc.steps;
+      Step step;
+      StepPosition StepPos;
+       
+      if (stepsLL != null) {
+        for (int i=0; i < stepsLL.size(); i++) { 
+          step = (Step)stepsLL.get(i); 
+          StepPos = (StepPosition)(step.pos);
+          if (StepPos.Bounds.contains(new Point2D.Double(PosX, PosY))) return(step);          
+        }   
+      }
+      return(null);                
+    }
+    
+    protected void processMouseEvent(MouseEvent e) {      
+      Step step;
 	//super.processMouseEvent(e);
       if (e.getID() == MouseEvent.MOUSE_PRESSED) {
-        Step step = new Step("Neuer Step");
-        step.Pos = new StepPosition(e.getX().doubleValue()/30, e.getY().doubleValue()/30, 1f, 1f);
-        sfc.steps.add(step);
-	repaint();
-	System.out.println("Mouse");
+        switch (editorAction) {
+          case INSERT_STEP : { 
+            step = new Step("Neuer Step");        
+            step.pos = new StepPosition((new Integer(e.getX())).doubleValue(), (new Integer(e.getY())).doubleValue(), 100f, 100f);
+            sfc.steps.add(step);
+          }
+          case INSERT_TRANS : {
+            SourceStep = checkStepHit((new Integer(e.getX())).doubleValue(), (new Integer(e.getY())).doubleValue());
+          }  
+        }
+	repaint();	                                            
       }
+      if (e.getID() == MouseEvent.MOUSE_RELEASED) {
+        switch (editorAction) {
+            case INSERT_TRANS : {
+                if (SourceStep != null) {
+                    step = checkStepHit((new Integer(e.getX())).doubleValue(), (new Integer(e.getY())).doubleValue());
+                    if (step == null) {
+                      SourceStep = null;
+                      System.out.println("DestStep = null");
+                    } else { 
+                        LinkedList SourceSteps = new LinkedList();
+                        SourceSteps.add(SourceStep);
+                        LinkedList DestSteps = new LinkedList();
+                        DestSteps.add(step);
+                        Transition Trans = new Transition(SourceSteps, null, DestSteps);
+                        sfc.transs.add(Trans);
+                        repaint();
+                    }                    
+                } // if (SourceStep ... 
+                else System.out.println("SourceStep = null");
+            }
+        } // switch     
+      }  // if
     } 
   } 

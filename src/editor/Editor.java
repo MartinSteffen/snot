@@ -102,17 +102,16 @@ public class Editor extends JFrame {
    * setzt den Dateinamen 
    * (nur zur Anzeige in der Titelleise, Datei-IO macht ansonsten die GUI-Gruppe) 
    */ 
-  private void setFilename(String Filename) { 
+  public void setSFCName(String Filename) { 
     strName = new String(Filename); 
-    setTitle("Editor - " + strName); 
-    boolModified = false; 
+    setTitle("Editor - " + strName);     
   } 
  
   private void setSFC(SFC anSFC) throws EditorException { 
     if (anSFC != null)  
 	sfc = anSFC; 
     else        
-      throw new EditorException("Anwendungsfehler: SFC = null"); 
+      throw new EditorException("Application-Error: SFC = null"); 
   } 
  
   private void proccessTrans(Transition Trans, int PosY) { 
@@ -172,7 +171,7 @@ public class Editor extends JFrame {
    * Übergeben werden muss ein SFC<>null 
    */ 
   public Editor(SFC anSFC) throws EditorException { 
-    setFilename("NoName"); 
+    setSFCName("NoName"); 
     setSize(600, 420); 
     setSFC(anSFC); 
  
@@ -260,22 +259,13 @@ public class Editor extends JFrame {
     boolModified = Value; 
     if (boolModified) boolChecked = false; 
   } 
- 
-  /** 
-   * gibt an, ob der SFC gecheckt ist 
-   * @see #setChecked() 
-   */ 
-  public boolean isChecked() { 
-    return(boolChecked); 
-  } 
- 
-  /** 
-   * teilt dem Editor mit, dass sein SFC gecheckt ist - sobald der SFC im Editor 
-   * geändert wird, ist der SFC für den Editor nicht mehr gecheckt 
-   * @see #isModified() 
-   */ 
-  public void setChecked() { 
-    boolChecked =  true; 
-  } 
+  
+  public void clearModified() {
+    setModified(false);
+  }
+  
+  public SFC getSFC() {
+      return(sfc);
+  }
  
 } 
