@@ -646,7 +646,7 @@ public class Editor extends JFrame implements ActionListener {
   	}
   }
   
-  Expression_Parser ExprEditor = new Expression_Parser(this, sfc);  
+  Expression_Parser ExprEditor = null;
   // DataActTable's Statement-Editor:
   class ActionEditor extends DefaultCellEditor {        
     int column=0, row=0;
@@ -696,6 +696,7 @@ public class Editor extends JFrame implements ActionListener {
     //setSize(600,420);
     setVisible(true);
     setSFC(anSFC); 
+    ExprEditor = new Expression_Parser(this, sfc);  
     SelectedLL = new LinkedList();
  
     // -- TOOL-BAR: ------------------------------------------------------------
