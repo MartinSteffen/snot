@@ -33,7 +33,7 @@ import javax.swing.event.*;
  *  create new, import or export Projects.
  *
  * @author  Hans Theman and Ingo Schiller
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  */
 
 public class Session extends java.lang.Object implements Serializable {
@@ -236,31 +236,36 @@ public class Session extends java.lang.Object implements Serializable {
     public void save(File _file) throws Exception {
         Enumeration e = null;
         Project p = null;
+	Editor editor = null;
         
         if (_file != null) {
             this.setFile(_file); // ... else use the old file
         }
 
+	Hashtable h = this.table;
         e = this.table.elements();
+	this.table = null;
         ObjectOutputStream outStream = new ObjectOutputStream(new FileOutputStream(this.file));
         try {
             outStream.writeObject(this); // throws IOException!!!!
-            outStream.writeInt(this.table.size()); // throws IOException!!!!
+            outStream.writeInt(h.size()); // throws IOException!!!!
             while (e.hasMoreElements()) {
                 p = (Project)e.nextElement();
                 p.setEnvironment();
                 p.clearModified();
+		editor = p.getEditor();
+		p.setEditor(null);	       
                 outStream.writeObject(p); // throws IOException!!!!
+		p.setEditor(editor);
             }
         }
 //        catch (Exception ex){ex.printStackTrace();}
 	finally {
-            outStream.close(); // throws IOException!!!!
+	    this.table = h;
+	    outStream.flush(); // throws IOException!!!!
+	    outStream.close(); // throws IOException!!!!
         }
         
-        outStream.flush(); // throws IOException!!!!
-        outStream.close(); // throws IOException!!!!
-
         this.is_saved = true;
         this.is_modified = false;
     }

@@ -25,17 +25,17 @@ import java.util.*;
 import absynt.*;
 import editor.*;
 import smv.*;
-import io.*;
+import io.*;  
 import utils.*;
+import simulator.*;
 import checks.*;
-import simulator.Simulator;
 
 
 /**
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.46 $
+ * @version $Revision: 1.47 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -684,7 +684,7 @@ public class Gui extends javax.swing.JFrame {
 
 
     private void createEditor(Project p) {
-	int result;
+	int result = -1;
 	Editor e = null;
 	try {
 	    e = p.getEditor();
@@ -696,10 +696,13 @@ public class Gui extends javax.swing.JFrame {
 		else
 		    (p.getEditor()).show();
 	    else {
-		// show warning dialog
-		result = SnotOptionPane.showConfirmDialog(null, "ATTENTION:\n\nThis SFC has no editor. If this \nSFC was parsed , the editor may mess up!\nShow editor anyway?\n(continue at own risk!)", "Launch editor?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-		
-		if (result == JOptionPane.YES_OPTION) {
+		if (!p.hasEditor()) {
+		    // show warning dialog
+		    result = SnotOptionPane.showConfirmDialog(null, "ATTENTION:\n\nThis SFC has no editor. If this \nSFC was parsed , the editor may mess up!\nShow editor anyway?\n(continue at own risk!)", "Launch editor?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+		}
+		if ((result == JOptionPane.YES_OPTION) || p.hasEditor()) {
+if (p.getSFC()==null)
+System.out.println("SFC ist null!!!!!!");
 		    e = new Editor(p.getSFC());
 		    e.setLocation(EditorLocation);
 		    e.addWindowListener(new GuiWindowListener());
@@ -1380,6 +1383,7 @@ System.out.print(ex.getClass());
           chooser.setCurrentDirectory(session.getFile());      
 
 
+
       // show FileChooser
       int result = chooser.showDialog(null, "Import");
       if (result == JFileChooser.APPROVE_OPTION) {
@@ -1480,6 +1484,7 @@ ex.printStackTrace();
       if (session.isSaved()) {
           try {
               session.save(null);
+	      setStatusLine(false, "Session saved.");
           }
           catch (Exception ex) {
 System.out.print("\n"+ex.getClass());
@@ -1520,7 +1525,7 @@ System.out.print("\n"+ex.getClass());
               case JOptionPane.CLOSED_OPTION: return;
           }
 
-//          closeSession();  closing session as late as possible!! see below
+
       }
 
       JFileChooser chooser = new JFileChooser();
@@ -1538,6 +1543,7 @@ System.out.print("\n"+ex.getClass());
           closeSession();
           session = openSession(chooser.getSelectedFile());
 	  globalDirectory = chooser.getSelectedFile();
+	  enableSession(true);
 	  setStatusLine(false, "Session opened");
       }
   }
@@ -1753,7 +1759,8 @@ System.out.print(ex.getClass());
             newSession = Session.read(file);
             v = newSession.getProjectList();
             for (int i=0; i<v.size(); i++) {
-                ((Project)v.elementAt(i)).getEditor().addWindowListener(new Gui.GuiWindowListener());
+                if(((Project)v.elementAt(i)).hasEditor())
+		    (createEditor((Project)v.elementAt(i)));
             }
         }
         catch (IOException ex) {
@@ -1767,8 +1774,7 @@ System.out.print(ex.getClass());
             return null;
         }
         setTitle(TITLE+"  "+newSession.getName());
-        enableSession(true);
-	enableFilesToolBar(true);
+       	enableFilesToolBar(true);
 	return newSession;
     }
 

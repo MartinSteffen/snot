@@ -25,7 +25,7 @@ import editor.Editor;
  *  It also keeps the name and status flags of the SFC.
  *
  * @author  Hans Theman and Ingo Schiller
- * @version $Revision: 1.21 $
+ * @version $Revision: 1.22 $
  */
 public class Project extends java.lang.Object implements Serializable {
 
@@ -37,7 +37,7 @@ public class Project extends java.lang.Object implements Serializable {
     private boolean is_named;   // determines if a name is set
     private boolean is_checked;   // indicates if it is checked
     private boolean is_only_bool;  // for the isOnlyBool() test of the checker group
-
+    private boolean has_editor;
 
     private Point location; // the position of the editor frame
     private Dimension size = new Dimension(600,420); // the size of the editor frame
@@ -53,6 +53,7 @@ public class Project extends java.lang.Object implements Serializable {
         is_named = false;
         is_checked = false;
         is_only_bool = false;
+	has_editor = false;
        }
 
 
@@ -77,6 +78,10 @@ public class Project extends java.lang.Object implements Serializable {
 
     public boolean isNamed() {
         return this.is_named;
+    }
+
+    public boolean hasEditor() {
+        return this.has_editor;
     }
 
     /** Return the projet checked flag.
@@ -141,7 +146,8 @@ public class Project extends java.lang.Object implements Serializable {
 
         ObjectOutputStream outStream = new ObjectOutputStream(new FileOutputStream(_file));
         try {
-            outStream.writeObject(this); // throws IOException!!!!
+            
+	    outStream.writeObject(this); // throws IOException!!!!
         }
         finally {
             outStream.close(); // throws IOException!!!!
@@ -201,9 +207,14 @@ System.out.print("\nSFC imported");
      *  While connecting an editor to the project, the project name is set in it.
      *  @param _editor  The editor in which the project is opened.
      */
-    public void setEditor(Editor _editor) {
-        editor = _editor;
-        editor.setSFCName(this.name);
+    public void setEditor(Editor editor) {
+        this.editor = editor;
+	if (editor!=null) {
+	    this.editor.setSFCName(this.name);
+	    this.has_editor = true;
+	}
+//	else
+//	    this.has_editor = false;
     }
 
     /** Returns the editor modified flag.
