@@ -33,7 +33,7 @@ import javax.swing.event.*;
  *  create new, import or export Projects.
  *
  * @author  Hans Theman and Ingo Schiller
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  */
 
 public class Session extends java.lang.Object implements Serializable {
@@ -287,19 +287,18 @@ public class Session extends java.lang.Object implements Serializable {
            s = (Session)inStream.readObject();
            s.table = new Hashtable();
            i = inStream.readInt();
-System.out.print("\n there are "+i+" projects in the session to read");           
+//System.out.print("\n there are "+i+" projects in the session to read");           
            while ((i--)>0) {
-System.out.print("\n reading project "+i);              
+//System.out.print("\n reading project "+i);              
                p = (Project)inStream.readObject();
-               p.restoreEnvironment();
+//               p.restoreEnvironment();
                s.addProject(p);
            }
-System.out.print("\n finished reading projects");
+//System.out.print("\n finished reading projects");
         }
         finally {
             inStream.close();
         }
-        inStream.close();
 
         // session settings
         s.setFile(_file);

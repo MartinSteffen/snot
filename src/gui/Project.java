@@ -25,7 +25,7 @@ import editor.Editor;
  *  It also keeps the name and status flags of the SFC.
  *
  * @author  Hans Theman and Ingo Schiller
- * @version $Revision: 1.22 $
+ * @version $Revision: 1.23 $
  */
 public class Project extends java.lang.Object implements Serializable {
 
@@ -39,8 +39,8 @@ public class Project extends java.lang.Object implements Serializable {
     private boolean is_only_bool;  // for the isOnlyBool() test of the checker group
     private boolean has_editor;
 
-    private Point location; // the position of the editor frame
-    private Dimension size = new Dimension(600,420); // the size of the editor frame
+    private Point location = null; // the position of the editor frame
+    private Dimension size = null; // the size of the editor frame
     private int state;      // the state ... (iconified, normal, ...)
 
     /** The standard constructor.
@@ -58,9 +58,9 @@ public class Project extends java.lang.Object implements Serializable {
 
 
 
-    public void restoreEnvironment() {
-        Editor e = this.getEditor();
-        if (e!=null) {
+    public void restoreEnvironment(Editor e) {
+//        Editor e = this.getEditor();
+        if (e!=null && location!=null && size!=null) {
             e.setSize(size);
             e.setLocation(location);
             e.setState(state);
@@ -155,7 +155,6 @@ public class Project extends java.lang.Object implements Serializable {
         outStream.flush(); // throws IOException!!!!
         outStream.close(); // throws IOException!!!!
 
-System.out.print("\nSFC exported");
     }
 
     /**
@@ -171,7 +170,6 @@ System.out.print("\nSFC exported");
         ObjectInputStream inStream = new ObjectInputStream(new FileInputStream(_file));
         try {
            p = (Project)inStream.readObject();
-System.out.print("\nImported SFC name: "+p.name+" is_checked: "+p.is_checked);
         }
         finally {
             inStream.close();
@@ -180,7 +178,6 @@ System.out.print("\nImported SFC name: "+p.name+" is_checked: "+p.is_checked);
         p.is_checked = false;
         p.is_only_bool = false;
 
-System.out.print("\nSFC imported");
         return p;
     }
 

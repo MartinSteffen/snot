@@ -35,7 +35,7 @@ import checks.*;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.49 $
+ * @version $Revision: 1.50 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -701,11 +701,12 @@ public class Gui extends javax.swing.JFrame {
 		    result = SnotOptionPane.showConfirmDialog(null, "ATTENTION:\n\nThis SFC has no editor. If this \nSFC was parsed , the editor may mess up!\nShow editor anyway?\n(continue at own risk!)", "Launch editor?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 		}
 		if ((result == JOptionPane.YES_OPTION) || p.hasEditor()) {
-if (p.getSFC()==null)
-System.out.println("SFC ist null!!!!!!");
 		    e = new Editor(p.getSFC());
-		    e.setLocation(EditorLocation);
 		    e.addWindowListener(new GuiWindowListener());
+		    if (p.hasEditor())
+			p.restoreEnvironment(e);
+		    else
+			e.setLocation(EditorLocation);
 		    p.setEditor(e);		
 		}
 	    }
@@ -827,8 +828,7 @@ System.out.println("SFC ist null!!!!!!");
      }
 
      // show Rename Dialog
-     input = SnotOptionPane.showInputDialog(null, "The current SFC's name is \""+project.getName()+"\".\nPlease enter a new name and hit \"OK\"",
-                                        "Rename SFC", JOptionPane.PLAIN_MESSAGE);
+     input = SnotOptionPane.showInputDialog(null, "The current SFC's name is \""+project.getName()+"\".\nPlease enter a new name and hit \"OK\"", "Rename SFC", JOptionPane.PLAIN_MESSAGE);
      // set new name
      if (input != null && input.length()>0) {
           project.setName(input);
@@ -846,16 +846,13 @@ System.out.println("SFC ist null!!!!!!");
       // check for active session
       if (session != null) {
           if (session.isModified()) {
-              response = SnotOptionPane.showConfirmDialog(null, "There already is an active unsaved session!\n Without saving the changes will be lost!\n\nDo you want to save the changes before opening a new session?\n",
-                                            "Alert", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+              response = SnotOptionPane.showConfirmDialog(null, "There already is an active unsaved session!\n Without saving the changes will be lost!\n\nDo you want to save the changes before opening a new session?\n", "Alert", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
           }
           else if (session.isSaved()) {
-              response = SnotOptionPane.showConfirmDialog(null, "There already is an active session!\nOpening a new once will close the current session.\n\n Do you wish to proceed?\n",
-                                            "Alert", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+              response = SnotOptionPane.showConfirmDialog(null, "There already is an active session!\nOpening a new once will close the current session.\n\n Do you wish to proceed?\n", "Alert", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
           }
           else {
-              response = SnotOptionPane.showConfirmDialog(null, "The active session is not saved!\n Without saving its content will be lost!\n\nDo you want to save it before opening a new session?\n",
-                                            "Alert", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+              response = SnotOptionPane.showConfirmDialog(null, "The active session is not saved!\n Without saving its content will be lost!\n\nDo you want to save it before opening a new session?\n", "Alert", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
           }
 
           switch (response) {
@@ -1268,8 +1265,7 @@ System.out.println("Error while simulating the SFC"+e.getMessage());
 
      if(activeProject.isChecked()) {
 	 setStatusLine(true, "Checks passed");
-	 SnotOptionPane.showMessageDialog(null, "All checks passed succesfully.\nOnly boolean expressions occured: "+status2,
-                                        "Check Info", JOptionPane.INFORMATION_MESSAGE);
+	 SnotOptionPane.showMessageDialog(null, "All checks passed succesfully.\nOnly boolean expressions occured: "+status2, "Check Info", JOptionPane.INFORMATION_MESSAGE);
      }
 
   }
@@ -1331,14 +1327,14 @@ System.out.println("Error while simulating the SFC"+e.getMessage());
           // set name out ouf filename
           if (!project.isNamed()) {
               name = file.getName();
-              name = name.substring(0,name.lastIndexOf(ProjectFileExtension));
+              name = name.substring(0,(name.lastIndexOf(ProjectFileExtension)-1));
               project.setName(name);
           }
 
           // save the editor's environment
           project.setEnvironment();
 
-          // save the session
+          // export the project
           try {
               project.exportSFC(file);
           }
@@ -1347,7 +1343,6 @@ System.out.println("Error while simulating the SFC"+e.getMessage());
               return;
           }
           catch (Exception ex) {
-System.out.print(ex.getClass());
               SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Save error", JOptionPane.ERROR_MESSAGE);
               return;
           }
@@ -1405,12 +1400,12 @@ System.out.print(ex.getClass());
           // read and add Project
           try {
               project = Project.importSFC(file);
-	      project.restoreEnvironment();
+//	      project.restoreEnvironment();
               session.addProject(project);
           }
 	  catch (Exception ex) {
-System.out.print("\n"+ex.getClass());
-ex.printStackTrace();
+//System.out.print("\n"+ex.getClass());
+//ex.printStackTrace();
                SnotOptionPane.showMessageDialog(null, "An unexpected condition occured!\n\n"+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
           }
 
@@ -1433,8 +1428,7 @@ ex.printStackTrace();
 
       // check for valid session
       if (session == null) {
-           SnotOptionPane.showMessageDialog(null, "Creating a new SFC failed!\nCannot load a SFC without an active session.\nPlease open or create a new session first!",
-                                            "Error", JOptionPane.ERROR_MESSAGE);
+           SnotOptionPane.showMessageDialog(null, "Creating a new SFC failed!\nCannot load a SFC without an active session.\nPlease open or create a new session first!", "Error", JOptionPane.ERROR_MESSAGE);
            return;
       }
 
@@ -1798,11 +1792,9 @@ System.out.print(ex.getClass());
 
         // session found: check its status
         if (session.isModified())
-            result = SnotOptionPane.showConfirmDialog(null, "The session has changed!\nWithout saving the changes will be lost!\n\nDo you want to save it?",
-                                            "Alert: session is not saved!", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+            result = SnotOptionPane.showConfirmDialog(null, "The session has changed!\nWithout saving the changes will be lost!\n\nDo you want to save it?", "Alert: session is not saved!", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
         else if (!session.isSaved())
-            result = SnotOptionPane.showConfirmDialog(null, "The session is not saved!\nIf exiting its contents will be lost.\n\nDo you want to save it now?",
-                                            "Alert: session will be lost!", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+            result = SnotOptionPane.showConfirmDialog(null, "The session is not saved!\nIf exiting its contents will be lost.\n\nDo you want to save it now?", "Alert: session will be lost!", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
         else if (exit) {
             return exitSnot(true);
         }
@@ -1810,7 +1802,10 @@ System.out.print(ex.getClass());
              return true; // simulates a successful exit state (needed for close Session)
 
         switch (result) {
-            case JOptionPane.YES_OPTION: return(SaveSessionActionPerformed(null));
+            case JOptionPane.YES_OPTION: 
+		if (SaveSessionActionPerformed(null)) return exitSnot(false);
+		else return false;
+		
             case JOptionPane.NO_OPTION: if (exit) return exitSnot(false); else return true;
             case JOptionPane.CANCEL_OPTION:
             case JOptionPane.CLOSED_OPTION: return false; // do not exit!
@@ -1915,14 +1910,12 @@ System.out.print(ex.getClass());
                 status = Utilities.createFile(_file); // throws a lot ...
             }
             catch (Exception ex) {
-System.out.print(ex.getClass());
                 SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Create file error", JOptionPane.ERROR_MESSAGE);
                 return null;
             }
             // file already exists?
             if (!status) {
-                response = SnotOptionPane.showConfirmDialog(null, "File \""+_file.getName()+"\" already exists!\n Overwrite it?",
-                                                            "Warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+                response = SnotOptionPane.showConfirmDialog(null, "File \""+_file.getName()+"\" already exists!\n Overwrite it?", "Warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
                 switch (response) {
                     case JOptionPane.NO_OPTION:
                     case JOptionPane.CANCEL_OPTION:
