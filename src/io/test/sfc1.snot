@@ -2,9 +2,22 @@
 
 begin sfc1
 
- init = 
+ vars =
+ [
+   x : bool = true;
+   y : bool = true;
+   
+ ];
 
- steps = 
+ init =  s1;
+
+
+ steps = [ 
+
+   (s1,[act1]),
+   	
+
+   ]
  begin
 
   
