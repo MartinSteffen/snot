@@ -35,7 +35,7 @@ import simulator.Simulator;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.44 $
+ * @version $Revision: 1.45 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -51,7 +51,7 @@ public class Gui extends javax.swing.JFrame {
     private final String SmvFileExtension = "smv";   // the SMV - translated file extension
     private final String ParserFileExtension = "tsfc";  // Parser file extension
     private final Point GuiLocation = new Point(0,0);
-    private final Point EditorLocation = new Point(0, 170);
+    private final Point EditorLocation = new Point(0,170);
     private Point ProjectListLocation = new Point(672,0);
     private Point HelpLocation = new Point(672,0);
     private File globalDirectory = null;
@@ -84,6 +84,7 @@ public class Gui extends javax.swing.JFrame {
 	this.pack();
 	//this.setSize(1000,170);
         setLocation(GuiLocation);
+	
     }
 
 	/** This method is called from within the constructor to
@@ -682,6 +683,38 @@ public class Gui extends javax.swing.JFrame {
  **********************************************************************************/
 
 
+    private void createEditor(Project p) {
+	int result;
+	Editor e = null;
+	try {
+	    e = p.getEditor();
+	    if (e != null)
+		if (e.isVisible()){
+		    e.toFront();
+//		    e.setFocus();
+		}
+		else
+		    (p.getEditor()).show();
+	    else {
+		// show warning dialog
+		result = SnotOptionPane.showConfirmDialog(null, "ATTENTION:\n\n This SFC has no editor. If this \nSFC was parsed , the editor may mess up!\nShow editor anyway?\n(continue at own risk!)", "Launch editor?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+		
+		if (result == JOptionPane.YES_OPTION) {
+		    e = new Editor(p.getSFC());
+		    e.setLocation(EditorLocation);
+		    e.addWindowListener(new GuiWindowListener());
+		    p.setEditor(e);		
+		}
+	    }
+	}
+	catch (EditorException edex){
+	    SnotOptionPane.showMessageDialog(null, edex.getMessage(), "Editor-Error", JOptionPane.ERROR_MESSAGE);
+	}
+	catch (Exception ex) {
+	    SnotOptionPane.showMessageDialog(null, "An unexpected error occured!\nWe told ya!\n"+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+	}
+    }
+
 
   //For the FilesToolBar
   private void ShowFilesToolBarActionPerformed(java.awt.event.ActionEvent evt) {
@@ -708,7 +741,6 @@ public class Gui extends javax.swing.JFrame {
   private void ImportExample1ActionPerformed(java.awt.event.ActionEvent evt) {
 
       Project project = null;
-      Editor editor = null;
       if (session == null) {
            SnotOptionPane.showMessageDialog(null, "Importing the Example1 SFC failed!\nCannot import a SFC without an active session.\nPlease open or create a new session first!",
                                             "Error", JOptionPane.ERROR_MESSAGE);
@@ -719,14 +751,7 @@ public class Gui extends javax.swing.JFrame {
        try {
               project = new Project();
               project.setSFC(sfc1);
-              editor = new Editor(sfc1);
-              editor.setLocation(EditorLocation);
-              editor.addWindowListener(new GuiWindowListener());
-              project.setEditor(editor);
               session.addProject(project);
-          }
-          catch (EditorException edex){
-	      SnotOptionPane.showMessageDialog(null, edex.getMessage(), "Editor-Error", JOptionPane.ERROR_MESSAGE);
           }
 	  catch (Exception ex) {
                SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -808,7 +833,8 @@ public class Gui extends javax.swing.JFrame {
      }
      updateProjectList();
      setStatusLine(true, "SFC renamed.");
-     project.getEditor().toFront();
+     if (project.getEditor() != null)
+	 project.getEditor().toFront();
   }
 
   private void NewSessionActionPerformed(java.awt.event.ActionEvent evt) {
@@ -878,7 +904,6 @@ public class Gui extends javax.swing.JFrame {
       int result;
       File file = null;
       Project project = null;
-      Editor editor = null;
 
       // check for valid session
       if (session == null) {
@@ -921,21 +946,7 @@ public class Gui extends javax.swing.JFrame {
 	      project = new Project();
 	      project.setSFC(parser.parseFile(file));
 System.out.println("File Parsed");
-	      try {
-		  editor = new Editor(project.getSFC());
-	      }
-	      catch (Exception e) {
-		  if (!(e instanceof EditorException)) {
-		      SnotOptionPane.showMessageDialog(null, "ATTENTION!\n\nThe editor failed to paint the current SFC! \nIt will be initialized with an empty SFC. The parsed SFC \nis kept in this project and will be used for other operations. \nPlease keep in mind, that this mode is just for testing! \nFuther errors might occure. \nMay the force be with you! \nGood luck!", "Editor-Error", JOptionPane.ERROR_MESSAGE);
-		      if (editor!=null && editor.isVisible())
-			  editor.dispose();
-		      editor = new Editor(new SFC());
-		  }
-	      }
-	      editor.addWindowListener(new GuiWindowListener());
-	      editor.setLocation(EditorLocation);
 	      project.setName(file.getName());
-	      project.setEditor(editor);
 	      project.setEnvironment();
               session.addProject(project);
 	      activeProject = project;
@@ -946,12 +957,8 @@ System.out.println("File Parsed");
 	      setStatusLine(true, "Parser failed");
 	      SnotOptionPane.showMessageDialog(null, pex.getMessage(), "Parse-Error", JOptionPane.ERROR_MESSAGE);
 	  }
-          catch (EditorException edex){
-	      setStatusLine(true, "Parser failed");
-	      SnotOptionPane.showMessageDialog(null, edex.getMessage(), "Editor-Error", JOptionPane.ERROR_MESSAGE);
-          }
 	  catch (Exception ex) {
-System.out.print("\n"+ex.getClass());
+System.out.println("\n"+ex.getClass());
 ex.printStackTrace();
 	       setStatusLine(true, "Parser failed");
                SnotOptionPane.showMessageDialog(null, "Abnormal Error!\nError code 0-8-15\nPlease consult your local cofe machine ...\n\n"+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -1028,13 +1035,8 @@ ex.printStackTrace();
 	  }
 	finally{try {in.close();}catch(IOException e){
 	    SnotOptionPane.showMessageDialog(null, "Help error.\n"+e.getMessage(), "File not found", JOptionPane.ERROR_MESSAGE);}}
-
-
-
     helpFrame.show();
   }
-
-
 
 
   /**
@@ -1074,7 +1076,6 @@ ex.printStackTrace();
 	  stream = new ByteArrayOutputStream();
 	  stream = trans.toStream();
 	  setStatusLine(true, "launching SMV translator ...");
-System.out.print("\nlaunching SMVTranslator ...");
           JFileChooser chooser = new JFileChooser();
 	  
 	  // set prefered Directory
@@ -1094,7 +1095,6 @@ System.out.print("\nlaunching SMVTranslator ...");
 	     output.flush();
 	     output.close();
 	     setStatusLine(true, "SMV translation succeeded!");
-System.out.print("\nFile saved succesfully");
             }
       }
       catch (SMVException smvex) {
@@ -1172,11 +1172,26 @@ System.out.println("Error while simulating the SFC"+e.getMessage());
   private void CheckSFCActionPerformed(java.awt.event.ActionEvent evt) {
       boolean status = false;
       boolean status2 = false;
-
+      int result;
       if (activeProject == null) {
           SnotOptionPane.showMessageDialog(null, "Please select a SFC first!\n", "Error: no SFC", JOptionPane.ERROR_MESSAGE);
           return;
       }
+     
+
+     // show Check - Dialog
+     result = SnotOptionPane.showConfirmDialog(null, "Checks may fail, due to bad programming.\n Do you want to override the checks\nand set checked = true??","Override checks", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+     if (result == JOptionPane.YES_OPTION){
+	 activeProject.setChecked(true);
+	 activeProject.setOnlyBool(true);
+	 
+	
+	 setStatusLine(true, "Checks passed");
+	 SnotOptionPane.showMessageDialog(null, "SFC set checked.\n","Check Info", JOptionPane.INFORMATION_MESSAGE);
+         return;
+     }
+
 
       try {
 	  status = Snotcheck.isWellDefined(activeProject.getSFC());
@@ -1192,39 +1207,52 @@ System.out.println("Error while simulating the SFC"+e.getMessage());
                 SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "No Istep Exception", JOptionPane.ERROR_MESSAGE);
 		status = false;
+		activeProject.setChecked(status);
+		return;
 	  }
           else if(checkEx instanceof DecListFailure) {
 	        status = false;
+		activeProject.setChecked(status);
 		activeProject.getEditor().highlight_state(((DecListFailure)checkEx).get_Declaration(),true);
 		SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "Error in the declaration list", JOptionPane.ERROR_MESSAGE);
+		return;
           }
           else if(checkEx instanceof ActionFailure) {
 	        status = false;
+		activeProject.setChecked(status);
 		activeProject.getEditor().highlight_state(((ActionFailure)checkEx).get_Action(),true);
                 SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "Action Failure", JOptionPane.ERROR_MESSAGE);
+		return;
           }
           else if(checkEx instanceof StepFailure) {
 	        status = false;
+		activeProject.setChecked(status);
 		activeProject.getEditor().highlight_state(((StepFailure)checkEx).get_Step(),true);
                 SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "Step Failure", JOptionPane.ERROR_MESSAGE);
+		return;
           }
           else if(checkEx instanceof TransitionFailure) {
 	        status = false;
+		activeProject.setChecked(status);
 		activeProject.getEditor().highlight_state(((TransitionFailure)checkEx).get_Trans(),true);
                 SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "Transition Failure", JOptionPane.ERROR_MESSAGE);
+		return;
           }
 	  else {
 	    status = false;
+	    activeProject.setChecked(status);
 	    SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "Check Error", JOptionPane.ERROR_MESSAGE);
+	     return;
 	  }
       }
       catch (Exception ex) {
           status = false;
+	  activeProject.setChecked(status);
 	  ex.printStackTrace();
 	  SnotOptionPane.showMessageDialog(null, "Abnormal Error \n"+ ex.getClass(),
                                         "Check Error", JOptionPane.ERROR_MESSAGE);
@@ -1330,7 +1358,6 @@ System.out.print(ex.getClass());
 
   private void ImportSFCActionPerformed(java.awt.event.ActionEvent evt) {
       Project project = null;
-      Editor editor = null;
       File file = null;
 
       // check for valid session
@@ -1370,25 +1397,17 @@ System.out.print(ex.getClass());
           // read and add Project
           try {
               project = Project.importSFC(file);
-              editor = new Editor(project.getSFC());
-	      editor.addWindowListener(new GuiWindowListener());
-              project.setEditor(editor);
 	      project.restoreEnvironment();
               session.addProject(project);
-          }
-          catch (EditorException edex){
-	      SnotOptionPane.showMessageDialog(null, edex.getMessage(), "Editor-Error", JOptionPane.ERROR_MESSAGE);
           }
 	  catch (Exception ex) {
 System.out.print("\n"+ex.getClass());
 ex.printStackTrace();
-               SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+               SnotOptionPane.showMessageDialog(null, "An unexpected condition occured!\n\n"+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
           }
 
       updateProjectList();
       setStatusLine(true, "SFC "+project.getName()+ " imported");
-      if (editor!=null)
-          editor.show();
       }
   }
 
@@ -1415,6 +1434,7 @@ ex.printStackTrace();
       project = new Project();
       try {
           editor = new Editor(project.getSFC());
+	  editor.setLocation(EditorLocation);
       }
       catch (EditorException editorEx) {
            SnotOptionPane.showMessageDialog(null, editorEx.getMessage(), "Editor error", JOptionPane.ERROR_MESSAGE);
@@ -1426,7 +1446,7 @@ ex.printStackTrace();
       }
 
       // set editor and project parameters
-      editor.setLocation(EditorLocation);
+      
       editor.addWindowListener(new GuiWindowListener());
       project.setEditor(editor);
       project.setChecked(false);
@@ -1443,8 +1463,8 @@ ex.printStackTrace();
       // set environmental parameters
       updateProjectList();
       activeProject = project;
-      editor.show();
-      setStatusLine(true);
+      editor.setSize(600,420);
+      setStatusLine(true, " New SFC created.");
  }
 
 
@@ -1553,7 +1573,7 @@ ex.printStackTrace();
           }
           catch (Exception ex) {
 System.out.print(ex.getClass());
-              SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Save error", JOptionPane.ERROR_MESSAGE);
+              SnotOptionPane.showMessageDialog(null, "An unexpected condition occured!\n\n"+ex.getMessage(), "Save error", JOptionPane.ERROR_MESSAGE);
               return false;
           }
           setTitle(TITLE+"  "+ session.getName());
@@ -1565,8 +1585,7 @@ System.out.print(ex.getClass());
   }
 
   private void AboutActionPerformed(java.awt.event.ActionEvent evt) {
-      SnotOptionPane.showMessageDialog(null, "Snot\n Still in experimental phase 0.1\n Please hang on for later versions ...",
-                                        "About", JOptionPane.INFORMATION_MESSAGE);
+      SnotOptionPane.showMessageDialog(null, "Snot\n Still in experimental phase 0.1\n Please hang on for later versions ...", "About", JOptionPane.INFORMATION_MESSAGE);
   }
 
 
@@ -1592,18 +1611,27 @@ System.out.print(ex.getClass());
     // A mouselistener to determine the clicked Project and to show it.
     MouseListener mouseListener = new MouseAdapter() {
        public void mouseClicked(MouseEvent e) {
-           if (e.getClickCount() == 1) {
+           if (e.getClickCount() == 2) {
                int index = list.locationToIndex(e.getPoint());
-               //System.out.println("Clicked on Item " + index);
-	       Vector p = session.getProjectList();
+    	       Vector p = session.getProjectList();
 	       try {
                     activeProject = (Project)p.elementAt(index);
 		    setStatusLine(true);
-		    if (activeProject.getEditor()!=null)
-			activeProject.getEditor().show();
+		    createEditor(activeProject);
 
 	       }catch(Exception ex){/*System.out.println("Daneben!!");*/}
                                                      // hihi! Daneben!! so, so ...
+	   }
+           if (e.getClickCount() == 1) {
+	       int index2 = list.locationToIndex(e.getPoint());
+               Vector p = session.getProjectList();
+	       try {
+                    activeProject = (Project)p.elementAt(index2);
+		    setStatusLine(true);
+		
+	       }catch(Exception ex){/*System.out.println("Daneben!!");*/}
+                                                     // hihi! Daneben!! so, so ...
+	      
 	   }
        }
     };
@@ -1683,6 +1711,10 @@ System.out.print(ex.getClass());
         ButtonSMV.setEnabled(state);
 	ButtonParser.setEnabled(state);
 	ButtonPrettyPrinter.setEnabled(state);
+	SFCBrowser.setState(state);
+	if(state)
+	    showProjectList();
+	
     }
 
     private void closeSession() {
@@ -1814,7 +1846,7 @@ System.out.print(ex.getClass());
 
         public void windowActivated(java.awt.event.WindowEvent evt) {
             // set the active Project
-            activeProject = session.getProject(evt.getSource());
+            activeProject = session.getProject((Object)((Editor)evt.getSource()).getSFC());
 	    setStatusLine(true);
 //            System.out.print("\n Window "+activeProject+" Activated");
         }

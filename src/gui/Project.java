@@ -25,7 +25,7 @@ import editor.Editor;
  *  It also keeps the name and status flags of the SFC.
  *
  * @author  Hans Theman and Ingo Schiller
- * @version $Revision: 1.20 $
+ * @version $Revision: 1.21 $
  */
 public class Project extends java.lang.Object implements Serializable {
 
@@ -40,7 +40,7 @@ public class Project extends java.lang.Object implements Serializable {
 
 
     private Point location; // the position of the editor frame
-    private Dimension size; // the size of the editor frame
+    private Dimension size = new Dimension(600,420); // the size of the editor frame
     private int state;      // the state ... (iconified, normal, ...)
 
     /** The standard constructor.
@@ -211,14 +211,17 @@ System.out.print("\nSFC imported");
      *  @return isModified  The editor's modified status
      */
     public boolean isModified() {
-        return editor.isModified();
+        if(editor!=null)
+	    return editor.isModified();
+	return false;
     }
 
     /** Sets the editor modified flag.
      *  This function is part of the editor interface.
      */
     public void clearModified() {
-        editor.clearModified();
+        if(editor!=null)
+	    editor.clearModified();
     }
 
 }

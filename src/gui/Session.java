@@ -18,6 +18,7 @@ import java.io.FileInputStream;
 import java.util.Enumeration;
 import java.util.Vector;
 import editor.Editor;
+import absynt.SFC;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -32,7 +33,7 @@ import javax.swing.event.*;
  *  create new, import or export Projects.
  *
  * @author  Hans Theman and Ingo Schiller
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 
 public class Session extends java.lang.Object implements Serializable {
@@ -181,7 +182,7 @@ public class Session extends java.lang.Object implements Serializable {
     public void addProject(Project _project) throws Exception {
         Object object;
         try {
-            object = table.put((Object)_project.getEditor(), (Object)_project); // throws NullPointerExeption !!!!
+            object = table.put((Object)_project.getSFC(), (Object)_project); // throws NullPointerExeption !!!!
         }
         catch (NullPointerException nullex) {
             throw new Exception("An error occured while adding a Project to the Session!");
@@ -198,16 +199,16 @@ public class Session extends java.lang.Object implements Serializable {
      *  @param _project Specifies the object to be removed from the current session.
      */
     public void removeProject(Project _project) {
-        Editor editor = _project.getEditor();
+        SFC sfc = _project.getSFC();
 
         // remove Project from hashtable
-        if (table.remove((Object)editor) == null) {
+        if (table.remove((Object)sfc) == null) {
             System.out.print("\nAttention: The removed Project was not found in the hashtable!");
             return;
         }
         // remove editor from screen
-        if (editor != null)
-            editor.dispose();
+        if (_project.getEditor() != null)
+            (_project.getEditor()).dispose();
     }
 
     public boolean isEmpty() {
@@ -221,8 +222,9 @@ public class Session extends java.lang.Object implements Serializable {
         Project p = null;
         for (Enumeration e = this.table.elements() ; e.hasMoreElements() ;) {
             p = (Project)e.nextElement();
-            p.setEnvironment();
-            p.getEditor().dispose();
+//            p.setEnvironment();
+	    if (p.getEditor() != null)
+		p.getEditor().dispose();
         }
     }
 
@@ -279,10 +281,6 @@ System.out.print("\n there are "+i+" projects in the session to read");
            while ((i--)>0) {
 System.out.print("\n reading project "+i);              
                p = (Project)inStream.readObject();
-               e = new Editor(p.getSFC());
-//               e.addWindowListener(new gwl.getConstructor());  // throws lots of evil things ...
-//System.out.print("\n the class is "+gwl.getClass().getName());
-               p.setEditor(e);
                p.restoreEnvironment();
                s.addProject(p);
            }
