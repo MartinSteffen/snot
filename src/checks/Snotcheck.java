@@ -9,7 +9,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.33 2001-06-27 13:12:42 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.34 2001-07-03 14:36:33 swprakt Exp $
  *
  */
 
@@ -358,7 +358,7 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
     int stepListSize = stepList.size();
     String stepName;
     Step aStep, bStep;
-    Action anAction, bAction;
+    StepAction anAction, bAction;
 
     if (stepList != null){
 
@@ -369,9 +369,9 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 	    if (aStep.actions == null){throw new StepFailure(aStep, "No actions in step!");}
 	    actionList = aStep.actions;
 	    for (int j=0; j < actionList.size(); j++){
-		anAction = (Action)actionList.get(j);
+		anAction = (StepAction)actionList.get(j);//ohne cast
 		for (int k=(j+1); k < actionList.size(); k++){
-		    bAction = (Action)actionList.get(k);
+		    bAction = (StepAction)actionList.get(k);//ohne cast
 		    if (anAction.a_name == bAction.a_name){throw new StepFailure(aStep,"The Actionname in Step is not unique!");}
 		}
 	    }
@@ -388,6 +388,7 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 	}
 
     }else throw new StepFailure(null,"Where are the steps?!!");
+    System.out.println("Steps are OK!");
 
     return true;
 }
@@ -495,9 +496,12 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.33 2001-06-27 13:12:42 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.34 2001-07-03 14:36:33 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.33  2001/06/27 13:12:42  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.32  2001/06/27 13:08:18  swprakt
 //	*** empty log message ***
 //	
