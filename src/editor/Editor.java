@@ -17,7 +17,7 @@ import editor.*;
  * @version 1.0 
  */ 
 
-public class Editor extends JFrame { 
+public class Editor extends JFrame implements ActionListener { 
 
   // ----------------------- visuelle Komponenten ------------------------------
   
@@ -596,8 +596,45 @@ public class Editor extends JFrame {
   	}
   }
   
-  Expression_Parser ExprEditor = new Expression_Parser();
-  
+  Expression_Parser ExprEditor = new Expression_Parser();  
+  class ActionEditor extends DefaultCellEditor {        
+
+        public ActionEditor(JButton b) {
+                super(new JCheckBox()); //Unfortunately, the constructor
+                                        //expects a check box, combo box,
+                                        //or text field.
+            editorComponent = b;
+            setClickCountToStart(1); //This is usually 1 or 2.
+
+            //Must do this so that editing stops when appropriate.
+            b.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    fireEditingStopped();
+                }
+            });
+        }
+
+        protected void fireEditingStopped() {
+            super.fireEditingStopped();
+        }
+
+        public Object getCellEditorValue() {
+	    LinkedList ll = new LinkedList();
+	    ll.add(new Assign(null, ExprEditor.get_expr()));
+            return (ll); //expr_lList;***
+        }
+
+        public Component getTableCellEditorComponent(JTable table, 
+                                                     Object value,
+                                                     boolean isSelected,
+                                                     int row,
+                                                     int column) {
+            ((JButton)editorComponent).setText(value.toString());
+            //ExprEditor.expr_lList=(LinkedList.value); //***
+            return editorComponent;
+        }
+    }
+    
   /** 
    * baut ein Editor-Fenster (momentan JFrame-Ableitung) auf. 
    * Übergeben werden muss ein SFC<>null 
@@ -658,6 +695,7 @@ public class Editor extends JFrame {
     //   a) "Titelleiste":
     DataActPanel.add(new JLabel("Action-List:"), BorderLayout.NORTH); 
     //   b) Tabelle mit Aktionen:
+    sfc.actions.add(new absynt.Action("<UNDEF>", new LinkedList())); // ***
     DataActTable = new JTable(new AbstractTableModel() {
       public int getRowCount() {
         return(sfc.actions.size());
@@ -672,6 +710,13 @@ public class Editor extends JFrame {
           return(((absynt.Action)sfc.actions.get(row)).a_name);
         else
           return(((absynt.Action)sfc.actions.get(row)).sap);
+      }
+      
+      public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        if (columnIndex == 0) 
+          ((absynt.Action)sfc.actions.get(rowIndex)).a_name=(String)aValue;
+        else 
+          ((absynt.Action)sfc.actions.get(rowIndex)).sap=(LinkedList)aValue;
       }
       
       public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -689,17 +734,62 @@ public class Editor extends JFrame {
     });
     
     DataActTable.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
+      Stmt stmt = null;
+      public void setPaintData(Stmt _stmt) {
+        stmt = _stmt;
+        if (stmt == null) 
+          setText("<UNDEF>");
+        else if (stmt instanceof Skip)
+          setText("SKIP");
+        else
+          setText("");      
+      }
       public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
         boolean hasFocus, int row, int column) {          
-          return(ExprEditor.getRenderer(table, value, isSelected, hasFocus, row, column));
+          //return(ExprEditor.getRenderer(table, value, isSelected, hasFocus, row, column));                      
+          Stmt stmt = null;
+          if (value != null && !((LinkedList)value).isEmpty()) stmt = (Stmt)((LinkedList)value).getFirst();
+          super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+          setPaintData(stmt);
+          return(this);
       }
+      public void paint(Graphics g) {
+        Graphics2D g2d = (Graphics2D)g;
+        if (stmt == null || stmt instanceof Skip)
+          super.paint(g2d);
+        else {
+          // ExprEditor.Expr = stmt.val;
+	    super.paint(g2d);
+	    ExprEditor.paint_Expression_Panel(((Assign)stmt).val, g2d);
+	      //ExprEditor.paint(stmt, g2d);
+	    //super.paint(g2d);
+        }
+      }    
 
     });
+    JButton Btn = new JButton("") {
+      public void setText(String s) {
+          //Button never shows text -- only color.
+      }
+    };
+    Btn.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {                
+	  //ExprEditor.setModal(true);
+	  ExprEditor.show();
+      }
+    });
+    DataActTable.getColumnModel().getColumn(1).setCellEditor(new ActionEditor(Btn));
     DataActPanel.add(new JScrollPane(DataActTable), BorderLayout.CENTER); 
     //   c) Buttons zum Löschen/Hinzufügen von Aktionen:
-    BtnPanel = new JPanel(new FlowLayout());    
-    BtnPanel.add(new JButton("Add")); 
-    BtnPanel.add(new JButton("Delete")); 
+    BtnPanel = new JPanel(new FlowLayout());
+    Btn = new JButton("Add");
+    Btn.setActionCommand("AddSFCAction");
+    Btn.addActionListener(this);    
+    BtnPanel.add(Btn); 
+    Btn = new JButton("Delete");
+    Btn.setActionCommand("DeleteSFCAction");
+    Btn.addActionListener(this);    
+    BtnPanel.add(Btn);     
     DataActPanel.add(BtnPanel, BorderLayout.SOUTH); 
     //   d) nun zum DataPanel hinzufügen:
     DataPanel.add(DataActPanel); 
@@ -925,6 +1015,19 @@ public class Editor extends JFrame {
   
   protected void processKeyEvent(KeyEvent e) {
     if (e.getKeyCode() == KeyEvent.VK_DELETE) deleteSelection();
+  }
+  
+  public void actionPerformed(java.awt.event.ActionEvent e) {
+    if (e.getActionCommand().equals("AddSFCAction")) {
+      sfc.actions.add(new absynt.Action("<UNDEF>", new LinkedList()));      
+      ((AbstractTableModel)DataActTable.getModel()).fireTableRowsInserted(sfc.actions.size()-1, sfc.actions.size()-1);
+    } else if (e.getActionCommand().equals("DeleteSFCAction")) {
+      int row = DataActTable.getSelectedRow();
+      if (row >= 0 && row < sfc.actions.size()) {
+        sfc.actions.remove(row);
+        ((AbstractTableModel)DataActTable.getModel()).fireTableRowsInserted(0, sfc.actions.size()-1);
+      }
+    }
   }
  
 } 
