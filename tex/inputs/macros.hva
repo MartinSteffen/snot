@@ -1,0 +1,87 @@
+1%%%% for hevea
+
+
+
+\renewcommand{\sf}{}
+\newcommand{\punkt}{\cdot}
+\newcommand{\to}{\rightarrow}
+\newcommand{\text}[1]{\mbox{#1}}
+\newcommand{\underbrace}[1]{\underline{#1}}
+
+
+\usepackage{color}
+\usepackage{moreverb}
+
+\definecolor{sectionshadecolor}{cmyk}{0.9,0.83,1,0.70}
+\definecolor{myheadcolor}{named}{MidnightBlue}
+\definecolor{myred}{named}{BrickRed}
+\definecolor{mygreen}{named}{PineGreen}
+\definecolor{mygreen}{named}{OliveGreen}
+\definecolor{myblue}{named}{Periwinkle}
+\definecolor{myblue}{named}{NavyBlue}
+\definecolor{myblue}{named}{BlueViolet}
+\definecolor{mygray}{named}{Gray}
+
+\newcommand{\lesson}[1]{\section{#1}}
+
+\newcommand{\hrulefill}{\begin{rawhtml}<hr>\end{rawhtml}}
+\newenvironment{minipage}[1]{\begin{quote}}{\end{quote}}
+\newcommand{\parbox}[2]{#2}
+\newcommand{\kommentar}[1]{}
+\newcommand{\folgt}{\ensuremath{\Rightarrow}}
+\newcommand{\shadowbox}[1]{%
+  \begin{rawhtml}<table bgcolor="lightgrey"><tr><td>\end{rawhtml}#1
+  \begin{rawhtml}</td></tr></table>\end{rawhtml}}
+\newcommand{\leavevmode}{}
+
+
+\newenvironment{lstlisting}{\begin{rawhtml}<code>\end{rawhtml}}{\begin{rawhtml}<\code>\end{rawhtml}}
+
+%\newcommand{\inputcode}[2][../Code]   {
+%  {\small
+%  \mbox{}
+%  \newline
+%  \mbox{}
+%  \hrulefill
+%  \verbatiminput{#1/#2.java}
+%  \hrulefill}}
+
+
+
+
+%%%% Senf      #FF963B"
+%%%% Gruenblau #6888AB
+%%%% Leichtgruen #D6DCD3
+
+\newcommand{\myfoilhead}[1]{
+\begin{rawhtml}<table width="100%" border=0 CELLPADDING="4" CELLSPACING="0">
+  <tr valign="top"><td align="center" bgcolor="#D6DCD3"><font size="+2" color="midnightblue">\end{rawhtml}#1
+  \begin{rawhtml}</td></tr></table>\end{rawhtml}}
+
+
+
+\newenvironment{myslide}[1]{\myfoilhead{#1}}{}
+\newenvironment{myrotatedslide}[1]{\myfoilhead{#1}}{}
+
+\newcommand{\important}[1]{{\color{myblue} #1}}
+\newcommand{\importantx}[1]{{\color{mygreen}#1}}
+\newcommand{\importantxx}[1]{{\color{myred}#1}}
+
+
+
+
+\newenvironment{lessonabstract}{\begin{quotation}\textbf{Inhalt}}{\end{quotation}}
+
+\newenvironment{lessonliteratur}{\begin{quotation}\textbf{Literatur:}}{\end{quotation}}
+
+\newtheorem{theorem}                      {Theorem}
+\newtheorem{example}         [theorem]    {Beispiel}
+
+%\newenvironment{lstlisting}{\begin{listing}{1}}{\end{listing}}
+
+%\newcommand{\inputcode}[2][../Code]{
+%  \listinginput{1}{#1/#2.java}}
+  
+        
+
+
