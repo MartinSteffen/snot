@@ -1,0 +1,190 @@
+
+
+
+\input{switches}
+
+\documentclass[11pt,german]{article}
+\usepackage{hevea}
+%\usepackage{url}
+\usepackage{babel}
+\usepackage{epsfig}
+\usepackage{tfheader}
+\usepackage{a4wide}
+\usepackage[latin1]{inputenc}
+
+\input{macros}
+
+
+\title{{\huge\bf \textsl{S}equential Fu\textsl{n}ction Charts
+    M\textsl{o}deling \textsl{T}ool (aka.\ \Snot)}}
+%\author{}
+%\url{}{Martin Steffen}}
+\date{}
+
+
+
+\ifweb
+
+\htmlfoot{\hrulefill{}
+  {\footnotesize Pages last (re-)generated \today}}
+\renewcommand{\@bodyargs}{bgcolor="white" alink="red" vlink="\#407999"  link="\#7070ff"}  
+\fi
+
+
+
+
+\begin{document}
+\vspace{-2cm}
+
+
+%\pagestyle{empty}
+
+\begin{rawhtml}
+<a href="http://www.techfak.uni-kiel.de/">
+  <img border=0 alt="[Technical Faculty]" height=20  src="/images/tflogo.gif"></a>
+<hr>
+\end{rawhtml}
+
+
+\maketitle{}
+
+
+\section*{Pflichtenheft}
+\label{sec:pflichtenheft}
+
+Die folgende Liste enthält das Pflichtenheft. Der erste Eintrag ist
+jeweils der \emph{aktuelle.}
+
+
+\begin{center}
+  \begin{tabular}[t]{r@{\quad}l@{\quad\quad}l@{\quad\quad}p{9cm}}
+    3.
+    & 
+    \url{pflichtenheft3/}{Version 3}
+    &
+    17.\ Mai 2001
+    & 
+    kleinere Änderungen, Teams eingetragen
+    \\
+    2.
+    & 
+    \url{pflichtenheft2/}{Version 2}
+    &
+    5.\ Mai 2001
+    & 
+    kleinere Änderungen an der Abstrakten Syntax, SMV-Teil ein
+    wenig ausführlicher
+    \\
+    1.
+    & 
+    \url{pflichtenheft1/}{Version 1}
+    &
+    2.\ Mai 2001
+    & 
+    Originalversion zu Beginn
+  \end{tabular}
+\end{center}
+
+
+
+\input{zeitplan}
+
+\section*{Arbeitsgruppen}
+\label{sec:gruppen}
+
+Jedes der Teams bearbeitet i.d.R.\ ein Java-Paket. Die Beschreibung der
+Aufgabenstellung findet sich im Pflichtenheft.
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}[t]{l@{\quad\quad}l}
+     Paket  &  Gruppe 
+     \\\hline
+     Gui/Integration & 
+     Hans Theman, Ingo Schiller
+     \\
+     Editor &
+     Natalia Freudenberg, Andreas Lukosch
+     \\
+     Checks & Tobias Pugatschov, Dimitri Schultheis
+     \\
+     SMV-Backend
+     &
+     Tobias Kloss, Kevin Koeser
+     \\
+     Simulator
+     &
+     Carsten Heine, Jörn Fiebelkorn
+  \end{tabular}
+  \caption{Gruppeneinteilung}
+  \label{tab:gruppen}
+\end{table}
+
+
+
+Die \emph{Mailadressen} der Teilnehmner finden sich (intern) unter
+\begin{verbatim}
+      $WORKDIR/Snot/org/gruppen.txt
+\end{verbatim}
+
+
+
+
+
+\section*{Baselines}
+\label{sec:Baselines}
+
+
+Die \emph{Baselines} sind hier zur schnelleren Referenz als
+\emph{Javaarchiv} \texttt{snot\_v[x].jar} festgehalten, wobei \texttt{[x]}
+die Nummber des Schnappschusses ist. Als Entwickler mit Zugriff auf das
+Quellcoderepositorium kann man die Entwicklungsschritte sie natürlich
+mittels \cvs{} wieder zurückholen. Zum Ausführen der Archivs speichere man
+die Datei \texttt{snot\_v[x].jar} an einen geeigneten Platz, und setze
+
+\begin{verbatim}
+ export CLASSPATH=[geeigneter_platz]/snot_v[x].jar
+\end{verbatim}
+
+
+
+
+
+\section*{HTML-Dokumentation}
+\label{sec:html-doc}
+
+
+
+Zur schnelleren Orientierung wird die mit \javadoc{} dokumentierte
+Implementierung im Netz bereitgestellt. Die Seiten werden bei größeren
+Entwicklungsschritten aufgefrischt.
+
+\begin{center}
+  Dokumentation \url{doc}{Snot}: momentan (\today): absynt, utils vorhanden, subs von Editor und SMV
+\end{center}
+
+
+
+
+
+
+\input{konventionen}
+
+
+
+\bibliographystyle{alpha}
+
+
+
+\bibliography{string,etc,oop,crossref}
+
+
+\end{document}
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
+
