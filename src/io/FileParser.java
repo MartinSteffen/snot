@@ -7,7 +7,7 @@ import java.io.*;
 /**
  * To test the parser
  * @author Martin Steffe
- * @version $Id: FileParser.java,v 1.1 2001-06-13 15:19:31 swprakt Exp $
+ * @version $Id: FileParser.java,v 1.2 2001-06-30 15:03:21 swprakt Exp $
  */
 class FileParser{
  
@@ -20,7 +20,7 @@ class FileParser{
 		  File datei = new File(args[0]);
 
 		  io.Parser parser = new io.Parser();
-		  io.parseFile(datei);
+		  parser.parseFile(datei);
 	  } catch (ParseException e){
 		  System.err.println(e.toString());
 		  System.exit(1);

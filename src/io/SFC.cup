@@ -4,7 +4,7 @@
  * Offers the methods  parseFile and parseExpression 
  *
  * @author Karsten Stahl, Martin Steffen
- * @version $Id: SFC.cup,v 1.4 2001-06-30 13:44:06 swprakt Exp $
+ * @version $Id: SFC.cup,v 1.5 2001-06-30 15:03:22 swprakt Exp $
  *
  * The grammar definition contains 4 parts:
  *    -  initialization declarations and how to generate the parser
@@ -74,7 +74,7 @@ parser code {:
   
   public void unrecovered_syntax_error(Symbol cur_token) throws ParseException{
     done_parsing();       
-    report_fatal_error("[modul parser2] Parsing wird abgebrochen", null);
+    report_fatal_error("[module io] fatal parsing error", null);
   }
 
 
@@ -145,6 +145,8 @@ non terminal	LinkedList	  steps;
 non terminal	LinkedList	  transitions;
 non terminal	LinkedList	  actions;
 non terminal	LinkedList	  declist;
+non terminal    absynt.Type       type;
+non terminal    absynt.Constval   c_val;
 non terminal    LinkedList        declarations;
 non terminal    Declaration       declaration;
 
@@ -170,12 +172,17 @@ start with sfc;
 /** 
  * Produktion:
  * Program   ::= "program" IDENT "[" "]" ""
- */
+ **/
 
 sfc          ::= program:p {: RESULT=p; :}
                  ;
 
-program      ::= BEGIN
+
+program      ::= BEGIN 
+                 declist SEM
+                 END;
+
+/** program      ::= BEGIN
 		 declist SEM
 		 istep SEM
 		 steps SEM
@@ -183,24 +190,34 @@ program      ::= BEGIN
 		 transitions SEM
 		 END
 		 ;
+**/
 
-declist      ::= VARS EQ LBRACKET
-		 declarations
-		 RBRACKET SEM
-              |   VARS EQ LBRACKET
-		 RBRACKET SEM
+
+declist      ::= VARS EQ LBRACKET  RBRACKET
+              |  VARS EQ LBRACKET  declarations RBRACKET
 		 ;
 declarations ::= declaration
               |  declaration SEM declarations
 		 ;
 
-declaration  ::= IDENT:var COLON IDENT:type EQ IDENT:val SEM
-		 ;
+declaration  ::= IDENT:var COLON type:type EQ c_val:val;
+  
+
+type         ::= INT 
+              |  BOOL;
+
+
+c_val        ::= TRUE 
+              |  FALSE
+  ;
+
 
 istep	     ::= INIT EQ IDENT:stepname
                  {: 
 	    	    less();
-		  RESULT = new absynt.Step(stepname);  // no actions yet
+		  RESULT = new absynt.Step(stepname);  // no actions yet int concrete syntax!
                  :} 
-             ;
+;
+
+
 

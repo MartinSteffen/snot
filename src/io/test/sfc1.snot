@@ -1,12 +1,14 @@
-// textual representation of SFC1
+
 
 
 begin 
  vars = [ 
 
-	  x : bool = false;
+	  x : bool = true
 
   ];
+end
+
 
 //begin
 // vars =
@@ -51,6 +53,5 @@ begin
 // ];
 //
 
-end
 
 

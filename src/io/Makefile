@@ -9,7 +9,11 @@ LEXLOGFILE = JLex.log
 PACKAGE    = io
 ################################################
 
-all:	Parser.class
+all:	Main.class
+
+
+Main.class: Parser.class Main.java
+	javac Main.java
 
 Parser.class:	Parser.java Yylex.java ParseException.java
 	javac Parser.java Sym.java Yylex.java ParseException.java
@@ -24,6 +28,10 @@ Parser.java:	SFC.cup
 
 
 
+
+tests: 
+	cd test; make all
+
 clean:
 	\rm -f *.class *~ Yylex.java Scanner.lex.java Sym.java Parser.java $(LEXLOGFILE) $(CUPLOGFILE)
 
@@ -35,6 +43,9 @@ www:
 
 # ------------------------------------------------------------------
 #	$Log: not supported by cvs2svn $
+#	Revision 1.4  2001/06/30 13:44:06  swprakt
+#	OK
+#	
 #	Revision 1.3  2001/06/30 12:19:35  swprakt
 #	I renamed the files
 #	
