@@ -2,7 +2,7 @@
                                steps      : step list
                                transs     : transition list
                                actions    : action list
-                     step ::=  a_name     : string
+                     step ::=  name       : string
                                actions    : stepaction list
                stepaction ::=  qualifier  : action_qualifier
                                a_name     : string
