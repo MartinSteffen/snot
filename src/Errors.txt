@@ -1,5 +1,5 @@
 ###########################################################
-## $Id: Errors.txt,v 1.11 2001-06-14 05:38:44 swprakt Exp $
+## $Id: Errors.txt,v 1.12 2001-07-13 07:42:49 swprakt Exp $
 ###########################################################
 
 
@@ -26,6 +26,17 @@
 --	  die neuen sollen _oben_ angeh"angt werden ------
 
 
+
+#number: 	8
+#reporter: 	Karsten (kst)
+#where:         checks
+#subject: 	vermutlich runtime error
+#status: 	reported  
+#description:   bei allen mit Parser eingelesenen SFC's steigt check aus mit:
+java.lang.NullPointerException
+        at checks.Snotcheck.isGuardOk(Snotcheck.java:285)
+        at checks.Snotcheck.isAllTransitionOk(Snotcheck.java:595)
+        at checks.Snotcheck.isWellDefined(Snotcheck.java:656)
 
 
 
