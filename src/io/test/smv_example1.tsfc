@@ -1,0 +1,58 @@
+// o variablendeklaration: ein `;' zuviel
+// o nach transitionsliste kein `;'
+// o end am ende fehlt
+
+
+begin
+ vars =
+ [
+    want1 : bool = false;
+    want2 : bool = false;
+    cs1   : bool = false;
+    cs2   : bool = false
+ ];
+
+ steps =
+ [
+   (start,[]);
+   (s1_1,[(N,act1)]);
+   (s1_2,[(N,act2)]);
+   (s1_3,[(N,act3)]);
+   (s1_4,[(N,act4)]);
+   (s2_1,[(N,act5)]);
+   (s2_2,[(N,act6)]);
+   (s2_3,[]);
+   (s2_4,[(N,act7)]);
+   (s2_5,[(N,act8)])
+ ];
+
+ init = start;
+
+ actions =
+ [
+    act1 = [want1:=true];
+    act2 = [cs1:=true];
+    act3 = [cs1:=false];
+    act4 = [want1:=false];
+    act5 = [want2:=false];
+    act6 = [want2:=true];
+    act7 = [cs2:=true];
+    act8 = [cs2:=false]
+ ];
+
+ transitions =
+ [
+    [ start ] -> [ s1_1;s2_1 ];
+    [ s1_1 ] -> [ s1_2 ] when (not want2);
+    [ s1_2 ] -> [ s1_3 ];
+    [ s1_3 ] -> [ s1_4 ];
+    [ s1_4 ] -> [ s1_1 ];
+    [ s2_1 ] -> [ s2_2 ] when (not want1);
+    [ s2_2 ] -> [ s2_3 ] when want1;
+    [ s2_2 ] -> [ s2_4 ] when (not want1);
+    [ s2_3 ] -> [ s2_1 ];
+    [ s2_4 ] -> [ s2_5 ];
+    [ s2_5 ] -> [ s2_1 ]
+ ]
+
+end
