@@ -4,7 +4,7 @@
  * Offers the methods  parseFile and parseExpression 
  *
  * @author Karsten Stahl, Martin Steffen
- * @version $Id: SFC.cup,v 1.9 2001-07-01 08:07:36 swprakt Exp $
+ * @version $Id: SFC.cup,v 1.10 2001-07-01 08:44:58 swprakt Exp $
  *
  * The grammar definition contains 4 parts:
  *    -  initialization declarations and how to generate the parser
@@ -125,24 +125,22 @@ parser code {:
  * The choice of names for the non-terminals is directly inspired
  * byte the extended abstract grammar.
  */ 
-terminal         SFC, LBRACKET, RBRACKET, ASSIGN;
+terminal         LBRACKET, RBRACKET, ASSIGN;
 terminal         LPAREN, RPAREN,  COMMA, SEM, COLON, FROMTO;  
 terminal         INIT, SKIP, WHEN, ACTIONS, BEGIN, END, VARS, STEPS, TRANSITIONS;
-terminal         INT, BOOL, GET, NEQ, OR, PLUS, TIMES;
+terminal         INT, BOOL, NEQ, OR, PLUS, TIMES;
 terminal         AND, DIV, EQ, GEQ, GREATER, LEQ, LESS, MINUS, NEG;
 terminal         TRUE, FALSE;
 
 terminal String  IDENT;
 terminal Integer INTEGER;
 
-non terminal    var_dec, assignment;
-
 non terminal    absynt.SFC        sfc;
 non terminal    absynt.SFC        program;
 non terminal	absynt.Step	  istep;
-non terminal	LinkedList	  steps, steplist;
+non terminal	LinkedList	  steps, steplist, stepnames;
 non terminal    absynt.Step       step;
-non terminal	LinkedList	  transitions;
+non terminal	LinkedList	  transitions, transitionlist;
 non terminal	LinkedList	  declist;
 non terminal    absynt.Type       type;
 non terminal    absynt.Constval   constval;
@@ -152,10 +150,11 @@ non terminal    LinkedList        stepactionlist;
 non terminal    absynt.StepAction stepaction;
 non terminal    absynt.ActionQualifier  qualifier;
 non terminal    LinkedList              actionlist,actions;
-non terminal    absynt.Action           sfcaction;   //action is reserved word
+non terminal    absynt.Action           sfcaction;   //action a is reserved word
 non terminal    LinkedList              sap, stmtlist;
 non terminal    absynt.Stmt             stmt;
 non terminal    absynt.Assign           assign;
+non terminal    absynt.Transition       transition;
 
 non terminal    absynt.Expr       expr;
 non terminal    absynt.Variable   var;
@@ -190,8 +189,11 @@ program      ::= BEGIN
                  declist SEM
 	         istep SEM
 	         steps SEM
-                 actions 
+                 actions SEM
+                 transitions
                  END;
+
+
 
 /** program      ::= BEGIN
 		 declist SEM
@@ -316,4 +318,26 @@ op              ::= PLUS     {: RESULT= new Integer(absynt.Expr.PLUS); :}
   ;
 
 var             ::= IDENT:v
+  ;
+
+
+transitions     ::=  TRANSITIONS EQ 
+                     LBRACKET
+                     transitionlist
+                     RBRACKET
+  ;
+
+transitionlist  ::=  transition
+                 |   transition SEM transitionlist
+  ;
+
+transition      ::=  LBRACKET stepnames RBRACKET FROMTO LBRACKET stepnames RBRACKET
+                 |   LBRACKET stepnames RBRACKET FROMTO LBRACKET stepnames RBRACKET
+                     WHEN expr
+  ;
+                  
+
+
+stepnames       ::= IDENT:s
+                 |  IDENT:s SEM stepnames
   ;
