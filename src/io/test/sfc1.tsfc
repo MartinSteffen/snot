@@ -17,7 +17,7 @@ begin
 
   actions = [
 	       act1 = [skip];
-	       act2 = [skip;x := 5];
+	       act2 = [skip; x := 5];
 	       act2 = [ x  := 5;
 	                y  := true;
 	                x  := y2;
