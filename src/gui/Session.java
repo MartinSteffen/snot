@@ -8,6 +8,7 @@ package gui;
 
 import java.util.Hashtable;
 import java.lang.*;
+//import java.lang.Class;
 import java.io.Serializable;
 import java.io.File;
 import java.io.ObjectOutputStream;
@@ -31,13 +32,13 @@ import javax.swing.event.*;
  *  create new, import or export Projects.
  *
  * @author  Hans Theman and Ingo Schiller
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 
 public class Session extends java.lang.Object implements Serializable {
 
     /** variable declarations */
-    private Hashtable table = null;
+    private transient Hashtable table = null;
     /** The name of the current session.
      *  It is taken form the filename excluding path and filename extension.
      */
@@ -161,7 +162,7 @@ public class Session extends java.lang.Object implements Serializable {
     public int noOfProjects() {
         return table.size();
     }
-
+    
     /**
      *  Returns the corresponding Project object.
      *  @param key  Specifies the object to search for.
@@ -183,7 +184,7 @@ public class Session extends java.lang.Object implements Serializable {
             object = table.put((Object)_project.getEditor(), (Object)_project); // throws NullPointerExeption !!!!
         }
         catch (NullPointerException nullex) {
-            throw new Exception(nullex.getMessage());
+            throw new Exception("An error occured while adding a Project to the Session!");
         }
         if (object != null)
             throw new Exception("Attention: The added Project was allready mapped in the Session!\nIt is now mapped to the new once.\n");
@@ -231,53 +232,66 @@ public class Session extends java.lang.Object implements Serializable {
      *  @param _file    Specifies the file in which to store the entire Session.
      */
     public void save(File _file) throws Exception {
+        Enumeration e = null;
+        Project p = null;
+        
         if (_file != null) {
             this.setFile(_file); // ... else use the old file
         }
 
+        e = this.table.elements();
         ObjectOutputStream outStream = new ObjectOutputStream(new FileOutputStream(this.file));
         try {
-	    System.out.println("vor writeObject.......");
             outStream.writeObject(this); // throws IOException!!!!
+            outStream.writeInt(this.table.size()); // throws IOException!!!!
+            while (e.hasMoreElements()) {
+                p = (Project)e.nextElement();
+                p.setEnvironment();
+                p.clearModified();
+                outStream.writeObject(p); // throws IOException!!!!
+            }
         }
-        catch (Exception ex){ex.printStackTrace();}
+//        catch (Exception ex){ex.printStackTrace();}
 	finally {
             outStream.close(); // throws IOException!!!!
         }
+        
         outStream.flush(); // throws IOException!!!!
         outStream.close(); // throws IOException!!!!
 
         this.is_saved = true;
         this.is_modified = false;
-
-        // tell all the editors that the session is saved
-        for (Enumeration e = this.table.elements() ; e.hasMoreElements() ;) {
-            ((Project)e.nextElement()).clearModified();
-        }
     }
 
     public static Session read(File _file) throws Exception {
         Project p = null;
         Session s = null;
+        Editor e = null;
+        int i = 0;
 
         ObjectInputStream inStream = new ObjectInputStream(new FileInputStream(_file));
+        // read session
         try {
            s = (Session)inStream.readObject();
+           s.table = new Hashtable();
+           i = inStream.readInt();
+System.out.print("\n there are "+i+" projects in the session to read");           
+           while ((i--)>0) {
+System.out.print("\n reading project "+i);              
+               p = (Project)inStream.readObject();
+               e = new Editor(p.getSFC());
+//               e.addWindowListener(new gwl.getConstructor());  // throws lots of evil things ...
+//System.out.print("\n the class is "+gwl.getClass().getName());
+               p.setEditor(e);
+               p.restoreEnvironment();
+               s.addProject(p);
+           }
+System.out.print("\n finished reading projects");
         }
         finally {
             inStream.close();
         }
         inStream.close();
-        Enumeration e = s.table.elements();
-        while (e.hasMoreElements()) {
-            p = (Project)e.nextElement();
-            p.setEditor(new Editor(p.getSFC()));
-            p.restoreEnvironment();
-            p.clearModified();
-            if (p.isActive()) {
-                p.getEditor().show();
-            }
-        }
 
         // session settings
         s.setFile(_file);

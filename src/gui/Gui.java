@@ -19,15 +19,19 @@ import java.util.*;
 import absynt.*;
 import editor.*;
 import smv.*;
-import checks.*;
-import simulator.*;
+
+import checks.IStepException;
+import checks.Snotcheck;
+import checks.CheckException;
+
+import simulator.Simulator;
 
 
 /**
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.21 $
+ * @version $Revision: 1.22 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -566,8 +570,6 @@ public class Gui extends javax.swing.JFrame {
   }//GEN-LAST:event_ShowToolBarActionPerformed
 
   private void SFCBrowserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SFCBrowserActionPerformed
-      //SnotOptionPane.showMessageDialog(null, "SFC browser not yet implemented!\n",
-        //                               "Error", JOptionPane.ERROR_MESSAGE);
       if (SFCBrowser.isSelected())
           {showProjectList();}
       else projectFrame.dispose();
@@ -652,7 +654,7 @@ System.out.print("\nlaunching SMVTranslator ...");
           status = Snotcheck.isWellDefined(project.getSFC());
       }
       catch (CheckException checkEx) {
-          if (checkEx instanceof NoIStepException)
+          if (checkEx instanceof IStepException)
                 SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "No Istep Exception", JOptionPane.ERROR_MESSAGE);
           else SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
@@ -1007,9 +1009,11 @@ System.out.print(ex.getClass());
                System.out.println("Clicked on Item " + index);
 	       Vector p = session.getProjectList();
 	       try {
-		    ((Project)p.elementAt(index)).getEditor().show();
+                    activeProject = (Project)p.elementAt(index);
+                    activeProject.getEditor().show();
+//                    (((Project)p.elementAt(index)).getEditor()).show();
 	       }catch(Exception ex){System.out.println("Daneben!!");}
-
+                                                     // hihi! Daneben!! so, so ... 
 	   }
        }
     };
@@ -1021,7 +1025,7 @@ System.out.print(ex.getClass());
     pane.add(scrollpane);
 
     projectFrame.show();
-    pack();
+    projectFrame.pack();
     }
 
     private void updateProjectList(){
@@ -1082,6 +1086,7 @@ System.out.print("\nSession is closed!");
 
     private Session openSession(File file) {
         Session newSession = null;
+        Vector v = null;
 
         try {
             Utilities.validateFile(file, SessionFileExtension);
@@ -1094,6 +1099,10 @@ System.out.print("\nSession is closed!");
 
         try {
             newSession = Session.read(file);
+            v = newSession.getProjectList();
+            for (int i=0; i<v.size(); i++) {
+                ((Project)v.elementAt(i)).getEditor().addWindowListener(new Gui.GuiWindowListener());
+            }
         }
         catch (IOException ex) {
             SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Read error", JOptionPane.WARNING_MESSAGE);
@@ -1102,8 +1111,19 @@ System.out.print("\nSession is closed!");
         catch (Exception ex) {
             String msg = (ex.getMessage()+"\n\nError type:\n"+ex.getClass().getName());
             SnotOptionPane.showMessageDialog(null, msg, "Read error", JOptionPane.WARNING_MESSAGE);
+            ex.printStackTrace();
             return null;
         }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        
+//      Hier muss unbedingt noch der GuiWindowListener an den Start geholt werden!!
+//      Und das für jedes Editorobject!!!!!!!!!!!!!!!        
+        
+//        for (Enumeration e = session
+//        e.addWindowListener(new Gui.GuiWindowListener());
+        
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////        
 
         setTitle(TITLE+"  "+newSession.getName());
         enableSession(true);
