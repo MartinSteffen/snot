@@ -9,36 +9,128 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.30 2001-06-19 15:04:39 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.31 2001-06-27 11:33:22 swprakt Exp $
  *
  */
 
 public class Snotcheck{
 
+    private static boolean isBExprOk(B_expr aBExpr){
+	/////////////////////////////////////////////////////////////////////////
+	//in dieser methode wird geprueft, ob der binaere ausdruck korrekt ist,
+	//und es wird ermittelt, welchen typ dieser hat
+	/////////////////////////////////////////////////////////////////////////
+	Expr lExpr,rExpr;
+	
+	lExpr = aBExpr.left_expr;
+	rExpr = aBExpr.right_expr;
 
-    private static boolean isExprOk(Expr anExpr){
-	//Diese Methode "uberpr"uft rekursiv, ob der angegebene Ausdruck ein korrekter Ausdruck ist.
+	//sind beide expressions vorhanden und ist der Operator ein moeglicher Operator?
+	if ((lExpr == null)||(rExpr == null)||(aBExpr.op < 0)||(aBExpr.op > 12)){return false;}
+
+	//pruefen der linken expression:
+	
+
+	return true;
+    }
+
+    private static boolean isUExprOk(U_expr anUExpr){
+	/////////////////////////////////////////////////////////////////////////
+	//in dieser methode wird geprueft, ob der unaere ausdruck korrekt ist,
+	//und es wird ermittelt, welchen typ dieser hat
+	/////////////////////////////////////////////////////////////////////////
+	return true;
+    }
+
+
+
+
+    private static boolean isGuardOk(Expr anExpr){
+	//Diese Methode "uberpr"uft, ob der angegebene Ausdruck ein korrekter Ausdruck fuer eine Guard ist.
 
 	//Folgende Dinge sollen gepr"uft werden:
-	// a)wenn expr=b_expr:
-	//   -Operator darf nur sein:AND, OR, NEG
-	//   -beide Operanden m"ussen vom Typ Boolean sein
-	//
-	// b)wenn expr=u_expr:
-	//   -Operator darf nur sein:PLUS, MINUS, TIMES, DIV, LESS, GREATER, LEQ, GEQ, EQ
+	//   -expr = b_expr?
+	//   -Typ der Expr muss Boolean sein
+	//   -beide Operanden m"ussen vom Typ Boolean sein  (auch erlaubt: (4>2)AND(...) , da 4>2 einen boolschen Wert ergibt)
 
-	int i=anExpr.AND;
 
 
 	//1. Schritt: feststellen, was fuer eine Expression vorliegt:
 	String nameOfExprClass;
 	Class exprClass;
+	int opera;
 	
 	if (anExpr == null){return false;}
 
 	exprClass = anExpr.getClass();
 	nameOfExprClass = exprClass.getName();
 
+	System.out.println(nameOfExprClass);
+
+	if (nameOfExprClass != "B_expr"){return false;}     //ist es eine BinaryExpr, wenn nicht, dann gebe false zurueck
+
+
+
+	Expr lExpr,rExpr;
+	B_expr bExpr;
+	U_expr uExpr;
+	String nameOfLExprClass,nameOfRExprClass;
+	Class lExprClass,rExprClass;
+	
+	lExpr = ((B_expr)anExpr).left_expr;
+	rExpr = ((B_expr)anExpr).right_expr;
+
+	lExprClass = lExpr.getClass();
+	nameOfLExprClass = lExprClass.getName();
+	rExprClass = rExpr.getClass();
+	nameOfRExprClass = rExprClass.getName();
+
+	if (nameOfLExprClass == "B_expr"){            //pruefen der linken expression:
+	    //Check einer BExpr aufrufen
+	    bExpr = (B_expr)lExpr;
+	    if (isBExprOk(bExpr) == false){
+		//ein Fehler trat auf
+		return false;
+	    }
+	    /////////////////////////////////////////////////////////////////
+	    //hier muss noch geprueft werden, ob die lExpr vom Typ bool ist//
+	    /////////////////////////////////////////////////////////////////
+	} else {
+	    //wenn die expr eine un"are expr ist, so darf der Operator nur NEG sein
+	    uExpr = (U_expr)lExpr;
+	    if (uExpr.op != uExpr.NEG){return false;}   //falls der Operator ungleich NEG ist, gib ein false zurueck
+	    //jetzt muss noch geprueft werden, ob die lExpr auch gueltig ist
+	    if (isUExprOk(uExpr) == false){
+		//ein Fehler trat auf, d.h. die lExpr ist ungueltig
+		return false;
+	    }
+	    //an dieser Stelle braucht man den Typ nicht mehr zu pruefen, da der Operator NEG nur auf einen boolschen Wert angewendet werden darf, und somit ist auch der gesamte Ausdruck vom Typ bool
+	}
+
+	if (nameOfRExprClass == "B_expr"){           //pruefen der rechten expression:
+	    //Check einer BExpr aufrufen
+	    bExpr = (B_expr)rExpr;
+	    if (isBExprOk(bExpr) == false){
+		//ein Fehler trat auf
+		return false;
+	    }
+	    /////////////////////////////////////////////////////////////////
+	    //hier muss noch geprueft werden, ob die lExpr vom Typ bool ist//
+	    /////////////////////////////////////////////////////////////////
+	} else {
+	    //wenn die expr eine un"are expr ist, so darf der Operator nur NEG sein
+	    uExpr = (U_expr)rExpr;
+	    if (uExpr.op != uExpr.NEG){return false;}   //falls der Operator ungleich NEG ist, gib ein false zurueck
+	    //jetzt muss noch geprueft werden, ob die rExpr auch gueltig ist
+	    if (isUExprOk(uExpr) == false){
+		//ein Fehler trat auf, d.h. die rExpr ist ungueltig
+		return false;
+	    }
+	    //an dieser Stelle braucht man den Typ nicht mehr zu pruefen, da der Operator NEG nur auf einen boolschen Wert angewendet werden darf, und somit ist auch der gesamte Ausdruck vom Typ bool
+	}
+	////////////////////////////////////////////////////////////////
+	//hier muss noch geprueft werden, ob die expr vom Typ bool ist//
+	////////////////////////////////////////////////////////////////
 	return true;
 
     }
@@ -156,7 +248,7 @@ public class Snotcheck{
 	for (int i=0; i < actionList.size(); i++){
 	    action = (Action)actionList.get(i);
 	    name1 = action.a_name;
-	    for (int j=i; j < actionList.size(); j++){
+	    for (int j=i+1; j < actionList.size(); j++){
 		action2 = (Action)actionList.get(j);
 		name2 = action2.a_name;
 		if (name1 == name2){throw new ActionFailure(action, "Action with a name, which is already used.");}
@@ -180,7 +272,9 @@ public class Snotcheck{
 		stmt1 = (Stmt)stmtList.get(j);               //auslesen des j-ten Statements aus der sap
 		class1 = stmt1.getClass();
 		class1Name = class1.getName();
-		if (class1Name == "Assign" || class1Name == "Skip"){
+		System.out.println(class1Name);
+		//	if (stmt1 == null){throw new ActionFailure(action, "neuer fehler.");}
+		if (class1Name == "absynt.Assign" || class1Name == "absynt.Skip"){
 		    if (class1Name == "Assign"){             //wenn das statement eine Zuweisung ist, dann muessen noch einige Dinge geprueft werden, naehmlich:
 			// - sind val und var ungleich null
 			// - ist val ein gueltiger Wert fuer var (richtiger Typ?)
@@ -218,7 +312,7 @@ public class Snotcheck{
 
 
 		    }
-		} else {throw new ActionFailure(null, "Error, that can`t be solved.");}
+		} else {throw new ActionFailure(null, "Impossible Error, that can`t be solved.");}
 	    }        //Ende der inneren for-Schleife
 	}            //Ende der ausseren for-Schleife
 	
@@ -234,24 +328,32 @@ public class Snotcheck{
 
 
 
-
-
-
     /**Diese Funktion prueft alle Steps(vollstaendig, korrekt)
      */
 private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 
     LinkedList stepList = aSFCObject.steps;
+    int stepListSize = stepList.size();
     String stepName;
-    Step aStep;
+    Step aStep, bStep;
 
     if (stepList != null){
 
         //Pruefung auf Null-Werte von Stepparameter
-	for (int i=0; i < stepList.size(); i++){
+	for (int i=0; i < stepListSize; i++){
 	    aStep = (Step)stepList.get(i);
 	    if (aStep.name == null){throw new StepFailure(aStep, "Stepname not found!");}
 	    if (aStep.actions == null){throw new StepFailure(aStep, "No actions in step!");}
+	}
+
+	//Pruefung auf Doppeltvorkommene Namen
+	for (int i=0; i < stepListSize; i++){
+	    aStep = (Step)stepList.get(i);
+	    
+	    for (int j=(i+1); j < stepListSize; j++){
+		bStep = (Step)stepList.get(j);
+		if (aStep.name == bStep.name){throw new StepFailure(aStep,"The Stepname is not unique!");}
+	    }
 	}
 
     }else throw new StepFailure(null,"Where are the steps?!!");
@@ -289,6 +391,7 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 
 	if (translist!=null){
 	    for (int i=0; i < translist.size(); i++){
+		//	System.out.println(i);
 		trans = (Transition)translist.get(i);
 		if (trans.source == null || trans.target == null || trans.guard == null){
 		    //Wenn einer der Werte fehlt, dann werfe eine Exception (TransitionFailure) mit der entsprechenden Transition als Argument
@@ -338,13 +441,18 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 
 	if (aSFCObject == null){throw new IStepException("No SFC selected.");}
 
-	boolean nurBool,test;
+	boolean test;
 
 	test = isThereAnIStep(aSFCObject);
+	System.out.println(test);
 	test = isDeclarationOk(aSFCObject);
+	System.out.println(test);
 	test = isAllActionOk(aSFCObject);
+	System.out.println(test);
 	test = isAllStepOk(aSFCObject);
+	System.out.println(test);
 	test = isAllTransitionOk(aSFCObject);
+	System.out.println(test);
 	return true;
     }
 
@@ -356,9 +464,12 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.30 2001-06-19 15:04:39 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.31 2001-06-27 11:33:22 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.30  2001/06/19 15:04:39  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.29  2001/06/19 14:34:55  swprakt
 //	*** empty log message ***
 //	
