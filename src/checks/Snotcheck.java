@@ -10,7 +10,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.44 2001-07-11 08:41:20 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.45 2001-07-11 09:25:18 swprakt Exp $
  *
  */
 
@@ -436,9 +436,9 @@ public class Snotcheck{
 		//Einschub fuer Bier
 		class1 = stmt1.getClass();
 		eee = class1.isInstance(new Assign(null,null));
-
-
-
+		
+		
+		
 
 		//	class1 = stmt1.getClass();
 		class1Name = class1.getName();
@@ -446,12 +446,48 @@ public class Snotcheck{
 		if (class1Name == "absynt.Assign" || class1Name == "absynt.Skip"){
 		    if (class1Name == "Assign"){             //wenn das statement eine Zuweisung ist, dann muessen noch einige Dinge geprueft werden, naehmlich:
 			// - sind val und var ungleich null
+			// - ist val eine gueltige Expression
 			// - ist val ein gueltiger Wert fuer var (richtiger Typ?)
 			ass = (Assign)stmt1;
 
 			//pruefen, ob var und val vernuenftig sind (d.h. ungleich null)
 			if (ass.var == null){throw new ActionFailure(action, "This statement has no var.");}
 			if (ass.val == null){throw new ActionFailure(action, "This statement has no val.");}
+			
+
+			/////////////////////////////////////////////////////////////////////
+			/////////////////////////////////////////////////////////////////////
+
+			//pruefen, ob val eine gueltige Expression ist:
+			String nameOfValClass = ((ass.val).getClass()).getName();
+			boolean allesOk;
+			if (nameOfValClass == "B_expr"){
+			    B_expr bExpr = (B_expr) ass.val;
+			    allesOk = isBExprOk(bExpr);
+			    if (allesOk == false){throw new ActionFailure(action, "This val is no correct expression.");}
+			}
+			if (nameOfValClass == "U_expr"){
+			    U_expr uExpr = (U_expr) ass.val;
+			    allesOk = isUExprOk(uExpr);
+			    if (allesOk == false){throw new ActionFailure(action, "This val is no correct expression.");} 
+			}
+			if (nameOfValClass == "Constval"){
+			    Constval constant = (Constval) ass.val;
+			    String nameOfConstvalClass = (constant.val.getClass()).getName();  //name des Typs der Konstanten
+			    if (nameOfConstvalClass == "Boolean"){
+				ass.val.type = new BoolType();
+			    } else {
+				ass.val.type = new IntType();
+			    }
+			}
+			if (nameOfValClass == "Variable"){
+			    //fc
+			}
+
+
+			//////////////////////////////////////////////////////////////////////////////
+			//////////////////////////////////////////////////////////////////////////////
+
 
 			//pruefen, ob val den gleichen Typ wie var hat:
 			valClass = ass.val.getClass();
@@ -468,7 +504,7 @@ public class Snotcheck{
 
 			} else {
 
-			    //2.Fall: der AUsdruck von val ist kein constval, hat also einen Typ, den man abfragen kann
+			    //2.Fall: der AUsdruck von val ist kein constval, hat also einen Type, den man abfragen kann
 			    valTypeClass = ass.val.type.getClass();
 			    valTypeName = valTypeClass.getName();
 
@@ -653,9 +689,12 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.44 2001-07-11 08:41:20 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.45 2001-07-11 09:25:18 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.44  2001/07/11 08:41:20  swprakt
+//	jetzt werden die guards gecheckt
+//	
 //	Revision 1.43  2001/07/11 07:14:49  swprakt
 //	*** empty log message ***
 //	
