@@ -11,7 +11,7 @@ import java.lang.Exception;
 /**
  *
  * @author  Kevin Koeser / Tobias Kloss
- * @version 0.2
+ * @version $ID: $
  */
 public class SMVException extends Exception {
     
