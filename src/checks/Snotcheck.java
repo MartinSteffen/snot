@@ -9,7 +9,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.25 2001-06-12 15:14:25 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.26 2001-06-13 13:34:30 swprakt Exp $
  *
  */
 
@@ -147,20 +147,50 @@ public class Snotcheck{
 		class1 = stmt1.getClass();
 		class1Name = class1.getName();
 		if (class1Name == "Assign" || class1Name == "Skip"){
-		    if (class1Name == "Assign"){
+		    if (class1Name == "Assign"){             //wenn das statement eine Zuweisung ist, dann muessen noch einige Dinge geprueft werden, naehmlich:
+			// - sind val und var ungleich null
+			// - ist val ein gueltiger Wert fuer var (richtiger Typ?)
 			ass = (Assign)stmt1;
-			//pruefen, ob var und val vernuenftig sind
+
+			//pruefen, ob var und val vernuenftig sind (d.h. ungleich null)
 			if (ass.var == null){throw new ActionFailure(action, "This statement has no var.");}
 			if (ass.val == null){throw new ActionFailure(action, "This statement has no val.");}
+
+			//pruefen, ob val den gleichen Typ wie var hat:
+			valClass = ass.val.getClass();
+			valClassName = valClass.getName();
+			varTypeClass = ass.var.type.getClass();
+			varTypeName = varTypeClass.getName();
+
+			//1.Fall: der Ausdruck von val ist ein constval:
+			if (valClassName == "constval"){
+			    if ((ass.val == true || ass.val == false) && varTypeName != "BoolType"){
+				throw new ActionFailure(action, "This statement tries to assign a Boolean to an Integer.");
+			    }
+			} else {
+
+			    //2.Fall: der AUsdruck von val ist kein constval, hat also einen Typ, den man abfragen kann
+			    valTypeClass = ass.val.type.getClass();
+			    valTypeName = valTypeClass.getName();
+
+			    if (varClassName != valTypeName){
+				throw new ActionFailure(action, "This statement tries to assign a Boolean to an Interger or an Interger to a Boolean.");
+			    }
+			}
+
+
+
+
 		    }
-		} else {throw new ActionFailure(null, "Error, that can`t be solved.");}
-	    }
-
-
+		}
+	    } else {throw new ActionFailure(null, "Error, that can`t be solved.");}
 	}
-
-	return true;
+	
+	
     }
+    
+    return true;
+}
 
 
 
@@ -275,9 +305,12 @@ public class Snotcheck{
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.25 2001-06-12 15:14:25 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.26 2001-06-13 13:34:30 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.25  2001/06/12 15:14:25  swprakt
+//	I removed a file
+//	
 //	Revision 1.23  2001/06/12 14:55:02  swprakt
 //	*** empty log message ***
 //	
