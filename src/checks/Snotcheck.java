@@ -9,7 +9,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.32 2001-06-27 13:08:18 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.33 2001-06-27 13:12:42 swprakt Exp $
  *
  */
 
@@ -29,7 +29,19 @@ public class Snotcheck{
 	if ((lExpr == null)||(rExpr == null)||(aBExpr.op < 0)||(aBExpr.op > 12)){return false;}
 
 	//pruefen der linken expression:
-	
+
+	//pruefen der rechten expression:
+
+	//"berechnen" des Typs von dieser Expression aus dem Operator und den Typen der linken/rechten expression
+	if (((lExpr.type.getClass()).getName()) != ((rExpr.type.getClass()).getName())){
+	    //abfrage, ob beide Operanden den gleichen Typ haben. Wenn nicht, dann gebe ein false zurueck
+	    return false;
+	}
+
+	String typeName = (lExpr.type.getClass()).getName();
+	if ((aBExpr.op == aBExpr.AND)&&(typeName == "BoolType")){
+	    aBExpr.type = new BoolType();
+	}
 
 	return true;
     }
@@ -483,9 +495,12 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.32 2001-06-27 13:08:18 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.33 2001-06-27 13:12:42 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.32  2001/06/27 13:08:18  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.31  2001/06/27 11:33:22  swprakt
 //	*** empty log message ***
 //	
