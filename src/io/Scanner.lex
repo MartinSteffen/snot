@@ -19,28 +19,28 @@ name    = ({letter}({letter}|{digit})*)
 
 {comment}             { }
 {space}               { }
-"program"             { return new Symbol(sym.PROGRAM);         }
-"{"                   { return new Symbol(sym.LBRACE);          }
-"}"                   { return new Symbol(sym.RBRACE);          }
-"channel"             { return new Symbol(sym.CHANNEL);         }
-"process"             { return new Symbol(sym.PROCESS);         }
-"put"                 { return new Symbol(sym.PUT);             }
-"get"                 { return new Symbol(sym.GET);             }
-";"                   { return new Symbol(sym.SEMICOL);         }
-"while"               { return new Symbol(sym.WHILE);           }
-"if"                  { return new Symbol(sym.IF);              }
+"begin"               { return new Symbol(sym.BEGIN);           }
+"actions"             { return new Symbol(sym.ACTIONS);         }
+"steps"               { return new Symbol(sym.STEPS);           }
+"init"                { return new Symbol(sym.INIT);            }
+"transitions"         { return new Symbol(sym.TRANSITIONS);     }
+"when"                { return new Symbol(sym.TRANSITIONS);     }
+"->"                  { return new Symbol(sym.FROMTO);          }
+"["                   { return new Symbol(sym.LBRACKET);        }
+"]"                   { return new Symbol(sym.RBRACKET);        }
+";"                   { return new Symbol(sym.SEM);             }
 "("                   { return new Symbol(sym.LPAREN);          }
 ")"                   { return new Symbol(sym.RPAREN);          }
-"else"                { return new Symbol(sym.ELSE);            }
 "="                   { return new Symbol(sym.ASSIGN);          }
 ","                   { return new Symbol(sym.COMMA);           }
-"assert"              { return new Symbol(sym.ASSERT);          }
 "int"                 { return new Symbol(sym.INT);             }
 "bool"                { return new Symbol(sym.BOOL);            }
 "true"                { return new Symbol(sym.TRUE);            }
 "false"               { return new Symbol(sym.FALSE);           }
 "&&"                  { return new Symbol(sym.AND);             }
 "||"                  { return new Symbol(sym.OR);              }
+"and"                 { return new Symbol(sym.AND);             }
+"or"                  { return new Symbol(sym.OR);              }
 "/"                   { return new Symbol(sym.DIV);             }
 "=="                  { return new Symbol(sym.EQ);              }
 ">="                  { return new Symbol(sym.GEQ);             }
@@ -54,6 +54,6 @@ name    = ({letter}({letter}|{digit})*)
 "!="                  { return new Symbol(sym.NEQ);             }
 
 
-{name}   { return new Symbol(sym.NAME, yytext()); }
-{number} { return new Symbol(sym.NUMBER, new Integer(yytext())); }
-.        { System.err.println("[Modul parser] in Zeile "+yyline+": unbek. Zeichen: "+yytext()); }
+{name}                { return new Symbol(sym.NAME, yytext()); }
+{number}              { return new Symbol(sym.NUMBER, new Integer(yytext())); }
+.                     { System.err.println("[Modul io] in line "+yyline+": unknow char: "+yytext()); }
