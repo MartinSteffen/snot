@@ -1,5 +1,5 @@
 #####################################################
-# $Id: Todo,v 1.4 2001-05-02 05:06:09 swprakt Exp $
+# $Id: Todo,v 1.5 2001-05-02 05:12:13 swprakt Exp $
 #####################################################
 
 
@@ -13,7 +13,9 @@ o general stuff:
 
     - Action.java: doc. the sap
 
-    - Action.java: Class Sap is not really necessary
+    - Action.java: Class Sap is not really necessary =>
+
+	remove it also from the req. spec.
 
 
 
