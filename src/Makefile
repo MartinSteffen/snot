@@ -1,6 +1,6 @@
 #----------------------------------------------------------------------
 # developers' top-level Makefile for the Snot project
-# $Id: Makefile,v 1.41 2001-07-01 11:11:50 swprakt Exp $
+# $Id: Makefile,v 1.42 2001-07-10 14:47:35 swprakt Exp $
 #----------------------------------------------------------------------
 
 # The targets installing gobal web-infos can be executed only
@@ -35,7 +35,7 @@ all:	packets $(patsubst %.java,%.class,$(wildcard *.java))
 debug:	; make JAVACOPTS="-g" all
 
 run:	all
-	java gui.GUI
+	java gui.Gui
 
 
 
