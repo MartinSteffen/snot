@@ -24,13 +24,19 @@ public class SimExample {
 		System.out.print("Anfangszustand: ");
 		sim.PrintConfiguration(System.out);				// Zustand ausgeben
 		
-		for (int i=1; i<=15; i++) {
-			
-			sim.SingleStep();
-			
-			System.out.print("nach "+i+". Schritt: ");
+                try {
 
-			sim.PrintConfiguration(System.out);
+			for (int i=1; i<=15; i++) {
+			
+              			sim.SingleStep();
+			
+				System.out.print("nach "+i+". Schritt: ");
+
+				sim.PrintConfiguration(System.out);
+			}
+		}
+		catch (SimException simex) {
+			System.out.print("boeser Fehler: " + simex.getMessage() );
 		}
 		
     }
