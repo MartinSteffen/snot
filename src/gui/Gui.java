@@ -35,7 +35,7 @@ import simulator.Simulator;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.40 $
+ * @version $Revision: 1.41 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -89,7 +89,15 @@ public class Gui extends javax.swing.JFrame {
 	 * initialize the form.
 	 */
     private void initComponents() {
-        jMenuBar = new javax.swing.JMenuBar();
+	ImageIcon nsicon = new ImageIcon("gui/icons/newsession.gif");
+	ImageIcon ssicon = new ImageIcon("gui/icons/savesession.gif");
+	ImageIcon ssaicon = new ImageIcon("gui/icons/savesessionas.gif");
+	ImageIcon osicon = new ImageIcon("gui/icons/opensession.gif");
+	ImageIcon csicon = new ImageIcon("gui/icons/closesession.gif");
+	ImageIcon isfcicon = new ImageIcon("gui/icons/importsfc.gif");
+	ImageIcon esfcicon = new ImageIcon("gui/icons/exportsfc.gif");
+    
+	jMenuBar = new javax.swing.JMenuBar();
         FileMenu = new javax.swing.JMenu();
         OpenSession = new javax.swing.JMenuItem();
         NewSession = new javax.swing.JMenuItem();
@@ -535,8 +543,7 @@ public class Gui extends javax.swing.JFrame {
           ButtonNewSession.setMaximumSize(new java.awt.Dimension(180, 35));
           ButtonNewSession.setName("buttonNewSession");
           //ButtonNewSession.setText("New Session");
-	  ImageIcon nsicon = new ImageIcon("gui/icons/newsession.gif");
-	  ButtonNewSession.setIcon((Icon)nsicon);
+	  //	  ButtonNewSession.setIcon((Icon)nsicon);
           ButtonNewSession.addActionListener(new java.awt.event.ActionListener() {
               public void actionPerformed(java.awt.event.ActionEvent evt) {
                   NewSessionActionPerformed(evt);
@@ -552,8 +559,7 @@ public class Gui extends javax.swing.JFrame {
           ButtonOpenSession.setMaximumSize(new java.awt.Dimension(180, 35));
           ButtonOpenSession.setName("buttonOpenSession");
 	  //ButtonOpenSession.setText("Open Session");
-	  ImageIcon osicon = new ImageIcon("gui/icons/openSession.gif");
-	  ButtonOpenSession.setIcon((Icon)osicon);
+	  //	  ButtonOpenSession.setIcon((Icon)osicon);
           ButtonOpenSession.addActionListener(new java.awt.event.ActionListener() {
               public void actionPerformed(java.awt.event.ActionEvent evt) {
                   OpenSessionActionPerformed(evt);
@@ -568,8 +574,7 @@ public class Gui extends javax.swing.JFrame {
           ButtonCloseSession.setMaximumSize(new java.awt.Dimension(180, 35));
           ButtonCloseSession.setName("buttonCloseSession");
           //ButtonCloseSession.setText("Close Session");
-	  ImageIcon csicon = new ImageIcon("gui/icons/closesession.gif");
-	  ButtonCloseSession.setIcon((Icon)csicon);
+	  //	  ButtonCloseSession.setIcon((Icon)csicon);
           ButtonCloseSession.addActionListener(new java.awt.event.ActionListener() {
               public void actionPerformed(java.awt.event.ActionEvent evt) {
                   CloseSessionActionPerformed(evt);
@@ -585,8 +590,7 @@ public class Gui extends javax.swing.JFrame {
           ButtonSaveSession.setMaximumSize(new java.awt.Dimension(180, 35));
           ButtonSaveSession.setName("buttonSaveSession");
           //ButtonSaveSession.setText("Save Session");
-	  ImageIcon ssicon = new ImageIcon("gui/icons/savesession.gif");
-	  ButtonSaveSession.setIcon((Icon)ssicon);
+	  //	  ButtonSaveSession.setIcon((Icon)ssicon);
           ButtonSaveSession.addActionListener(new java.awt.event.ActionListener() {
               public void actionPerformed(java.awt.event.ActionEvent evt) {
                   SaveSessionActionPerformed(evt);
@@ -601,8 +605,7 @@ public class Gui extends javax.swing.JFrame {
           ButtonSaveAsSession.setMaximumSize(new java.awt.Dimension(180, 35));
           ButtonSaveAsSession.setName("buttonSaveAsSession");
           //ButtonSaveAsSession.setText("Save Session As");
-	  ImageIcon ssaicon = new ImageIcon("gui/icons/savesessionas.gif");
-	  ButtonSaveAsSession.setIcon((Icon)ssaicon);
+	  //	  ButtonSaveAsSession.setIcon((Icon)ssaicon);
           ButtonSaveAsSession.addActionListener(new java.awt.event.ActionListener() {
               public void actionPerformed(java.awt.event.ActionEvent evt) {
                   SaveAsSessionActionPerformed(evt);
@@ -620,8 +623,7 @@ public class Gui extends javax.swing.JFrame {
           ButtonImportSFC.setMaximumSize(new java.awt.Dimension(180, 35));
           ButtonImportSFC.setName("buttonImportSFC");
           //ButtonImportSFC.setText("Import SFC");
-	  ImageIcon isfcicon = new ImageIcon("gui/icons/importsfc.gif");
-	  ButtonImportSFC.setIcon((Icon)isfcicon);
+	  //	  ButtonImportSFC.setIcon((Icon)isfcicon);
           ButtonImportSFC.addActionListener(new java.awt.event.ActionListener() {
               public void actionPerformed(java.awt.event.ActionEvent evt) {
                   ImportSFCActionPerformed(evt);
@@ -636,8 +638,7 @@ public class Gui extends javax.swing.JFrame {
           ButtonExportSFC.setMaximumSize(new java.awt.Dimension(180, 35));
           ButtonExportSFC.setName("buttonExportSFC");
           //ButtonExportSFC.setText("Export SFC");
-	  ImageIcon esfcicon = new ImageIcon("gui/icons/exportsfc.gif");
-	  ButtonExportSFC.setIcon((Icon)esfcicon);
+	  //	  ButtonExportSFC.setIcon((Icon)esfcicon);
           ButtonExportSFC.addActionListener(new java.awt.event.ActionListener() {
               public void actionPerformed(java.awt.event.ActionEvent evt) {
                   ExportSFCActionPerformed(evt);
@@ -916,9 +917,9 @@ public class Gui extends javax.swing.JFrame {
 	      project = new Project();
 	      project.setSFC(parser.parseFile(file));
 System.out.println("File Parsed");
-              //editor = new Editor(project.getSFC());
-	      //editor.addWindowListener(new GuiWindowListener());
-	      //editor.setLocation(EditorLocation);
+              editor = new Editor(project.getSFC());
+	      editor.addWindowListener(new GuiWindowListener());
+	      editor.setLocation(EditorLocation);
 	      project.setName(file.getName());
 	      project.setEditor(editor);
 	      project.setEnvironment();
@@ -931,16 +932,19 @@ System.out.println("File Parsed");
 	      setStatusLine(true, "Parser failed");
 	      SnotOptionPane.showMessageDialog(null, pex.getMessage(), "Parse-Error", JOptionPane.ERROR_MESSAGE);
 	  }
-          /*catch (EditorException edex){
+          catch (EditorException edex){
 	      setStatusLine(true, "Parser failed");
 	      SnotOptionPane.showMessageDialog(null, edex.getMessage(), "Editor-Error", JOptionPane.ERROR_MESSAGE);
-          }*/
+          }
 	  catch (Exception ex) {
 System.out.print("\n"+ex.getClass());
 ex.printStackTrace();
 	       setStatusLine(true, "Parser failed");
                SnotOptionPane.showMessageDialog(null, "Abnormal Error!\nError code 0-8-15\nPlease consult your local cofe machine ...\n\n"+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
           }
+	  finally {
+	      System.out.print("Ein Fehler ist aufgetreten!!!!!!!!!!");
+	  }
 
 
       updateProjectList();
@@ -1149,7 +1153,7 @@ System.out.println("Error while simulating the SFC"+e.getMessage());
    */
   private void CheckSFCActionPerformed(java.awt.event.ActionEvent evt) {
       boolean status = false;
-      boolean status2 = false;
+      
 
       if (activeProject == null) {
           SnotOptionPane.showMessageDialog(null, "Please select a SFC first!\n", "Error: no SFC", JOptionPane.ERROR_MESSAGE);
@@ -1157,13 +1161,13 @@ System.out.println("Error while simulating the SFC"+e.getMessage());
       }
 
       try {
-          status = Snotcheck.isOnlyBool(activeProject.getSFC());
-System.out.println("Nach isonlybool \n"+status);
+	  status = Snotcheck.isWellDefined(activeProject.getSFC());
+	  // Checked setzen falls alle Tests bestanden wurden.
+	  activeProject.setChecked(status);          
+	  status = Snotcheck.isOnlyBool(activeProject.getSFC());
 	  //Den Only Bool Wert des Projects setzen
 	  activeProject.setOnlyBool(status);
-          status2 = Snotcheck.isWellDefined(activeProject.getSFC());
-	  // Checked setzen falls alle Tests bestanden wurden.
-	  activeProject.setChecked(status2);
+         
       }
       catch (CheckException checkEx) {
           if (checkEx instanceof IStepException){
@@ -1425,6 +1429,7 @@ ex.printStackTrace();
       if (!prepareForExitSnot(false))
           return;
       closeSession();
+      setStatusLine(false, "Session closed");
   }
 
   private boolean SaveSessionActionPerformed(java.awt.event.ActionEvent evt) {
@@ -1560,7 +1565,8 @@ System.out.print(ex.getClass());
 	       try {
                     activeProject = (Project)p.elementAt(index);
 		    setStatusLine(true);
-                    activeProject.getEditor().show();
+		    if (activeProject.getEditor()!=null)
+			activeProject.getEditor().show();
 
 	       }catch(Exception ex){/*System.out.println("Daneben!!");*/}
                                                      // hihi! Daneben!! so, so ...
@@ -1662,7 +1668,6 @@ System.out.print(ex.getClass());
         session = null;
 	activeProject = null;
         this.setTitle(TITLE);
-System.out.print("\nSession is closed!");
     }
 
     private Session openSession(File file) {
@@ -1953,7 +1958,13 @@ System.out.print(ex.getClass());
     private javax.swing.JPanel PanelStatus;
     private javax.swing.JLabel Status;
 
-
+    private ImageIcon nsicon;
+    private ImageIcon osicon;
+    private ImageIcon ssaicon;
+    private ImageIcon ssicon;
+    private ImageIcon csicon;
+    private ImageIcon isfcicon;
+    private ImageIcon esfcicon;
     // End of variables declaration
 
 }
