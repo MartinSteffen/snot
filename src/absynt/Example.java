@@ -1,12 +1,13 @@
 package absynt;
 
 import utils.PrettyPrint;
+import java.util.LinkedList;
 
 /**
  * 
  * The class offers an example for a program int abstract syntax.
  * @author Initially provided by Martin Steffen.
- * @version $Id: Example.java,v 1.11 2001-05-10 06:59:52 swprakt Exp $	
+ * @version $Id: Example.java,v 1.12 2001-05-23 14:56:33 swprakt Exp $	
  */
 
 
@@ -16,10 +17,9 @@ public class Example{
    * most constructs of the abstract syntax. The example is not
    * really meaningful.
    */
-    public static StepActionList getExampleStepActionList1(){
-	StepActionList sal1 =
-	    new StepActionList (new StepAction(new Nqual(),
-					       new String("act1")), null);
+    public static LinkedList getExampleStepActionList1(){
+	LinkedList sal1 = new LinkedList();
+	sal1.addLast(new StepAction(new Nqual(), new String("act1")));
 	return sal1;
     };
 
@@ -44,29 +44,31 @@ public class Example{
       Assign stmt1 =                 
 	new Assign(v_x,                    // x := false
 		   new Constval(false));
-      StmtList sl1 = new StmtList(stmt1, null);
+      LinkedList sl1 = new LinkedList();
+      sl1.addLast(stmt1);
       Action a1 = 
 	new Action (new String("act1"),
 		    sl1);
       StepAction sa1 = 
 	new StepAction (new Nqual(),
 			new String("act1"));
-      StepActionList sal1 = 
-	new StepActionList (sa1, null);
+      LinkedList sal1 = new LinkedList();
+      sal1.addLast(sa1);
       Step s1      = new Step("S1",sal1);   // Step s1
 
       //   ------- Step 2
       Assign stmt2 =                 
 	new Assign(v_y, v_x);                   // y := x
-      StmtList sl2 = new StmtList(stmt2, null);
+      LinkedList sl2 = new LinkedList();
+      sl2.addLast(stmt2);
       Action a2 = 
 	new Action (new String("act2"),
 		    sl2);
       StepAction sa2 =
 	new StepAction (new Nqual(),
 			new String("act2"));
-      StepActionList sal2 = 
-	new StepActionList (sa2, null);
+      LinkedList sal2 = new LinkedList();
+      sal2.addLast(sa2);
       Step s2      = new Step("S2",sal2);   // Step s2
 
       //   ------- Step 3
@@ -75,84 +77,135 @@ public class Example{
 		   new U_expr(Expr.NEG, v_x));
       Assign stmt3_2 =                 
 	new Assign(v_y, v_x);             // y :=  x
-      StmtList sl3 = new StmtList(stmt3_1, 
-				  new StmtList(stmt3_2, null));
+      LinkedList sl3 = new LinkedList();
+      sl3.addLast(stmt3_1);
+      sl3.addLast(stmt3_2);
       Action a3 = 
 	new Action (new String("act3"),
 		    sl3);
       StepAction sa3 = 
 	new StepAction (new Nqual(),
 			new String("act3"));
-      StepActionList sal3 = 
-	new StepActionList (sa3, null);
+      LinkedList sal3 = new LinkedList();
+      sal3.addLast(sa3);
       Step s3      = new Step("S3",sal3);   // Step s3
       //   ------- Step 4
-      Step s4      = new Step("S4",null);   // Step s4
-      Step s5      = new Step("S5",null);   // Step s5
-      Step s6      = new Step("S6",null);   // Step s6
-      Step s7      = new Step("S7",null);   // Step s7
-      Step s8      = new Step("S8",null);   // Step s8
+      Step s4      = new Step("S4");   // Step s4
+      Step s5      = new Step("S5");   // Step s5
+      Step s6      = new Step("S6");   // Step s6
+      Step s7      = new Step("S7");   // Step s7
+      Step s8      = new Step("S8");   // Step s8
 
-      Transition t1 =  // s1 ->true   -> {s2,s3}
-	new Transition (new StepList(s1,null),
+      // s1 ---(true)--> {s2,s3}
+      LinkedList src1 = new LinkedList();
+      src1.addLast(s1);
+      LinkedList target1 = new LinkedList();
+      target1.addLast(s2);
+      target1.addLast(s3);
+      Transition t1 =
+	new Transition (src1,
 			new Constval (true), 
-      			new StepList (s2,
-      				      new StepList (s3, null)));
-      Transition t2 =  // s2 ---(x and y)--> s4
-	new Transition (new StepList(s2,null),
-			new B_expr(v_x,Expr.AND,v_y),
-			new StepList(s4,null));
-      Transition t3 = // s3 --(y)--> s5
-	new Transition (new StepList(s3,null),
-			v_y,
-			new StepList(s5,null));
-      Transition t4 = // s3 --(not y)--> s6
-	new Transition (new StepList(s3,null),
-			new U_expr(Expr.NEG,v_y),
-			new StepList(s6,null));
-      Transition t5 = // s5 ----> s7
-	new Transition (new StepList(s5,null),
-			new StepList(s7,null));
-      Transition t6 = // s6 ----> s7
-	new Transition (new StepList(s6,null),
-			new StepList(s7,null));
+      			target1);
 
-      Transition t7  = // s4,s7 ----> s8
-	new Transition (new StepList(s4, new StepList(s7,null)),
-			new StepList(s8,null));
-      Transition t8  = // s8 ----> s1
-	new Transition (new StepList(s8, null),
-			new StepList(s1, null));
+      // s2 ---(x and y)--> s4
+      LinkedList src2 = new LinkedList();
+      src2.addLast(s2);
+      LinkedList target2 = new LinkedList();
+      target2.addLast(s4);
+      Transition t2 =
+	  new Transition (src2,
+			  new B_expr(v_x,Expr.AND,v_y),
+			  target2);
+
+      // s3 --(y)--> s5
+      LinkedList src3 = new LinkedList();
+      src3.addLast(s3);
+      LinkedList target3 = new LinkedList();
+      target3.addLast(s5);
+      Transition t3 =
+	new Transition (src3, v_y, target3);
+
+      // s3 --(not y)--> s6
+      LinkedList src4 = new LinkedList();
+      src4.addLast(s3);
+      LinkedList target4 = new LinkedList();
+      target4.addLast(s6);
+      Transition t4 =
+	new Transition (src4,
+			new U_expr(Expr.NEG,v_y),
+			target4);
+
+      // s5 ----> s7
+      LinkedList src5 = new LinkedList();
+      src5.addLast(s5);
+      LinkedList target5 = new LinkedList();
+      target5.addLast(s7);
+      Transition t5 =
+	new Transition (src5, target5);
+
+      // s6 ----> s7
+      LinkedList src6 = new LinkedList();
+      src6.addLast(s6);
+      LinkedList target6 = new LinkedList();
+      target6.addLast(s7);
+      Transition t6 =
+	new Transition (src6, target6);
+
+      // s4,s7 ----> s8
+      LinkedList src7 = new LinkedList();
+      src7.addLast(s4);
+      src7.addLast(s7);
+      LinkedList target7 = new LinkedList();
+      target7.addLast(s8);
+      Transition t7  =
+	new Transition (src7, target7);
+
+      // s8 ----> s1
+      LinkedList src8 = new LinkedList();
+      src8.addLast(s8);
+      LinkedList target8 = new LinkedList();
+      target8.addLast(s1);
+      Transition t8  =
+	new Transition (src8, target8);
+
+      LinkedList steplist = new LinkedList();
+      steplist.addLast(s1);
+      steplist.addLast(s2);
+      steplist.addLast(s3);
+      steplist.addLast(s4);
+      steplist.addLast(s5);
+      steplist.addLast(s6);
+      steplist.addLast(s7);
+      steplist.addLast(s8);
+
+      LinkedList transitionlist = new LinkedList();
+      transitionlist.addLast(t1);
+      transitionlist.addLast(t2);
+      transitionlist.addLast(t3);
+      transitionlist.addLast(t4);
+      transitionlist.addLast(t5);
+      transitionlist.addLast(t6);
+      transitionlist.addLast(t7);
+      transitionlist.addLast(t8);
+
+      LinkedList actionlist = new LinkedList();
+      actionlist.addLast(a1);
+      actionlist.addLast(a2);
+      actionlist.addLast(a3);
+
+      LinkedList declarationlist = new LinkedList();
+      declarationlist.addLast(dec_x);
+      declarationlist.addLast(dec_y);
+      declarationlist.addLast(dec_z);
+
       SFC sfc1 = 
 	new SFC (s1,  //initial step
-		 new StepList(s1,
-		 new StepList(s2,
-		 new StepList(s3,
-		 new StepList(s4,
-		 new StepList(s5,
-		 new StepList(s6,
-		 new StepList(s7,
-		 new StepList(s8,null)))))))),
-		 new TransitionList(t1,
-		 new TransitionList(t2,
-		 new TransitionList(t3,
-		 new TransitionList(t4,
-		 new TransitionList(t5,
-		 new TransitionList(t6,
-		 new TransitionList(t7,
-		 new TransitionList(t8,null)))))))),
-		 new ActionList(a1,
-		 new ActionList(a2,
- 		 new ActionList(a3,null))),
-                 new DeclarationList(dec_x,
-                 new DeclarationList(dec_y,
-	         new DeclarationList(dec_z,null))));
-
-      //new Constval(true)));
-			
-  
+		 steplist,
+		 transitionlist,
+		 actionlist,
+                 declarationlist);  
       
-  return sfc1;
+      return sfc1;
     };
 }
 
@@ -163,9 +216,12 @@ public class Example{
 //	Abstract syntax for Snot programs
 //	------------------------------------
 //
-//	$Id: Example.java,v 1.11 2001-05-10 06:59:52 swprakt Exp $
+//	$Id: Example.java,v 1.12 2001-05-23 14:56:33 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.11  2001/05/10 06:59:52  swprakt
+//	added a declaration list to the SFC's
+//	
 //	Revision 1.10  2001/05/08 08:22:11  swprakt
 //	Extended the example, such that there is a non-trivial list
 //	of statements associated with an action.

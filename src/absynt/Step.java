@@ -1,25 +1,30 @@
 package absynt;
 import java.io.Serializable;
+import java.util.LinkedList;
 
 
 /**
  * A step of a Snot-program.
  * 
  * @author Initially provided by Martin Steffen.
- * @version $Id: Step.java,v 1.5 2001-05-17 08:30:01 swprakt Exp $
+ * @version $Id: Step.java,v 1.6 2001-05-23 14:56:34 swprakt Exp $
  */
 
 
 public class Step extends Absynt implements Serializable { 
   public String name;
-  public StepActionList actions;
+  public LinkedList actions;
   public Position pos;
   //-------------------------------
-  public Step (String _name, StepActionList _actions) {
+  public Step (String _name) {
+    name = _name;
+    actions = new LinkedList();
+  }
+  public Step (String _name, LinkedList _actions) {
     name = _name;
     actions = _actions;
   }
-  public Step (String _name, StepActionList _actions, Position _pos) {
+  public Step (String _name, LinkedList _actions, Position _pos) {
     name = _name;
     actions = _actions;
     pos     = _pos;
@@ -33,9 +38,12 @@ public class Step extends Absynt implements Serializable {
 //	Abstract syntax for Snot programs
 //	------------------------------------
 //
-//	$Id: Step.java,v 1.5 2001-05-17 08:30:01 swprakt Exp $
+//	$Id: Step.java,v 1.6 2001-05-23 14:56:34 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.5  2001/05/17 08:30:01  swprakt
+//	Added a new constructor
+//	
 //	Revision 1.4  2001/05/04 15:10:19  swprakt
 //	changed actions in steps
 //	
