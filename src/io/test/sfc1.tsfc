@@ -10,10 +10,11 @@ begin
 
   ];
 
-  init = s1;
   steps = [ (s1,[(N,act1)]);
 	    (s2,[(N,act2)])
           ];
+
+  init = s1;
 
   actions = [
 	       act1 = [skip];
@@ -35,50 +36,3 @@ begin
 	[s1;s5] -> [s2;s3;s3] when x+y
      ]
 end
-
-
-//begin
-// vars =
-// [
-//   x : bool = false;
-//   y : bool = false;
-//   z : bool = false
-// ];
-//
-// init =  s1;
-//
-// steps =
-// [ 
-//   (s1,[(N,act1)]);
-//   (s2,[(N,act2)]);
-//   (s3,[(N,act3)]);
-//   (s4,[]);
-//   (s5,[]);
-//   (s6,[]);
-//   (s7,[]);
-//   (s8,[])
-// ];
-//
-// actions =
-// [
-//   act1 = [ x := false];
-//   act2 = [ y := x];
-//   act3 = [ x := not x; y:=x ]
-// ];
-//  
-// transitions = 
-// [
-//   [ s1 ] -> [s2;s3];
-//   [ s2 ] -> [s4]  when x and y;
-//   [ s3 ] -> [s5;s6];
-//   [ s5 ] -> [s7];
-//   [ s6 ] -> [s7];
-//   [ s3 ] -> [s5] when y;
-//   [ s3 ] -> [s6] when (not y);
-//  [s4,s7] -> [s8];
-//   [s8]   -> [s1];
-// ];
-//
-
-
-

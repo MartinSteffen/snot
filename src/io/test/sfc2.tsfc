@@ -7,14 +7,14 @@ begin
    y : bool = false
  ];
 
- init =  s1;
-
  steps =
  [ 
    (s1, [(N,act1)]);
    (s2, [(N,act2)]);
    (s3, [(N,act3)])
  ];
+
+ init =  s1;
 
  actions =
  [

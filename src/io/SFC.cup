@@ -4,7 +4,7 @@
  * Offers the methods  parseFile and parseExpression 
  *
  * @author Karsten Stahl, Martin Steffen
- * @version $Id: SFC.cup,v 1.14 2001-07-11 13:17:46 swprakt Exp $
+ * @version $Id: SFC.cup,v 1.15 2001-07-11 14:52:20 swprakt Exp $
  *
  * The grammar definition contains 4 parts:
  *    -  initialization declarations and how to generate the parser
@@ -209,8 +209,8 @@ sfc          ::= program:p {: RESULT=p; :}
 
 program      ::= BEGIN 
                  declist:dl     SEM
-	         istep:i        SEM
 	         steps:sl       SEM
+	         istep:i        SEM
                  actions:al     SEM
                  transitions:tl
                  END
@@ -252,10 +252,11 @@ constval        ::= TRUE
   ;
 
 
-
+// the abstract syntax needs a full step here, therefore we search for the
+// right step in the steplist
 istep	     ::= INIT EQ IDENT:stepname // init = s1
                  {: 
-		  RESULT = new absynt.Step(stepname);  // no actions yet int concrete syntax!
+		  RESULT = get_step_by_name(stepname);
                  :} 
 ;
 
