@@ -34,7 +34,7 @@ import simulator.Simulator;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.36 $
+ * @version $Revision: 1.37 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -51,7 +51,7 @@ public class Gui extends javax.swing.JFrame {
     private final String ParserFileExtension = "tsfc";  // Parser file extension
     private final Point GuiLocation = new Point(0,0);
     private final Point EditorLocation = new Point(250, 170);
-    private Point ProjectListLocation = new Point(0,170);
+    private Point ProjectListLocation = new Point(680,0);
 
 
     /** Creates new form Gui */
@@ -856,6 +856,8 @@ System.out.println("File Parsed");
 	      project.setEditor(editor);
 	      project.setEnvironment();
               session.addProject(project);
+	      activeProject = project;
+	      setStatusLine(true,"Parser succesfull");
 
           }
 	  catch (ParseException pex) {
@@ -873,7 +875,7 @@ ex.printStackTrace();
                SnotOptionPane.showMessageDialog(null, ex.getMessage()+"Anormal Error", "Error", JOptionPane.ERROR_MESSAGE);
           }
 
-      activeProject = project;
+      
       updateProjectList();
   }
   else{setStatusLine(true, "Parser aborted.");}
@@ -935,7 +937,11 @@ System.out.print("\nlaunching SMVTranslator ...");
 	 setStatusLine(true, "SMV translation failed.");
          SnotOptionPane.showMessageDialog(null, fnfe.getMessage(), "File - Error", JOptionPane.ERROR_MESSAGE);
       }
-      catch(Exception e){ SnotOptionPane.showMessageDialog(null, e.getMessage(), "File - Error", JOptionPane.ERROR_MESSAGE);}
+      catch(Exception e){
+	 setStatusLine(true, "SMV translation failed.");
+	 SnotOptionPane.showMessageDialog(null, e.getMessage(), "Abnormal Error", JOptionPane.ERROR_MESSAGE);
+e.printStackTrace();
+      }
 
   }
 
@@ -1000,6 +1006,7 @@ System.out.print("\nlaunching SMVTranslator ...");
 
       try {
           status = Snotcheck.isOnlyBool(activeProject.getSFC());
+	  System.out.println("Nach isonlybool \n"+status);
 	  //Den Only Bool Wert des Projects setzen
 	  activeProject.setOnlyBool(status);
           status = Snotcheck.isWellDefined(activeProject.getSFC());
@@ -1042,6 +1049,7 @@ System.out.print("\nlaunching SMVTranslator ...");
       }
       catch (Exception ex) {
           status = false;
+	  ex.printStackTrace();
 	  SnotOptionPane.showMessageDialog(null, "Abnormal Error \n"+ ex.getClass(),
                                         "Check Error", JOptionPane.ERROR_MESSAGE);
       }
