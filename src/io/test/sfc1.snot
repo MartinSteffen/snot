@@ -17,7 +17,16 @@ begin
 
   actions = [
 	       act1 = [skip];
-	       act2 = [skip;skip]
+	       act2 = [skip;x := 5];
+	       act2 = [ x  := 5;
+	                y  := true;
+	                x  := y2;
+	                x  := x + y;
+	                x  := (x+y)/4;
+	                x2 := (((x-6)));
+	                x  := -x;
+	                x  := (x = (x))
+	              ]
 	    ]
 end
 

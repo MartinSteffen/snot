@@ -4,7 +4,7 @@
  * Offers the methods  parseFile and parseExpression 
  *
  * @author Karsten Stahl, Martin Steffen
- * @version $Id: SFC.cup,v 1.8 2001-07-01 07:25:28 swprakt Exp $
+ * @version $Id: SFC.cup,v 1.9 2001-07-01 08:07:36 swprakt Exp $
  *
  * The grammar definition contains 4 parts:
  *    -  initialization declarations and how to generate the parser
@@ -145,7 +145,7 @@ non terminal    absynt.Step       step;
 non terminal	LinkedList	  transitions;
 non terminal	LinkedList	  declist;
 non terminal    absynt.Type       type;
-non terminal    absynt.Constval   c_val;
+non terminal    absynt.Constval   constval;
 non terminal    LinkedList        declarations;
 non terminal    Declaration       declaration;
 non terminal    LinkedList        stepactionlist;
@@ -158,7 +158,8 @@ non terminal    absynt.Stmt             stmt;
 non terminal    absynt.Assign           assign;
 
 non terminal    absynt.Expr       expr;
-non terminal    Integer           op;
+non terminal    absynt.Variable   var;
+non terminal    Integer           op;    // int does not work! RESULT must be an object
 
 
 /* ---        precedences and associativity ------- */
@@ -210,16 +211,16 @@ declarations ::= declaration
               |  declaration SEM declarations
 		 ;
 
-declaration  ::= IDENT:var COLON type:type EQ c_val:val;
+declaration  ::= IDENT:var COLON type:type EQ constval:val;
   
 
 type         ::= INT 
               |  BOOL;
 
 
-c_val        ::= TRUE 
-              |  FALSE
-	      |  INTEGER:i 
+constval        ::= TRUE 
+                 |  FALSE
+	         |  INTEGER:i 
   ;
 
 
@@ -290,4 +291,29 @@ stmt            ::= SKIP
   ;
 
 assign          ::= IDENT:x ASSIGN expr:e
+  ;
+
+expr            ::= op expr
+                 |  expr op expr
+                 |  LPAREN expr RPAREN
+                 |  var
+                 | constval
+  ;
+
+op              ::= PLUS     {: RESULT= new Integer(absynt.Expr.PLUS); :}
+                 |  MINUS    {: RESULT= new Integer(absynt.Expr.MINUS); :}
+                 |  TIMES    {: RESULT= new Integer(absynt.Expr.TIMES); :}
+                 |  DIV      {: RESULT= new Integer(absynt.Expr.DIV); :}
+                 |  AND      {: RESULT= new Integer(absynt.Expr.AND); :}
+                 |  OR       {: RESULT= new Integer(absynt.Expr.OR); :}
+                 |  NEG      {: RESULT= new Integer(absynt.Expr.NEG); :}
+                 |  LESS     {: RESULT= new Integer(absynt.Expr.LESS); :}
+                 |  GREATER  {: RESULT= new Integer(absynt.Expr.GREATER); :}
+                 |  LEQ      {: RESULT= new Integer(absynt.Expr.LEQ); :}
+                 |  GEQ      {: RESULT= new Integer(absynt.Expr.GEQ); :}
+                 |  EQ       {: RESULT= new Integer(absynt.Expr.EQ); :}
+                 |  NEQ      {: RESULT= new Integer(absynt.Expr.NEQ); :}
+  ;
+
+var             ::= IDENT:v
   ;
