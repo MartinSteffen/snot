@@ -9,7 +9,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.20 2001-06-08 08:56:17 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.21 2001-06-08 09:00:56 swprakt Exp $
  *
  */
 
@@ -30,6 +30,10 @@ public class Snotcheck{
 	LinkedList decList = aSFCObject.declist;
 	Declaration decl,decl2;
 	Variable var,var2;
+	String className1, className2;
+	Class typeClass1, typeClass2;
+	
+
 	
 	if (decList != null){
 	    for (int i=0; i < decList.size(); i++){
@@ -181,16 +185,15 @@ public class Snotcheck{
 
 	LinkedList decList = aSFCObject.declist;
 	Declaration decl;
-	String s1;
-	Class z;
-	String s2="BoolType";
+	String nameOfClass;
+	Class typeClass;
 	boolean nurBool = true;
 	
 	for (int i=0; i < decList.size(); i++){
 	    decl = (Declaration)decList.get(i);
-	    z = decl.type.getClass();
-	    s1 = z.getName();
-	    if(s1 != "BoolType"){nurBool = false;}
+	    typeClass = decl.type.getClass();
+	    nameOfClass = typeClass.getName();
+	    if(nameOfClass != "BoolType"){nurBool = false;}
 	}
 	return nurBool;
     }
@@ -225,9 +228,12 @@ public class Snotcheck{
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.20 2001-06-08 08:56:17 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.21 2001-06-08 09:00:56 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.20  2001/06/08 08:56:17  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.19  2001/06/07 12:04:25  swprakt
 //	*** empty log message ***
 //	
