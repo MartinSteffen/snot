@@ -11,6 +11,7 @@ package gui;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.ImageIcon;
 import java.io.File;
 import java.io.IOException;
 import java.lang.Integer;
@@ -29,7 +30,7 @@ import simulator.Simulator;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.27 $
+ * @version $Revision: 1.28 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -43,8 +44,8 @@ public class Gui extends javax.swing.JFrame {
     private final String SessionFileExtension = ".snot"; // the session file extension
     private final String ProjectFileExtension = ".sfc";  // the exported SFC file extension
     private final Point GuiLocation = new Point(100,50);
-    private final Point EditorLocation = new Point(360, 170);
-    private Point ProjectListLocation = new Point(100,170);
+    private final Point EditorLocation = new Point(350, 205);
+    private Point ProjectListLocation = new Point(100,205);
 
 
     /** Creates new form Gui */
@@ -55,7 +56,7 @@ public class Gui extends javax.swing.JFrame {
 
         // set GUI L&F
         try {
-            // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName()); // the standard
         } catch (Exception exc) {
             System.err.println("Error loading L&F: " + exc.getMessage());
@@ -64,8 +65,12 @@ public class Gui extends javax.swing.JFrame {
         // preparing visual components
         initComponents ();
         ToolBarTools.setFloatable(false);
+
+	//For the ToolBarFiles Menu
+	ToolBarFiles.setFloatable(false);
         if (session == null)
             enableSession(false);
+	    enableFilesToolBar(false);
         pack ();
         this.setResizable(false);
         setLocation(GuiLocation);
@@ -114,6 +119,16 @@ public class Gui extends javax.swing.JFrame {
         PanelStatus = new javax.swing.JPanel();
         Status = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
+      //the files option toolbar
+	ToolBarFiles = new javax.swing.JToolBar();
+ 	ButtonOpenSession = new javax.swing.JButton();
+	ButtonNewSession = new javax.swing.JButton();
+	ButtonSaveSession = new javax.swing.JButton();
+        ButtonSaveAsSession = new javax.swing.JButton();
+        ButtonCloseSession = new javax.swing.JButton();
+        ButtonImportSFC = new javax.swing.JButton();
+        ButtonExportSFC = new javax.swing.JButton();
+	ShowFilesToolBar = new javax.swing.JCheckBoxMenuItem();
 
         FileMenu.setName("Session");
           FileMenu.setActionCommand(null);
@@ -324,6 +339,19 @@ public class Gui extends javax.swing.JFrame {
             View.add(ShowToolBar);
             jMenuBar.add(View);
 
+
+	  ShowFilesToolBar.setLabel("Files Toolbar");
+            ShowFilesToolBar.setSelected(true);
+            ShowFilesToolBar.setName("showFilesToolBar");
+            ShowFilesToolBar.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    ShowFilesToolBarActionPerformed(evt);
+                }
+            }
+            );
+            View.add(ShowFilesToolBar);
+            jMenuBar.add(View);
+
         HelpMenu.setText("? (Help) ");
 
           About.setLabel("About");
@@ -408,7 +436,121 @@ public class Gui extends javax.swing.JFrame {
           ToolBarTools.add(ButtonSMV);
 
 
-        getContentPane().add(ToolBarTools, java.awt.BorderLayout.NORTH);
+
+	/**
+	 * The Toolbar for the Files options
+	 */
+	ToolBarFiles.setName("ToolBarFiles");
+	ToolBarFiles.setSize(378,39);
+
+
+
+	//The NewSession Button
+	ButtonNewSession.setPreferredSize(new java.awt.Dimension(90, 35));
+          ButtonNewSession.setToolTipText("New Session");
+          ButtonNewSession.setMaximumSize(new java.awt.Dimension(180, 35));
+          ButtonNewSession.setName("buttonNewSession");
+          ButtonNewSession.setText("New Session");
+          ButtonNewSession.addActionListener(new java.awt.event.ActionListener() {
+              public void actionPerformed(java.awt.event.ActionEvent evt) {
+                  NewSessionActionPerformed(evt);
+              }
+          }
+          );
+          ToolBarFiles.add(ButtonNewSession);
+
+
+	//The OpenSession Button
+	ButtonOpenSession.setPreferredSize(new java.awt.Dimension(90, 35));
+          ButtonOpenSession.setToolTipText("Open Session");
+          ButtonOpenSession.setMaximumSize(new java.awt.Dimension(180, 35));
+          ButtonOpenSession.setName("buttonOpenSession");
+	  ButtonOpenSession.setText("Open Session");
+          ButtonOpenSession.addActionListener(new java.awt.event.ActionListener() {
+              public void actionPerformed(java.awt.event.ActionEvent evt) {
+                  OpenSessionActionPerformed(evt);
+              }
+          }
+          );
+          ToolBarFiles.add(ButtonOpenSession);
+
+
+	// The SaveSession Button
+       ButtonSaveSession.setPreferredSize(new java.awt.Dimension(90, 35));
+          ButtonSaveSession.setToolTipText("Save Session");
+          ButtonSaveSession.setMaximumSize(new java.awt.Dimension(180, 35));
+          ButtonSaveSession.setName("buttonSaveSession");
+          ButtonSaveSession.setText("Save Session");
+          ButtonSaveSession.addActionListener(new java.awt.event.ActionListener() {
+              public void actionPerformed(java.awt.event.ActionEvent evt) {
+                  SaveSessionActionPerformed(evt);
+              }
+          }
+          );
+          ToolBarFiles.add(ButtonSaveSession);
+
+       // The SaveAsSession Button
+       ButtonSaveAsSession.setPreferredSize(new java.awt.Dimension(120, 35));
+          ButtonSaveAsSession.setToolTipText("Save Session As");
+          ButtonSaveAsSession.setMaximumSize(new java.awt.Dimension(180, 35));
+          ButtonSaveAsSession.setName("buttonSaveAsSession");
+          ButtonSaveAsSession.setText("Save Session As");
+          ButtonSaveAsSession.addActionListener(new java.awt.event.ActionListener() {
+              public void actionPerformed(java.awt.event.ActionEvent evt) {
+                  SaveAsSessionActionPerformed(evt);
+              }
+          }
+          );
+          ToolBarFiles.add(ButtonSaveAsSession);
+
+       // The CloseSession Button
+       ButtonCloseSession.setPreferredSize(new java.awt.Dimension(90, 35));
+          ButtonCloseSession.setToolTipText("Close Session");
+          ButtonCloseSession.setMaximumSize(new java.awt.Dimension(180, 35));
+          ButtonCloseSession.setName("buttonCloseSession");
+          ButtonCloseSession.setText("Close Session");
+          ButtonCloseSession.addActionListener(new java.awt.event.ActionListener() {
+              public void actionPerformed(java.awt.event.ActionEvent evt) {
+                  CloseSessionActionPerformed(evt);
+              }
+          }
+          );
+          ToolBarFiles.add(ButtonCloseSession);
+
+
+	 // The ImportSFC Button
+       ButtonImportSFC.setPreferredSize(new java.awt.Dimension(90, 35));
+          ButtonImportSFC.setToolTipText("Import SFC");
+          ButtonImportSFC.setMaximumSize(new java.awt.Dimension(180, 35));
+          ButtonImportSFC.setName("buttonImportSFC");
+          ButtonImportSFC.setText("Import SFC");
+          ButtonImportSFC.addActionListener(new java.awt.event.ActionListener() {
+              public void actionPerformed(java.awt.event.ActionEvent evt) {
+                  ImportSFCActionPerformed(evt);
+              }
+          }
+          );
+          ToolBarFiles.add(ButtonImportSFC);
+
+	 // The ExportSFC Button
+       ButtonExportSFC.setPreferredSize(new java.awt.Dimension(90, 35));
+          ButtonExportSFC.setToolTipText("Export SFC");
+          ButtonExportSFC.setMaximumSize(new java.awt.Dimension(180, 35));
+          ButtonExportSFC.setName("buttonExportSFC");
+          ButtonExportSFC.setText("Export SFC");
+          ButtonExportSFC.addActionListener(new java.awt.event.ActionListener() {
+              public void actionPerformed(java.awt.event.ActionEvent evt) {
+                  ExportSFCActionPerformed(evt);
+              }
+          }
+          );
+          ToolBarFiles.add(ButtonExportSFC);
+
+
+	//Add the ToolBarFiles Menu first
+	getContentPane().add(ToolBarFiles, java.awt.BorderLayout.NORTH);
+	//Then add the ToolBarTools
+	getContentPane().add(ToolBarTools, java.awt.BorderLayout.WEST);
 
 
         PanelStatus.setLayout(new java.awt.GridLayout(1, 1, 20, 0));
@@ -583,8 +725,21 @@ public class Gui extends javax.swing.JFrame {
       }
 
       enableSession(true);
+      enableFilesToolBar(true);
       setTitle(TITLE+"  "+session.getName());
+
   }//GEN-LAST:event_NewSessionActionPerformed
+
+  //For the FilesToolBar
+  private void ShowFilesToolBarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ShowToolBarActionPerformed
+      // switch the Tools ToolBar on and off in the Gui
+      if (ShowFilesToolBar.isSelected())
+          ToolBarFiles.setVisible(true);
+      else
+          ToolBarFiles.setVisible(false);
+      this.pack();
+  }//GEN-LAST:event_ShowToolBarActionPerformed
+
 
   private void ShowToolBarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ShowToolBarActionPerformed
       // switch the Tools ToolBar on and off in the Gui
@@ -1111,6 +1266,17 @@ System.out.print(ex.getClass());
  *
  *******************************************************************************/
 
+
+    //en-disable the Files MenuBar.
+    private void enableFilesToolBar(boolean state){
+      ButtonSaveSession.setEnabled(state);
+      ButtonSaveAsSession.setEnabled(state);
+      ButtonCloseSession.setEnabled(state);
+      ButtonImportSFC.setEnabled(state);
+      ButtonExportSFC.setEnabled(state);
+    }
+
+
     private void enableSession(boolean state) {
         // en-disable menus
         SaveSession.setEnabled(state);
@@ -1141,6 +1307,7 @@ System.out.print(ex.getClass());
                 projectFrame.dispose();}
 
         enableSession(false);
+	enableFilesToolBar(false);
         session = null;
         this.setTitle(TITLE);
 System.out.print("\nSession is closed!");
@@ -1178,6 +1345,7 @@ System.out.print("\nSession is closed!");
         }
         setTitle(TITLE+"  "+newSession.getName());
         enableSession(true);
+	enableFilesToolBar(true);
 	return newSession;
     }
 
@@ -1374,6 +1542,17 @@ System.out.print("\nerr  "+sEx.toString());
             return status;
         }
     }
+
+   //For the ToolBarFiles
+    private javax.swing.JButton ButtonOpenSession;
+    private javax.swing.JButton ButtonNewSession;
+    private javax.swing.JButton ButtonSaveSession;
+    private javax.swing.JButton ButtonSaveAsSession;
+    private javax.swing.JButton ButtonCloseSession;
+    private javax.swing.JButton ButtonExportSFC;
+    private javax.swing.JButton ButtonImportSFC;
+    private javax.swing.JToolBar ToolBarFiles;
+    private javax.swing.JCheckBoxMenuItem ShowFilesToolBar;
 
     private javax.swing.JScrollPane scrollpane;
     private javax.swing.JList list;
