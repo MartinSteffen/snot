@@ -30,7 +30,7 @@ import simulator.Simulator;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.29 $
+ * @version $Revision: 1.30 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -44,8 +44,8 @@ public class Gui extends javax.swing.JFrame {
     private final String SessionFileExtension = ".snot"; // the session file extension
     private final String ProjectFileExtension = ".sfc";  // the exported SFC file extension
     private final Point GuiLocation = new Point(100,50);
-    private final Point EditorLocation = new Point(350, 205);
-    private Point ProjectListLocation = new Point(100,205);
+    private final Point EditorLocation = new Point(350, 220);
+    private Point ProjectListLocation = new Point(100,220);
 
 
     /** Creates new form Gui */
@@ -66,13 +66,14 @@ public class Gui extends javax.swing.JFrame {
         initComponents ();
         ToolBarTools.setFloatable(false);
 	ToolBarFiles.setFloatable(false);
-        
+
         if (session == null)
             enableSession(false);
-	
-        enableFilesToolBar(false);
-        pack ();
+	    enableFilesToolBar(false);
+
         this.setResizable(false);
+	this.pack();
+	//this.setSize(700,200);
         setLocation(GuiLocation);
     }
 
@@ -118,7 +119,7 @@ public class Gui extends javax.swing.JFrame {
         ButtonSMV = new javax.swing.JButton();
         PanelStatus = new javax.swing.JPanel();
         Status = new javax.swing.JLabel();
-        jSeparator1 = new javax.swing.JSeparator();
+
       //the files option toolbar
 	ToolBarFiles = new javax.swing.JToolBar();
  	ButtonOpenSession = new javax.swing.JButton();
@@ -546,8 +547,13 @@ public class Gui extends javax.swing.JFrame {
           );
           ToolBarFiles.add(ButtonExportSFC);
 
-          
-          
+
+
+	//Add the ToolBarFiles Menu first
+	getContentPane().add(ToolBarFiles, java.awt.BorderLayout.NORTH);
+	//Then add the ToolBarTools
+	getContentPane().add(ToolBarTools, java.awt.BorderLayout.CENTER);
+
         PanelStatus.setLayout(new java.awt.GridLayout(2, 1, 20, 0));
         PanelStatus.setPreferredSize(new java.awt.Dimension(400, 20));
         PanelStatus.setName("panelStatus");
@@ -555,23 +561,19 @@ public class Gui extends javax.swing.JFrame {
 
         Status.setName("statusLine");
         Status.setText("  StatusLine");
-        PanelStatus.add(jSeparator1);
         PanelStatus.add(Status);
 
-          
+
         // Feed the main frame with all bits n bytes
-          
+
         getContentPane().setLayout(new GridLayout(3,1));
         getContentPane().add(ToolBarFiles);
         getContentPane().add(ToolBarTools);
         getContentPane().add(PanelStatus);
-        
+
         setJMenuBar(jMenuBar);
 
     }
-
-    
-    
 
 
 /**********************************************************************************
@@ -580,8 +582,8 @@ public class Gui extends javax.swing.JFrame {
  *
  **********************************************************************************/
 
-    
-    
+
+
   //For the FilesToolBar
   private void ShowFilesToolBarActionPerformed(java.awt.event.ActionEvent evt) {
       // switch the Tools ToolBar on and off in the Gui
@@ -593,6 +595,7 @@ public class Gui extends javax.swing.JFrame {
   }
 
 
+
   private void ShowToolBarActionPerformed(java.awt.event.ActionEvent evt) {
       // switch the Tools ToolBar on and off in the Gui
       if (ShowToolBar.isSelected())
@@ -601,7 +604,7 @@ public class Gui extends javax.swing.JFrame {
           ToolBarTools.setVisible(false);
       this.pack();
   }
-  
+
 
   private void ImportExample1ActionPerformed(java.awt.event.ActionEvent evt) {
 // Add your handling code here:
@@ -752,6 +755,7 @@ public class Gui extends javax.swing.JFrame {
 
   }
 
+
   private void SFCBrowserActionPerformed(java.awt.event.ActionEvent evt) {
       if (SFCBrowser.isSelected())
           {showProjectList();}
@@ -805,7 +809,13 @@ System.out.print("\nlaunching SMVTranslator ...");
       int response = 0;
       Project project = activeProject;
       SFC _sfc = project.getSFC();
-      if (activeProject.isChecked()==true)
+
+       if (project == null) {
+          SnotOptionPane.showMessageDialog(null, "Please select a SFC first!\n", "Error: no SFC", JOptionPane.ERROR_MESSAGE);
+          return;
+        }
+
+      else if (activeProject.isChecked()==true)
       {
         try{
 		Simulator sim = new Simulator(_sfc);	// Simulator erzeugen
@@ -1597,7 +1607,8 @@ System.out.print("\nerr  "+sEx.toString());
     private javax.swing.JButton ButtonSMV;
     private javax.swing.JPanel PanelStatus;
     private javax.swing.JLabel Status;
-    private javax.swing.JSeparator jSeparator1;
+
+
     // End of variables declaration
 
 }
