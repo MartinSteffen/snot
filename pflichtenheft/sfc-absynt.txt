@@ -1,11 +1,11 @@
                       SFC ::=  istep      : step
                                steps      : step list
                                transs     : transition list
-                               actions    : action   list
+                               actions    : action list
                      step ::=  a_name     : string
                                actions    : stepaction list
                stepaction ::=  qualifier  : action_qualifier
-                               a_name     : string  (* simple assignment program *)
+                               a_name     : string
                   action ::=   a_name     : string
                                sap        : stmt list  (* simple assignment program *)
                     stmt  ::=               skip
