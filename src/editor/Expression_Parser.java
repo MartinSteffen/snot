@@ -702,9 +702,11 @@ public class Expression_Parser extends JDialog implements ActionListener{
        drawObject_List(expr_lList,expr_drawObject,bright);
        Iterator expr_List = expr_drawObject.iterator();       
        
+       /*j  String name = ((Variable)_ass.var).name;
+       System.out.println("NAME="+name);
 
-       G2D.drawString(_ass.var.name,2,y_a+letter_high);
-       G2D.drawString("=",16,y_a+letter_high);
+       G2D.drawString(name,2,y_a+letter_high);
+       G2D.drawString("=",16,y_a+letter_high);*/
 
        while (expr_List.hasNext()){
           element = expr_List.next();
