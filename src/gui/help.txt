@@ -6,7 +6,7 @@ Contents:
 
 1.) Introduction
 
-2.) The Elements of Snot
+2.) Basic Functionality
 
 3.) The Editor
 
@@ -23,7 +23,86 @@ Contents:
 
 
 1.) 
-Snot is a project of some students at the CAU (Christian Albrechts University in Kiel, Germany). It was developed during the summer term 2001. 
+Snot is a project of some students at the CAU (Christian Albrechts
+University in Kiel, Germany). It was developed during the summer term
+2001. The programm deals with SFCs (Sequebntial Function Charts). You
+can create a SFC in the editor, parse it from a .tsfc file, check if
+it is correct, simulate it  and translate it to SMV.
 
 
+2.)
+Snot deals with sessions and SFCs.
+A session includes one or many SFCs. There is no SFC without a
+session. You always have to create or open a session before you can
+start working.
+
+Starting Snot the Programm offers two options:
+  - Loading an existing session, or
+  - Creating a new empty session.
+
+
+The menu structure:
+  Session:
+   "New Session" opens a new session
+   "Open Session" opens an existing session
+   "Close Session" closes a session
+	
+   "Save Session" saves the session with tho old name
+   "Save Session As" saves it with a new name
+   "Exit Snot" exits Snot
+
+  SFC:
+   "New SFC" creates a new empty SFC an shows the Editor
+   "Import SFC" imports an exported SFC into the session
+   "Export SFC" exports and saves an SFC.
+   "Rename SFC" renames the SFC
+   "Remove SFC" removes the SFC from the session
+   "Import Example1" imports an Example
+
+  Tools:
+   "Editor" starts an editor with a new SFC
+   "Check SFC" checks the SFC
+   "Simulator" simulates the SFC at standard out.
+   "SMV" translates the SFC to SMV and saves it to the disk
+   "Parser" parses a SFC from disk
+   "Pretty Printer"
+	
+  View:
+   "SFC-Browser" shows or disables the SFC-Browser window
+   "Tool Bar" shows or disables the tools toolbar
+   "Files toolbar" shows or disables the files toolbar
+
+The SFC-Browser:
+In the SFC-Browser all SFCs in the session are listed.
+- A single click sets this SFC as the active SFC. Now it can be checked
+or simulated..
+
+- A doubleclick sets this SFC as the active SFC and displays it in an
+editor window.
+
+Note: 
+Not all SFCs must be displayed in an editor. For example the
+parsed SFCs. So by doubleclicking on an SFC in the list you are
+sometimes asked if you wish to create an editor for this SFC. If you
+want to do so click yes, but be aware, that the editor sometimes may
+not be able to deal with these SFCs.
+
+
+
+
+3.)
+
+
+4.)
+
+
+5.)
+
+
+6.)
+
+
+7.)
+
+8.)
 

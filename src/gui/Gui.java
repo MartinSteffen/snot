@@ -35,7 +35,7 @@ import simulator.Simulator;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.45 $
+ * @version $Revision: 1.46 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -697,7 +697,7 @@ public class Gui extends javax.swing.JFrame {
 		    (p.getEditor()).show();
 	    else {
 		// show warning dialog
-		result = SnotOptionPane.showConfirmDialog(null, "ATTENTION:\n\n This SFC has no editor. If this \nSFC was parsed , the editor may mess up!\nShow editor anyway?\n(continue at own risk!)", "Launch editor?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+		result = SnotOptionPane.showConfirmDialog(null, "ATTENTION:\n\nThis SFC has no editor. If this \nSFC was parsed , the editor may mess up!\nShow editor anyway?\n(continue at own risk!)", "Launch editor?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 		
 		if (result == JOptionPane.YES_OPTION) {
 		    e = new Editor(p.getSFC());
@@ -798,7 +798,7 @@ public class Gui extends javax.swing.JFrame {
      session.removeProject(project);
      activeProject = null;
      updateProjectList();
-     setStatusLine(false, "SFC "+project.getName() +"removed.");
+     setStatusLine(false, "SFC "+project.getName() +" removed.");
   }
 
   private void RenameSFCActionPerformed(java.awt.event.ActionEvent evt) {
@@ -1002,7 +1002,7 @@ ex.printStackTrace();
 
     helpFrame = new JFrame("Documentation");
     helpFrame.setResizable(true);
-    helpFrame.setSize(300,700);
+    helpFrame.setSize(480,700);
     helpFrame.setLocation(HelpLocation);
 
 
@@ -1180,7 +1180,7 @@ System.out.println("Error while simulating the SFC"+e.getMessage());
      
 
      // show Check - Dialog
-     result = SnotOptionPane.showConfirmDialog(null, "Checks may fail, due to bad programming.\n Do you want to override the checks\nand set checked = true??","Override checks", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+     result = SnotOptionPane.showConfirmDialog(null, "Checks may fail, due to bad programming.\nDo you want to override the checks\nand set checked = true??","Override checks", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
      if (result == JOptionPane.YES_OPTION){
 	 activeProject.setChecked(true);
