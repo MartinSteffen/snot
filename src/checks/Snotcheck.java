@@ -9,7 +9,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.22 2001-06-12 11:56:00 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.23 2001-06-12 14:55:02 swprakt Exp $
  *
  */
 
@@ -22,7 +22,7 @@ public class Snotcheck{
 
 
     private static boolean isDeclarationOk(SFC aSFCObject) throws DecListFailure {
-	//Diese Methode prueft, ob in den Dekarationen keine NULL-Werte stehen, ob keine Variable doppelt deklariert ist und ob der in der Keklaration angegebene Typ gleich dem Typ der Variable ist.
+	//Diese Methode prueft, ob in den Dekarationen keine NULL-Werte stehen, ob keine Variable doppelt deklariert ist und ob der in der Deklaration angegebene Typ gleich dem Typ der Variable ist.
 	
 	
 	//Pruefung auf NULL-Werte:
@@ -101,16 +101,53 @@ public class Snotcheck{
     /**Diese Funktion prueft, ob alle Actions vollstaendig und korrekt sind
      */
     private static boolean isAllActionOk(SFC aSFCObject) throws ActionFailure {
-	
+	//Diese Methode pr"uft zuerst, ob bei den actions aus der actionList keine Null-Werte stehen. Anschliessend wird noch geprueft, ob die Namen eindeutig, d.h. nicht doppelt, sind.
+
 	LinkedList actionList = aSFCObject.actions;
-	Action action;
+	String name1,name2;
+	Action action,action2;
 	
+	if (actionList = null){return true;}    //wenn in der actionList keine Eintraege vorhanden sind, kann auch kein Eintrag fehlerhaft sein, also sind alle Eintraege korrekt
+
+	//Pruefung auf Null-Werte
 	for (int i=0; i < actionList.size(); i++){
 	    action = (Action)actionList.get(i);
 	    if (action.sap == null){throw new ActionFailure(action, "Missing sap in this Action.");}
 	    if (action.a_name == null){throw new ActionFailure(action, "Action without a name.");}
 	}
 
+	//Namenspruefung
+	for (int i=0; i < actionList.size(); i++){
+	    action = (Action)actionList.get(i);
+	    name1 = action.a_name;
+	    for (int j=i; j < actionList.size(); j++){
+		action2 = (Action)actionList.get(j);
+		name2 = action2.a_name;
+		if (name1 == name2){throw new ActionFailure(action, "Action with a name, which is already used.");}
+	    }
+	    
+	}
+
+
+	//nun muessen nur noch die einzelnen sap`s ueberprueft werden:
+	for (int i=0; i < actionList.size(); i++){
+	    action = (Action)actionList.get(i);
+	    sap1 = action.sap;                           //auslesen der i-ten sap
+	    for (int j=0; j < sap1.size(); j++){
+		stmt1 = (Stmt)sap1.get(j);               //auslesen des j-ten Statements aus der sap
+		class1 = stmt.getClass();
+		class1Name = class1.getName();
+		if (class1Name == "Assign" || class1Name == "Skip"){
+		    if (class1Name == "Assign"){
+			//pruefen, ob var und val vernuenftig sind
+			if (stmt1.var == null){throw new ActionFailure(action, "This statement has no var.")}
+			if (stmt1.val == null){throw new ActionFailure(action, "This statement has no val.")}
+		    }
+		} else {throw new ActionFailure(null, "Error, that can`t be solved."}
+	    }
+
+
+	}
 
 	return true;
     }
@@ -228,7 +265,7 @@ public class Snotcheck{
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.22 2001-06-12 11:56:00 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.23 2001-06-12 14:55:02 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
 //	Revision 1.21  2001/06/08 09:00:56  swprakt
