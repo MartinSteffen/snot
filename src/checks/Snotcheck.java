@@ -7,12 +7,19 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.12 2001-05-30 14:01:58 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.13 2001-06-05 13:21:31 swprakt Exp $
  *
  */
 
 
 public class Snotcheck{
+
+    /**Diese Funktion prueft, ob nur boolsche Variablen vorkommen.
+     */
+    public static boolean isOnlyBool(SFC aSFCObject){
+	return true;
+    }
+
 
 
     /**Diese Funktion prueft, ob der istep vorhanden ist
@@ -37,32 +44,16 @@ public class Snotcheck{
 	return true;
     }
 
-    public static boolean isWellDefined(SFC aSFCObject) throws Exception {
+    public static boolean isWellDefined(SFC aSFCObject) throws CheckException {
 
-	if (!isThereAnIStep( aSFCObject ) ){throw new NoIStepException();}
+	if (!isThereAnIStep( aSFCObject ) ){throw new IStepException("Ihr Idioten habt vergessen einen I-Step zu setzen!!");}
 
-	if (false) {
-	    throw new Exception("Es ist voll 'was schief gelaufen!");
-	}
+
 	boolean nurBool;
 	nurBool = isOnlyBool(aSFCObject);
-	if (nurBool) {
-	    return true;
-	} else {
-	    throw new Exception("Es ist etwas schief gelaufen!");
-	}
+	if (!nurBool) throw new BoolException("Es kamen auch Integervariablen vor!");
     }
 
-    public static boolean isOnlyBool(SFC aSFCObject) throws Exception {
-	return false;
-    }
-    public static void main(String[] args){
-	SFC test= new SFC(null,null,null,null,null);
-	boolean a;
-	try{
-	a=isWellDefined(test);
-	}catch (Exception e){};
-    }
 
 }
 
@@ -71,9 +62,12 @@ public class Snotcheck{
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.12 2001-05-30 14:01:58 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.13 2001-06-05 13:21:31 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.12  2001/05/30 14:01:58  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.11  2001/05/29 15:08:01  swprakt
 //	*** empty log message ***
 //	
