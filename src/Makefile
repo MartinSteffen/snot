@@ -1,12 +1,12 @@
 #----------------------------------------------------------------------
 # developers' top-level Makefile for the Snot project
-# $Id: Makefile,v 1.31 2001-05-23 14:21:33 swprakt Exp $
+# $Id: Makefile,v 1.32 2001-05-23 14:23:59 swprakt Exp $
 #----------------------------------------------------------------------
 
 # The targets installing gobal web-infos can be executed only
 # by the maintainers
 
-#### #TEST #####################################
+#### #TEST ###################################
 
 TOOLNAME      = Snot
 
