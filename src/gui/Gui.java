@@ -34,7 +34,7 @@ import simulator.Simulator;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.37 $
+ * @version $Revision: 1.38 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -800,6 +800,8 @@ public class Gui extends javax.swing.JFrame {
 	projectFrame.dispose();
       }
   }
+
+
  /**
   * The Parser routine
   */
@@ -812,7 +814,7 @@ public class Gui extends javax.swing.JFrame {
 
       // check for valid session
       if (session == null) {
-           SnotOptionPane.showMessageDialog(null, "Parser failed!\nPlease open or create a new session first!",
+           SnotOptionPane.showMessageDialog(null, "Please open or create a new session first!",
                                             "Error", JOptionPane.ERROR_MESSAGE);
            return;
       }
@@ -839,8 +841,8 @@ public class Gui extends javax.swing.JFrame {
               Utilities.validateFile(file,ParserFileExtension);
           }
           catch (Exception ex) {
-	      setStatusLine(true, "Parser failed, file error.");
-              SnotOptionPane.showMessageDialog(null, ex.getMessage(), "File error", JOptionPane.ERROR_MESSAGE);
+	      setStatusLine(true, "Parser failed, file error!");
+              SnotOptionPane.showMessageDialog(null, new String(ex.getMessage()+"\n\nMaybe file is not valid or not accessible"), "File error", JOptionPane.ERROR_MESSAGE);
           }
 
       // parse file to SFC and add new Project to Session
@@ -857,7 +859,7 @@ System.out.println("File Parsed");
 	      project.setEnvironment();
               session.addProject(project);
 	      activeProject = project;
-	      setStatusLine(true,"Parser succesfull");
+	      setStatusLine(true,"Parsed file \""+file.getName()+"\" succesfully");
 
           }
 	  catch (ParseException pex) {
@@ -872,7 +874,7 @@ System.out.println("File Parsed");
 System.out.print("\n"+ex.getClass());
 ex.printStackTrace();
 	       setStatusLine(true, "Parser failed");
-               SnotOptionPane.showMessageDialog(null, ex.getMessage()+"Anormal Error", "Error", JOptionPane.ERROR_MESSAGE);
+               SnotOptionPane.showMessageDialog(null, "Abnormal Error!\nError code 0-8-15\nPlease consult your local cofe machine ...\n\n"+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
           }
 
       
@@ -903,30 +905,35 @@ ex.printStackTrace();
           else
               return;
 
+	  // war der check erfolgreich???
+	  if (!activeProject.isChecked()) 
+	      return;
+      }
+
       if (!activeProject.isOnlyBool()) {
-         SnotOptionPane.showMessageDialog(null, "The SFC \""+activeProject.getName()+"\" is buggy!\n Aborting SMV translation",
-                                        "Error: SFC is buggy", JOptionPane.ERROR_MESSAGE);
-              return;
-          }
+	  SnotOptionPane.showMessageDialog(null, "The SFC \""+activeProject.getName()+"\" is not boolean!\n The SMV translator can only/nhandle SFCs with boolean operations./nAborting SMV translation", "Error: SFC is not boolean", JOptionPane.ERROR_MESSAGE);
+          return;
       }
 
       try {
           SMVTranslator trans = new SMVTranslator(activeProject.getSFC());
 	  stream = new ByteArrayOutputStream();
 	  stream = trans.toStream();
-	  setStatusLine(true, "launching SMVTranslator.");
+	  setStatusLine(true, "launching SMV translator ...");
 System.out.print("\nlaunching SMVTranslator ...");
           JFileChooser chooser = new JFileChooser();
           chooser.setFileFilter(new SnotFileFilter("smv","SMV output"));
-          chooser.setDialogTitle("Save SMV - Output as");
+          chooser.setDialogTitle("Save SMV translation output as");
           int result = chooser.showDialog(null, "Save as");
           if (result == JFileChooser.APPROVE_OPTION) {
              file = Utilities.createFileDialog(chooser.getSelectedFile(), SmvFileExtension);
 	     FileOutputStream output = new FileOutputStream(file);
 	     byte[] array =  stream.toByteArray();
 	     output.write(array);
+	     output.flush();
 	     output.close();
-	     System.out.print("\nFile saved succesfully");
+	     setStatusLine(true, "SMV translation succeeded!");
+System.out.print("\nFile saved succesfully");
             }
       }
       catch (SMVException smvex) {
@@ -939,7 +946,7 @@ System.out.print("\nlaunching SMVTranslator ...");
       }
       catch(Exception e){
 	 setStatusLine(true, "SMV translation failed.");
-	 SnotOptionPane.showMessageDialog(null, e.getMessage(), "Abnormal Error", JOptionPane.ERROR_MESSAGE);
+	 SnotOptionPane.showMessageDialog(null, ("An unexpected condition occured!/n"+e.getMessage()), "Abnormal Error", JOptionPane.ERROR_MESSAGE);
 e.printStackTrace();
       }
 
@@ -953,44 +960,49 @@ e.printStackTrace();
      int response = 0;
 
      if (activeProject == null) {
-          SnotOptionPane.showMessageDialog(null, "Please select a SFC first!\n", "Error: no SFC", JOptionPane.ERROR_MESSAGE);
+          SnotOptionPane.showMessageDialog(null, "Please select a SFC first!\n"
+					   , "Error: no SFC", JOptionPane.ERROR_MESSAGE);
           return;
-        }
+     }
 
-      else if (activeProject.isChecked()==true)
-      {
-        try{
-	        setStatusLine(true, "launching simulator.");
-	        SFC _sfc = activeProject.getSFC();
-		Simulator sim = new Simulator(_sfc);	// Simulator erzeugen
-
-		sim.Initialize();						// Simulator initialisieren
-
-		System.out.print("Anfangszustand: ");
-		sim.PrintConfiguration(System.out);				// Zustand ausgeben
-
-		for (int i=1; i<=15; i++) {
-
-			sim.SingleStep();
-
-			System.out.print("nach "+i+". Schritt: ");
-
-			sim.PrintConfiguration(System.out);
-		}
-        }catch(Exception e){
-	    setStatusLine(true, "Simulator failed.");
-	    System.out.println("Error while simulating the SFC"+e.getMessage());
-            SnotOptionPane.showMessageDialog(null, "Simulator execution aborted, an error occured.",
-                          "Error", JOptionPane.ERROR_MESSAGE);}
-      }
-      else {
-          response = SnotOptionPane.showConfirmDialog(null, "The SFC \""+activeProject.getName()+"\" needs to be checked\nbefore the SMV translator can be run!\n\nDo you want to check the SFC now?\n",
-                                            "Warning: SFC is not checked", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+     // check for valid SFC
+     if (!activeProject.isChecked()) {
+	 response = SnotOptionPane.showConfirmDialog(null, "The SFC \""+activeProject.getName()+"\" needs to be checked\nbefore the simulator can be run!\n\nDo you want to check the SFC now?\n", "Warning: SFC is not checked"
+						     , JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
           if (response == JOptionPane.OK_OPTION)
               CheckSFCActionPerformed(null);
           else
               return;
-      }
+
+	  // was the check successful???
+	  if (!activeProject.isChecked())
+	      return;
+     }
+
+     try {
+	 setStatusLine(true, "launching simulator ...");
+	 SFC _sfc = activeProject.getSFC();
+	 Simulator sim = new Simulator(_sfc);	// Simulator erzeugen
+	 
+	 sim.Initialize();						// Simulator initialisieren
+	 
+	 System.out.print("Anfangszustand: ");
+	 sim.PrintConfiguration(System.out);				// Zustand ausgeben
+	 
+	 for (int i=1; i<=15; i++) {
+	     
+	     sim.SingleStep();
+	     
+	     System.out.print("nach "+i+". Schritt: ");
+	     
+			sim.PrintConfiguration(System.out);
+	 }
+     } catch (Exception e) {
+	 setStatusLine(true, "Simulator failed.");
+System.out.println("Error while simulating the SFC"+e.getMessage());
+	 SnotOptionPane.showMessageDialog(null, ("Simulator execution aborted due to an unexpected error./n"+e.getMessage())
+					  , "Error", JOptionPane.ERROR_MESSAGE);
+     }
   }
 
   /**
@@ -1006,10 +1018,12 @@ e.printStackTrace();
 
       try {
           status = Snotcheck.isOnlyBool(activeProject.getSFC());
-	  System.out.println("Nach isonlybool \n"+status);
+System.out.println("Nach isonlybool \n"+status);
 	  //Den Only Bool Wert des Projects setzen
 	  activeProject.setOnlyBool(status);
           status = Snotcheck.isWellDefined(activeProject.getSFC());
+	  // Checked setzen falls alle Tests bestanden wurden.
+	  activeProject.setChecked(status);
       }
       catch (CheckException checkEx) {
           if (checkEx instanceof IStepException){
@@ -1054,10 +1068,7 @@ e.printStackTrace();
                                         "Check Error", JOptionPane.ERROR_MESSAGE);
       }
 
-    // Checked setzen falls alle Tests bestanden wurden.
-     activeProject.setChecked(status);
-
-     if(status == true) {
+     if(activeProject.isChecked()) {
 	 setStatusLine(true, "Checks passed");
 	 SnotOptionPane.showMessageDialog(null, "All checks passed succesfully",
                                         "Check Info", JOptionPane.INFORMATION_MESSAGE);
@@ -1192,9 +1203,9 @@ System.out.print(ex.getClass());
           try {
               project = Project.importSFC(file);
               editor = new Editor(project.getSFC());
+	      editor.addWindowListener(new GuiWindowListener());
               project.setEditor(editor);
 	      project.restoreEnvironment();
-	      editor.addWindowListener(new GuiWindowListener());
               session.addProject(project);
           }
           catch (EditorException edex){
