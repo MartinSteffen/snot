@@ -7,20 +7,34 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.13 2001-06-05 13:21:31 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.14 2001-06-05 14:17:34 swprakt Exp $
  *
  */
 
-
 public class Snotcheck{
 
-    /**Diese Funktion prueft, ob nur boolsche Variablen vorkommen.
+
+
+    /**Diese Funktion prueft Deklarationsliste
      */
-    public static boolean isOnlyBool(SFC aSFCObject){
+    private static boolean isDeclarationOk(SFC aSFCObject){
+	//Quellcode fehlt
 	return true;
     }
 
+    /**Diese Funktion prueft, ob alle Actions vollstaendig und korrekt sind
+     */
+    private static boolean isAllActionOk(SFC aSFCObject){
+	//Quellcode fehlt
+	return true;
+    }
 
+    /**Diese Funktion prueft alle Steps(vollstaendig, korrekt)
+     */
+    private static boolean isAllStepOk(SFC aSFCObject){
+	//Quellcode fehlt
+	return true;
+    }
 
     /**Diese Funktion prueft, ob der istep vorhanden ist
      */
@@ -33,14 +47,45 @@ public class Snotcheck{
      *
      */
     private static boolean isAllTransitionOk(SFC aSFCObject){
-	//Quellcode fehlt
+	//Bevor diese Methode aufgerufen wird, ist zu pruefen, ob die Transitionsliste=null ist.
+	//Wenn die Liste nicht existiert, arbeitet diese Methode m"oglicherweise nicht korrekt.
+
+	LinkedList translist = aSFCObject.transs;
+	Transition trans;
+	boolean allesOK = true;
+	
+	if (translist!=null){
+	    for (int i=0; i < translist.size(); i++){
+		trans = translist.get(i);
+		if (trans.source == null || trans.target == null || trans.guard == null){
+		    //Wenn einer der Werte fehlt, dann:
+		    // - setze das Flag (wenn es implementiert wurde) und merke dir, dass ein Fehler auftrat
+		    //oder
+		    // - werfe eine Exception (TransitionFailure) mit der entsprechenden Transition als Argument
+		    throw new TransitionFailure(trans, "Bei der angegebenen Transition fehlt mindestens eines der Argumente.");
+		    
+		    /*Hier steht der Programmtext, der verwendet werden sollte,
+		      wenn sog. Flags implementiert sind:
+		      trans.setFlag(1);  //Flag besagt, dass ein Fehler auftrat
+		      allesOK = false;
+		    */
+		}
+	    }
+	}
+	
+	
+	
 	return true;
+	
     }
 
-    /**Diese Funktion prueft, ob alle Actions vollstaendig und korrekt sind
+
+
+
+
+    /**Diese Funktion prueft, ob nur boolsche Variablen vorkommen.
      */
-    private static boolean isAllActionOk(SFC aSFCObject){
-	//Quellcode fehlt
+    public static boolean isOnlyBool(SFC aSFCObject){
 	return true;
     }
 
@@ -62,9 +107,12 @@ public class Snotcheck{
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.13 2001-06-05 13:21:31 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.14 2001-06-05 14:17:34 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.13  2001/06/05 13:21:31  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.12  2001/05/30 14:01:58  swprakt
 //	*** empty log message ***
 //	

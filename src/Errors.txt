@@ -1,5 +1,5 @@
 ###########################################################
-## $Id: Errors.txt,v 1.7 2001-06-05 13:58:46 swprakt Exp $
+## $Id: Errors.txt,v 1.8 2001-06-05 14:14:16 swprakt Exp $
 ###########################################################
 
 
@@ -11,12 +11,12 @@
 // Das ist ein Kommentar
 // Muster
 //
-// #Number: 	<Error number> 
-// #Reporter: 	<name> <e-mail>
-// #where:      Paket (und Klasse)
-// #Subject: 	<short title>
-// #Status: 	reported | processing | fixed (by whom) | confirmed
-// #Description: 
+// #number: 	<Error number> 
+// #reporter: 	<name> <e-mail>
+// #where:      Paket (und Klasse) + version
+// #subject: 	<short title>
+// #status: 	reported | processing | fixed (by whom) | confirmed
+// #description: 
 // <long description how to generate>
 //------------------------------------------------------------------------------
 
@@ -27,6 +27,15 @@
 
 
 
+#number: 	6
+#reporter: 	Martin (ms)
+#where:      im laufenden tool (vermutlich gui)
+#subject: 	Merkw"urdiges aussehen des Hilfemenues
+#status: 	reported  
+#description:   Klicken auf ?(Help) -> liefert ein
+	        Hilfsfenster aber es zeigt es nicht richtig
+		an, zur H"alfte wei"s (under fvwm)
+                 
 
 
 #number: 	5
