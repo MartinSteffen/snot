@@ -27,10 +27,14 @@ public class Simulator{
 
 	private static final boolean DEBUG = false;
 
+
     /**
      *
-     * Erzeugt neuen Simulator
-     * @param editor 
+     * Erzeugt einen neuen Simulator.
+     * Das zu simulierende SFC wird vom Editor geliefert.
+     * Der Editor wird verwendet, um den Zustand des SFCs darzustellen.
+     *
+     * @param Editor
      *
      */
     public Simulator(Editor _editor) {
@@ -39,23 +43,49 @@ public class Simulator{
     }
 
 
+    /**
+     *
+     * Erzeugt einen neuen Simulator.
+     * Das zu simulierende SFC wird direkt übergeben.
+     *
+     * @param SFC 
+     *
+     */
     public Simulator(SFC _sfc) {
 		sfc    = _sfc;
 		editor = null;
     }
     
-    
+    /**
+     *
+     * Bringt den Simulator in den Anfangszustand
+     *
+     */
     public void Initialize() {
 		config = new Configuration(sfc.istep,sfc.declist);
     }
     
-    
+
+    /**
+     *
+     * Ausgabe des aktuellen Zustands in Textform
+     *
+     * @param out PrintStream
+     *
+     */
     public void PrintConfiguration(PrintStream out) {
     	config.Print(out);
     }
     
     
-    public void SingleStep() {
+    /**
+     *
+     * Simuliert einen SFC-Zyklus 
+     *
+     * @throws SimException 
+     * 
+     */
+    public void SingleStep() throws SimException {
     	
 		PrettyPrint pp = new PrettyPrint();
 		
@@ -135,7 +165,19 @@ public class Simulator{
     }
     
     
-    private Expr EvaluateExpression(Expr e, State state) {
+    /**
+     *
+     * Wertet einen Ausdruck aus, indem Variablen durch ihre aktuellen Werte ersetzt werden.
+     *
+     * @param  Expr
+     * @param  State  Variablenbelegung
+     *
+     * @return Expr   ein konstanter Audruck gemaess der abstrakten Syntax
+     *
+     * @throws SimException 
+     * 
+     */
+    private Expr EvaluateExpression(Expr e, State state) throws SimException {
     	
     	if (e instanceof Constval) {
     		
@@ -148,7 +190,7 @@ public class Simulator{
 				return new Constval( ((Boolean)c.val).booleanValue() );
 			}
 			
-			// throw Execption
+            throw new SimException("Konstante unbekannten Typs");
     	}
     	
     	if (e instanceof Variable) {
@@ -177,9 +219,8 @@ public class Simulator{
     				switch (u.op) {
     				case Expr.PLUS  : return ( new Constval( i) );
     				case Expr.MINUS : return ( new Constval(-i) );
-//    				default         : break;
     				}
-    				// throw Exception
+                    throw new SimException("unerlaubter Operator vor Integer-Ausdruck");
     			}
     			if ( c.val instanceof Boolean ) {
     				
@@ -187,12 +228,11 @@ public class Simulator{
     				
     				switch (u.op) {
     				case Expr.NEG : return ( new Constval(!b) );
-//    				default       : break;
     				}
-    				// throw Exception
+                    throw new SimException("unerlaubter Operator vor Boolean-Ausdruck");
     			}
     		}
-    		// throw Exception
+            throw new SimException("Teilausdruck konnte nicht ausgewertet werden");
     	}
 
     	if (e instanceof B_expr) {
@@ -225,9 +265,8 @@ public class Simulator{
     				case Expr.GREATER : return ( new Constval(left_i >  right_i) );
     				case Expr.LEQ     : return ( new Constval(left_i <= right_i) );
     				case Expr.GEQ     : return ( new Constval(left_i >= right_i) );
-//    				default           : break;
     				}
-    				// throw Exception
+                    throw new SimException("unerlaubter Operator");
     			}
     			if ( left_c.val instanceof Boolean && right_c.val instanceof Boolean) {
     				
@@ -239,20 +278,28 @@ public class Simulator{
     				case Expr.OR  : return ( new Constval(left_b || right_b) );
     				case Expr.EQ  : return ( new Constval(left_b == right_b) );
     				case Expr.NEQ : return ( new Constval(left_b != right_b) );
-//    				default       : break;
     				}
-    				// throw Exception
+                    throw new SimException("unerlaubter Operator");
     			}
     		}
-    		// throw Exception
+            throw new SimException("unzulaessige Kombination von Ausdruecken");
     	}
-    	// throw Exception
-    	return null;
+        throw new SimException("Syntax-Fehler");
     }
 
     
     
-    private void ExecAction(Action action, State state) {
+    /**
+     *
+     * Fuehrte eine StepAction aus.
+     *
+     * @param  Action  Aktion
+     * @param  State   Variablenbelegung
+     *
+     * @throws SimException 
+     * 
+     */
+    private void ExecAction(Action action, State state) throws SimException {
     
 		for (Iterator i = action.sap.iterator(); i.hasNext();) {
 	  	
@@ -278,14 +325,25 @@ public class Simulator{
 					state.SetVar(a.var,c);
 	    		}
 	    		else
-	    			; // throw Execption
+
+                    throw new SimException("Ausdruck konnte nicht ausgewertet werden");
 	    	
 			}
     	}
     }
     
     
-    private void ExecNQualifiedStepActions(Step step, State state) {
+    /**
+     *
+     * Fuehrte saemtliche N-Aktionen eines Steps aus.
+     *
+     * @param  Step 
+     * @param  State   Variablenbelegung
+     *
+     * @throws SimException 
+     * 
+     */
+    private void ExecNQualifiedStepActions(Step step, State state) throws SimException {
     	
     	for (Iterator i = step.actions.iterator(); i.hasNext(); ) {
     		
@@ -304,7 +362,22 @@ public class Simulator{
     	}
     }
     
-    private StepList ExecTransition(Transition t, Configuration cfg) {
+    /**
+     *
+     * Bearbeitet eine Transition. 
+     * Ist diese aktiviert, so werden die Quell-Steps deaktiviert und 
+     * die zu aktivierenden Ziel-Steps als Liste zurueckgegeben.
+     * Ist sie nicht aktiviert, so wird eine leere Liste zurückgegeben.
+     *
+     * @param  Transition 
+     * @param  Configuration  aktueller Zustand 
+     *
+     * @return StepList       aktivierte Steps
+     *
+     * @throws SimException 
+     * 
+     */
+    private StepList ExecTransition(Transition t, Configuration cfg) throws SimException {
     	
 		StepList l = new StepList();
 
@@ -367,6 +440,13 @@ public class Simulator{
     
 
 
+    /**
+     *
+     * Zustand des Simulators
+     * StepList: aktive Steps
+     * State:    Variablenbelegung
+     *
+     */
     private class Configuration {
     	
     	private StepList  active_steps;  // Liste der aktivierten Steps ("Step")
@@ -427,8 +507,13 @@ public class Simulator{
 		
     } // class Configuration
     
+
     
-    
+    /**
+     *
+     * Variablenbelegung
+     * 
+     */
     public class State extends LinkedList {
     	
     	public State(LinkedList l) {
