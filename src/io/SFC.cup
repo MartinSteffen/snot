@@ -4,7 +4,7 @@
  * Offers the methods  parseFile and parseExpression 
  *
  * @author Karsten Stahl, Martin Steffen
- * @version $Id: SFC.cup,v 1.13 2001-07-10 15:09:46 swprakt Exp $
+ * @version $Id: SFC.cup,v 1.14 2001-07-11 13:17:46 swprakt Exp $
  *
  * The grammar definition contains 4 parts:
  *    -  initialization declarations and how to generate the parser
@@ -52,7 +52,7 @@ action code {:
       absynt.Step _s = null;
       for (Iterator i = _steplist.iterator(); i.hasNext();) {
 	  Step _li = (Step) i.next();
-	  if (s==_li.name) _s=_li;
+	  if (s.equals(_li.name)) _s=_li;
       }
       if (_s == null)
 	  System.err.println("not all steps occur in the step list");
