@@ -6,6 +6,6 @@ import absynt.*;
 
 
 public class BoolException extends CheckException{
-    public
+  public
 	BoolException(String s){nachricht = s;}
 }

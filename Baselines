@@ -1,10 +1,11 @@
 ###########################################################
-# $Id: Baselines,v 1.4 2001-07-01 11:10:30 swprakt Exp $
+# $Id: Baselines,v 1.5 2002-03-19 10:51:49 swprakt Exp $
 ###########################################################
 
 List of major development steps. (all compilable)
 
 
+  - Baseline4:    end of semester
 
   - Baseline3:    parser on board, including actions. Not yet 100% satisfactory (see corr. Todo)
 
