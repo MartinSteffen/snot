@@ -1,5 +1,5 @@
 ###########################################################
-## $Id: Errors.txt,v 1.10 2001-06-05 14:33:15 swprakt Exp $
+## $Id: Errors.txt,v 1.11 2001-06-14 05:38:44 swprakt Exp $
 ###########################################################
 
 
@@ -24,6 +24,25 @@
 
 --------- Liste der aktuellen Fehler ---
 --	  die neuen sollen _oben_ angeh"angt werden ------
+
+
+
+
+
+#number: 	7
+#reporter: 	Martin (ms)
+#where:         checks
+#subject: 	kompiliert nicht
+#status: 	reported  
+#description:   Snotcheck.java:186: 'else' without 'if'
+	    } else {throw new ActionFailure(null, "Error, that can`t be solved.");}
+              ^
+              Snotcheck.java:192: illegal start of type
+              return tru 
+	       
+	       und verschiedene sonstige Fehler
+                 
+
 
 
 
