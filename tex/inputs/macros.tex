@@ -1,0 +1,59 @@
+%\newcommand{\kommentar}[1]{[{\small\em #1}]
+
+\newcommand{\Siff}{\textsc{Siff}}
+\newcommand{\Java}{\textsc{Java}}
+
+
+\newcommand{\team}[1]{\textbf{Team:} #1\bigskip{}}
+
+
+
+\newcommand{\bnfdef}{::=}
+\newcommand{\bnfbar}{\ensuremath{\mid}}
+\newcommand{\of}    {\ensuremath{\mathrel{:}}}
+
+\newenvironment{diagram}{\begin{displaymath}}{\end{displaymath}}
+
+\newcommand{\inputcode}[2][Code]   {
+  {\small
+  \mbox{}
+  \newline
+  \mbox{}
+  \hrulefill
+  \verbatiminput{#1/#2.java}
+  \hrulefill}}
+
+
+
+
+\renewcommand{\inputcode}[2][Code]{
+  {\small
+  \mbox{}
+  \newline\nopagebreak{}
+  \mbox{}
+  \hrulefill
+  \lstinputlisting{#1/#2.java}
+  \hrulefill}}
+
+\newenvironment{code}{%
+%  \small\mbox{}\nopagebreak{}\mbox\hrulefill{}
+  {\begin{lstlisting}{}}}{%
+  {\end{lstlisting}}}
+
+
+%\newenvironment{diagram}{\begin{displaymath}}{\end{displaymath}}
+
+
+
+
+
+
+
+
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

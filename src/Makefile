@@ -1,11 +1,11 @@
 #----------------------------------------------------------------------
-# developers' top-level Makefile for the Mist project
-# $Id: Makefile,v 1.1.1.1 2001-04-19 11:24:28 swprakt Exp $
+# developers' top-level Makefile for the Siff project
+# $Id: Makefile,v 1.2 2001-04-19 11:39:44 swprakt Exp $
 #----------------------------------------------------------------------
 
 ################################################
 
-TOOLNAME      = XXXX
+TOOLNAME      = Siff
 
 WEBDIR        = /home/info/www/inf/deRoever/SS01/Java/$(TOOLNAME)
 WEBDOCDIR     = $(WEBDIR)/doc
