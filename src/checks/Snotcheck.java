@@ -1,7 +1,7 @@
 package checks;
 
 import java.lang.*;
-
+import absynt.*;
 
 /**
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
@@ -9,7 +9,7 @@ import java.lang.*;
  *-checken von SFCs
  *-und nat"urlich auch checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.5 2001-05-22 14:28:04 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.6 2001-05-22 14:31:47 swprakt Exp $
  *
  */
 
@@ -33,9 +33,12 @@ public class Snotcheck{
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.5 2001-05-22 14:28:04 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.6 2001-05-22 14:31:47 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.5  2001/05/22 14:28:04  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.4  2001/05/22 14:25:23  swprakt
 //	ok
 //	
