@@ -11,7 +11,7 @@ import java.io.*;
  * Oeffentlichkeit zur Verfuegung
  *
  * @author Martin Steffen
- * @version $Id: Scanner.cup,v 1.1 2001-06-13 14:21:05 swprakt Exp $
+ * @version $Id: Scanner.cup,v 1.2 2001-06-13 14:33:33 swprakt Exp $
  *
  * */
 
@@ -105,34 +105,32 @@ parser code {:
 
 
    /** 
-    * public Methode um eine Datei zu parsen
+    * public method to parse a file
     *
     * @parameter 
-    * sourcefile - zu parsende Datei
+    * sourcefile - file to parse
     * @return 
-    * der abstrakte Syntaxbaum mit absynt.Program als Wurzel
+    * abstract syntax tree with absynt.sfc as root
     * @throws 
-    * java.Exception bei Fehler.
+    * java.Exception when broken.
     */
     public absynt.Program parseFile(java.io.File sourcefile) throws Exception {
         lexer   = new Yylex(new FileInputStream(sourcefile));
 	setScanner(lexer);
-        absynt.Program proggi = (absynt.Program)parse().value;
-	return proggi;
+        absynt.Sfc  sfc = (absynt.Program)parse().value;
+	return sfc;
     }
 
     
     /**
      * public method to parse a single expression<br><br>
      *
-     * public Methode um einen einzelnen Ausdruck zu parsen
-     *
      * @parameter
-     * die zu parsende Zeichenkette 
+     * The string to parse
      * @return 
-     * ein Ausdruck wie absynt.Expr* parser.ParseException falls ein Syntax-Fehler in der Datei vorliegt
+     * an absynt.Expr*
      * @throws
-     * java.Exception bei Fehler.
+     * java.Exception when not parseable.
      */
     public absynt.Expr parseExpression(java.lang.String expression) throws Exception {
       lexer = new Yylex(new StringReader(expression));
@@ -149,14 +147,13 @@ parser code {:
 :}
 
 /** 
- * Terminale ohne Typ
+ * Terminals without type
  */ 
-terminal         PROGRAM, LBRACE, RBRACE, CHANNEL, ASSIGN, ASSERT;
-terminal         INT, LPAREN, RPAREN, ELSE, PROCESS, COMMA, SEMICOL;  
-terminal         IF, BOOL, WHILE, PUT, GET, NEQ, OR, PLUS, TIMES;
+terminal         SFC, LBRACKET, RBRACKET, ASSIGN;
+terminal         LPAREN, RPAREN,  COMMA, SEMICOL;  
+terminal         INT, BOOL, GET, NEQ, OR, PLUS, TIMES;
 terminal         AND, DIV, EQ, GEQ, GREATER, LEQ, LESS, MINUS, NEG;
 terminal         TRUE, FALSE;
-
 
 
 /** 
