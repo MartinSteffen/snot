@@ -3,7 +3,7 @@ import java.io.Serializable;
 
 
 /**
- * <Klasse> 
+ * some description 
  * Bla
  * @author Initially provided by Martin Steffen.
  * @version $Id: <dollar>	
@@ -17,7 +17,7 @@ public class <xxxx> extends Absynt implements Serializable {
 
 
 //----------------------------------------------------------------------
-//	Abstract Syntax for Mist Programs
+//	Abstract syntax for Snot programs
 //	------------------------------------
 //
 //	$Id: <dollar>
