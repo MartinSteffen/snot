@@ -1,9 +1,12 @@
 ######################################################
-# $Id: gruppen.txt,v 1.3 2001-04-25 06:16:04 swprakt Exp $
+# $Id: gruppen.txt,v 1.4 2001-04-28 12:56:14 swprakt Exp $
 ######################################################
 ## Gruppeneinteilung + Mailadressen der Teilnehmer: .mailrc-Syntax
 ##
+##
 
+
+alias Isemann.Marc        marc_isemann@yahoo.de
 
 
 alias Kloss.Tobias tobias.kloss@gmx.de
@@ -14,7 +17,7 @@ alias Schiller.Ingo       schiller.ingo@web.de
 alias Theman.Hans         htheman@web.de
 alias Heine.Carsten       cheine@web.de
 alias Schroeder.Christian chs@informatik.uni-kiel.de
-alias Isemann.Marc        marc_isemann@yahoo.de
+
 alias Lukosch.Andreas    stu38212@mail.uni-kiel.de
 alias Fiebelkorn.Joern   Joern.Fiebelkorn@t-online.de
 alias Froidenberg.Natalia  stu39147@mail.uni-kiel.de
@@ -27,7 +30,6 @@ alias javasnot Kloss.Tobias,\
                Theman.Hans,\
                Schiller.Ingo,Heine.Carsten,\
                Schroeder.Christian,\
-               Isemann.Marc,\
                Lukosch.Andreas,\
                Fiebelkorn.Joern,\
 	       Froidenberg.Natalia
