@@ -7,13 +7,13 @@
 Es soll die Möglichkeit gegeben werden, die \emph{Korrektheit} des
 eingegebenen SFC's zu überprüfen. Dies soll in einfacher Weise dadurch
 geschehen, daß überprüft wird, ob auf allen Ausführungen des Programmes die
-\emph{Assertions} nicht verletzt sind.
+\emph{Assertions} nicht verletzt werden.
 
 
 
 \medskip
 
-Im wesentlichen wird eine \emph{Graphsuche} implementiert werde: die
+Im wesentlichen wird eine \emph{Graphsuche} implementiert: die
 abstrakte Syntax wird in einem ersten Schritt in einen (expliziten oder
 impliziten) Graphen übersetzt, der danach mittels \emph{Tiefensuche} nach
 Verletzung der Zusicherungen abgesucht wird.
@@ -27,12 +27,12 @@ beschrieben.
 
 Im wesentlichen mit der Gui (Abschnitt~\ref{sec:gui}): 
 
-Methode \texttt{start\_modcheck} mit Parameter eines Programmes in
+Methode \texttt{start\_modcheck} mit Parameter eines SFC's in
 abstrakter Syntax. Rückgabe: \emph{noch zu klären}: entweder mittels
-Ausnahme oder boolescher Wert. Auf jeden Fall wird der Gui der Zustand,
-zurückgegeben wo die Verletzung auftritt. Wie die Gui darauf reagiert,
-ist nicht Sache des Modelcheckerpaketes. (z.B.\ könnte der Zustand
-gehighlighted werden.)
+Ausnahme oder boolescher Wert. Auf jeden Fall wird der Gui der Zustand
+zurückgegeben, in welchem die Verletzung auftritt. Wie die Gui darauf reagiert
+ist nicht Sache des Modelcheckerpaketes (z.B.\ könnte der Zustand
+gehighlighted werden).
 
 
 

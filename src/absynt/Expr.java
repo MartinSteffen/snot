@@ -6,7 +6,7 @@ import java.io.Serializable;
  * Abstract class for simple expressions
  * 
  * @author Initially provided by Martin Steffen.
- * @version $Id: Expr.java,v 1.2 2001-04-27 08:04:13 swprakt Exp $
+ * @version $Id: Expr.java,v 1.3 2001-04-27 08:13:21 swprakt Exp $
  */
 
 
@@ -38,12 +38,15 @@ public abstract class Expr extends Absyn implements Serializable{
 
 
 //----------------------------------------------------------------------
-//	Abstract Syntax for Mist Programs
+//	Abstract syntax for Snot programs
 //	------------------------------------
 //
-//	$Id: Expr.java,v 1.2 2001-04-27 08:04:13 swprakt Exp $
+//	$Id: Expr.java,v 1.3 2001-04-27 08:13:21 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.2  2001/04/27 08:04:13  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.1  2001/04/27 07:34:37  swprakt
 //	First proposal according to the requirement spec
 //	
