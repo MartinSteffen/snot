@@ -10,7 +10,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.43 2001-07-11 07:14:49 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.44 2001-07-11 08:41:20 swprakt Exp $
  *
  */
 
@@ -36,10 +36,28 @@ public class Snotcheck{
 	    B_expr lBExpr = (B_expr) lExpr;
 	    allesOk = isBExprOk(lBExpr);
 	    if (allesOk == false){return false;}
-	} else {
+	}
+	if (className == "U_expr"){
 	    U_expr lUExpr = (U_expr) lExpr;
 	    allesOk = isUExprOk(lUExpr);
 	    if (allesOk == false){return false;}
+	}
+	if (className == "Constval"){
+	    String nameOfConstvalClass = (((Constval) lExpr).val.getClass()).getName();
+	    if (nameOfConstvalClass == "Boolean"){
+		lExpr.type = new BoolType();
+	    } else {
+		lExpr.type = new IntType();
+	    }
+	}
+
+	if (className == "Variable"){
+	    String nameOfVariableType = (((Variable) lExpr).type.getClass()).getName();
+	    if (nameOfVariableType == "Boolean"){
+		lExpr.type = new BoolType();
+	    } else {
+		lExpr.type = new IntType();
+	    }
 	}
 
 
@@ -49,11 +67,30 @@ public class Snotcheck{
 	    B_expr rBExpr = (B_expr) rExpr;
 	    allesOk = isBExprOk(rBExpr);
 	    if (allesOk == false){return false;}
-	} else {
+	}
+	if (className == "U_expr"){
 	    U_expr rUExpr = (U_expr) rExpr;
 	    allesOk = isUExprOk(rUExpr);
 	    if (allesOk == false){return false;}
 	}
+	if (className == "Constval"){
+	    String nameOfConstvalClass = (((Constval) rExpr).val.getClass()).getName();
+	    if (nameOfConstvalClass == "Boolean"){
+		rExpr.type = new BoolType();
+	    } else {
+		rExpr.type = new IntType();
+	    }
+	}
+
+	if (className == "Variable"){
+	    String nameOfVariableType = (((Variable) rExpr).type.getClass()).getName();
+	    if (nameOfVariableType == "Boolean"){
+		rExpr.type = new BoolType();
+	    } else {
+		rExpr.type = new IntType();
+	    }
+	}
+
 
 
 	//"berechnen" des Typs von dieser Expression aus dem Operator und den Typen der linken/rechten expression
@@ -102,13 +139,15 @@ public class Snotcheck{
 	    if (typeName == "IntType"){
 		//bei Operation auf Integers:
 		aBExpr.type = new IntType();
+		return true;
 	    } else {
 		//bei OPeration auf Booleans:
 		aBExpr.type = new BoolType();
+		return true;
 	    }
 	}
 
-
+	//wenn keiner der ganzen Faelle eintrat, dann ist die Expression ungueltig:
 	return false;
     }
 
@@ -119,30 +158,65 @@ public class Snotcheck{
 	//in dieser methode wird geprueft, ob der unaere ausdruck korrekt ist,
 	//und es wird ermittelt, welchen typ dieser hat
 	/////////////////////////////////////////////////////////////////////////
-	Expr lExpr;
+	Expr sExpr;
 	String typeName;
 	boolean allesOk = true;
 
-	lExpr = anUExpr.sub_expr;
+	sExpr = anUExpr.sub_expr;
 
-	//ist die Expression vorhanden und ist der Operator gueltig (d.h. MINUS oder NEG)
-	if ((lExpr == null)||((anUExpr.op != anUExpr.MINUS)&&(anUExpr.op != anUExpr.NEG))){return false;}
+	//ist die Sub-Expression vorhanden und ist der Operator gueltig (d.h. MINUS oder NEG)
+	if ((sExpr == null)||((anUExpr.op != anUExpr.MINUS)&&(anUExpr.op != anUExpr.NEG))){return false;}
 
-	//pruefen der linken Expression:
-	String className = (lExpr.getClass()).getName();
+	//pruefen der Sub-Expression:
+	String className = (sExpr.getClass()).getName();
 	if (className == "B_expr"){
-	    B_expr lBExpr = (B_expr) lExpr;
-	    allesOk = isBExprOk(lBExpr);
-	    if (allesOk == false){return false;}
-	} else {
-	    U_expr lUExpr = (U_expr) lExpr;
-	    allesOk = isUExprOk(lUExpr);
+	    B_expr sBExpr = (B_expr) sExpr;
+	    allesOk = isBExprOk(sBExpr);
 	    if (allesOk == false){return false;}
 	}
-	
-	//"berechnen" des Typs von dieser Expression aus dem Operator und den Typen der linken/rechten expression
-	typeName = (lExpr.type.getClass()).getName();
+	if (className == "U_expr"){
+	    U_expr sUExpr = (U_expr) sExpr;
+	    allesOk = isUExprOk(sUExpr);
+	    if (allesOk == false){return false;}
+	}
+	if (className == "Constval"){
+	    String nameOfConstvalClass = (((Constval) sExpr).val.getClass()).getName();
+	    if (nameOfConstvalClass == "Boolean"){
+		sExpr.type = new BoolType();
+	    } else {
+		sExpr.type = new IntType();
+	    }
+	}
+	if (className == "Variable"){
+	    String nameOfVariableType = (((Variable) sExpr).type.getClass()).getName();
+	    if (nameOfVariableType == "Boolean"){
+		sExpr.type = new BoolType();
+	    } else {
+		sExpr.type = new IntType();
+	    }
+	}
 
+	
+	//pruefen, ob der Operator den Type der Sub-Expression verarbeiten kann und setzen des Types von dieser Expression
+	typeName = (sExpr.type.getClass()).getName();   //
+	if (anUExpr.op == anUExpr.MINUS){
+	    //das MINUS kann nur auf Integerwerte angewendet werden
+	    if (typeName == "IntType"){
+		anUExpr.type = new IntType();
+		return true;
+	    } else {return false;}
+	}
+
+	if (anUExpr.op == anUExpr.NEG){
+	    //das NEG ist nur auf boolschen Expressions definiert
+	    if (typeName == "BoolType"){
+		anUExpr.type = new BoolType();
+		return true;
+	    } else {return false;}
+	}
+
+
+	//wenn keiner dieser beiden Faelle auftritt, dann ist die Expression ungueltig:
 	return false;
     }
 
@@ -153,98 +227,67 @@ public class Snotcheck{
 	//Diese Methode "uberpr"uft, ob der angegebene Ausdruck ein korrekter Ausdruck fuer eine Guard ist.
 
 	//Folgende Dinge sollen gepr"uft werden:
-	//   -expr = b_expr?
 	//   -Typ der Expr muss Boolean sein
-	//   -beide Operanden m"ussen vom Typ Boolean sein  (auch erlaubt: (4>2)AND(...) , da 4>2 einen boolschen Wert ergibt)
-
 
 
 	//1. Schritt: feststellen, was fuer eine Expression vorliegt:
-	String nameOfExprClass;
-	Class exprClass;
-	int opera;
+	String nameOfExprClass,nameOfConstvalClass;
+	Class exprClass,constvalClass;
+	boolean allesOk = true;
 	
+	//wurde keine Expression uebergeben, dann gebe ein false zurueck:
 	if (anExpr == null){return false;}
-
-//	System.out.println("jjbfsvjhlhd");
 
 	exprClass = anExpr.getClass();
 	nameOfExprClass = exprClass.getName();
 
-//	System.out.println("jjbfsvjhlhd");
+	if (nameOfExprClass == "B_expr"){
+	    //Aufruf der Methode zum Pruefen einer binaeren Expression:
+	    B_expr bExpr = (B_expr) anExpr;
+	    allesOk = isBExprOk(bExpr);
+	    if (allesOk == false){return false;}
+	}
+	if (nameOfExprClass == "U_expr"){
+	    //Aufruf der Methode zum Pruefen einer unaeren Expression:
+	    U_expr uExpr = (U_expr) anExpr;
+	    allesOk = isUExprOk(uExpr);
+	    if (allesOk == false){return false;}
+	}
 
-	if (nameOfExprClass != "B_expr"){return false;}     //ist es eine BinaryExpr, wenn nicht, dann gebe false zurueck
+	if (nameOfExprClass == "Constval"){
+	    //wenn die Expression ein konstanter Wert ist, so sind nur boolsche Werte erlaubt
+	    Constval constant = (Constval) anExpr;
+	    constvalClass = constant.val.getClass();
+	    nameOfConstvalClass = constvalClass.getName();
+	    if (nameOfConstvalClass != "Boolean"){
+		anExpr.type = new IntType();
+		//wenn der konstante Wert nicht zu den Booleans gehoert, dann gebe ein false zurueck:
+		return false;
+	    } else {
+		anExpr.type = new BoolType();
+		return true;
+	    }
+	}
 
-
-
-	Expr lExpr,rExpr;
-	B_expr bExpr;
-	U_expr uExpr;
-	String nameOfLExprClass,nameOfRExprClass;
-	Class lExprClass,rExprClass;
-	
-	lExpr = ((B_expr)anExpr).left_expr;
-	rExpr = ((B_expr)anExpr).right_expr;
-
-	lExprClass = lExpr.getClass();
-	nameOfLExprClass = lExprClass.getName();
-	rExprClass = rExpr.getClass();
-	nameOfRExprClass = rExprClass.getName();
-
-	if (nameOfLExprClass == "B_expr"){            //pruefen der linken expression:
-	    //Check einer BExpr aufrufen
-	    bExpr = (B_expr)lExpr;
-	    if (isBExprOk(bExpr) == false){
-		//ein Fehler trat auf
+	if (nameOfExprClass == "Variable"){
+	    //wenn die Expression eine Variable ist, so muss diese vom Type BoolType sein:
+	    if (((anExpr.type.getClass()).getName()) == "BoolType"){
+		anExpr.type = new BoolType();
+		return true;
+	    } else {
+		anExpr.type = new IntType();
 		return false;
 	    }
-	    /////////////////////////////////////////////////////////////////
-	    //hier muss noch geprueft werden, ob die lExpr vom Typ bool ist//
-	    /////////////////////////////////////////////////////////////////
-	} else {
-	    //wenn die expr eine un"are expr ist, so darf der Operator nur NEG sein
-	    uExpr = (U_expr)lExpr;
-	    if (uExpr.op != uExpr.NEG){return false;}   //falls der Operator ungleich NEG ist, gib ein false zurueck
-	    //jetzt muss noch geprueft werden, ob die lExpr auch gueltig ist
-	    if (isUExprOk(uExpr) == false){
-		//ein Fehler trat auf, d.h. die lExpr ist ungueltig
-		return false;
-	    }
-	    //an dieser Stelle braucht man den Typ nicht mehr zu pruefen, da der Operator NEG nur auf einen boolschen Wert angewendet werden darf, und somit ist auch der gesamte Ausdruck vom Typ bool
 	}
 
 
-
-
-	if (nameOfRExprClass == "B_expr"){           //pruefen der rechten expression:
-	    //Check einer BExpr aufrufen:
-	    bExpr = (B_expr)rExpr;
-	    if (isBExprOk(bExpr) == false){
-		//ein Fehler trat auf
-		return false;
-	    }
-
-	    /////////////////////////////////////////////////////////////////
-	    //hier muss noch geprueft werden, ob die lExpr vom Typ bool ist//
-	    /////////////////////////////////////////////////////////////////
-
+	//wenn die Expression OK ist, dann pruefe noch, ob der Type der Expression BoolType ist, sonst gebe ein false zurueck:
+	if (((anExpr.type.getClass()).getName()) == "BoolType"){
+	    //alles ist OK
+	    return true;
 	} else {
-	    //wenn die expr eine un"are expr ist, so darf der Operator nur NEG sein
-	    uExpr = (U_expr)rExpr;
-	    if (uExpr.op != uExpr.NEG){return false;}   //falls der Operator ungleich NEG ist, gib ein false zurueck
-	    //jetzt muss noch geprueft werden, ob die rExpr auch gueltig ist
-	    if (isUExprOk(uExpr) == false){
-		//ein Fehler trat auf, d.h. die rExpr ist ungueltig
-		return false;
-	    }
-	    //an dieser Stelle braucht man den Typ nicht mehr zu pruefen, da der Operator NEG nur auf einen boolschen Wert angewendet werden darf, und somit ist auch der gesamte Ausdruck vom Typ bool
+	    return false;
 	}
-
-
-	////////////////////////////////////////////////////////////////
-	//hier muss noch geprueft werden, ob die expr vom Typ bool ist//
-	////////////////////////////////////////////////////////////////
-	return true;
 
     }
 
@@ -258,7 +301,7 @@ public class Snotcheck{
 
 
 
-    /**Diese Funktion prueft Deklarationsliste
+    /**Diese Methode prueft die Deklarationsliste
      */
 
 
@@ -526,22 +569,24 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 	Transition trans;
 	Expr expr;
 
-	if (translist!=null){
-	    for (int i=0; i < translist.size(); i++){
-		trans = (Transition)translist.get(i);
-		if (trans.source == null || trans.target == null || trans.guard == null){
-		    //Wenn einer der Werte fehlt, dann werfe eine Exception (TransitionFailure) mit der entsprechenden Transition als Argument
-		    throw new TransitionFailure(trans, "Missing argument(s) in transition.");
-		}
-		//Pruefen der Guard:
-		/*if (isGuardOk(trans.guard) == false){
-		    throw new TransitionFailure(trans, "Failure in Expression.");
-		}*/
+	if (translist == null){throw new TransitionFailure(null, "There are no Transitions!!!");}
 
+
+	for (int i=0; i < translist.size(); i++){
+	    trans = (Transition)translist.get(i);
+	    if (trans.source == null || trans.target == null || trans.guard == null){
+		//Wenn einer der Werte fehlt, dann werfe eine Exception (TransitionFailure) mit der entsprechenden Transition als Argument
+		throw new TransitionFailure(trans, "Missing argument(s) in transition.");
 	    }
+	    //Pruefen der Guards:
+	    if (isGuardOk(trans.guard) == false){
+		throw new TransitionFailure(trans, "Failure in Expression.");
+	    }
+	    
 	}
-
-
+	
+	
+	
 
 	return true;
 
@@ -608,9 +653,12 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.43 2001-07-11 07:14:49 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.44 2001-07-11 08:41:20 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.43  2001/07/11 07:14:49  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.42  2001/07/10 14:25:34  swprakt
 //	*** empty log message ***
 //	
