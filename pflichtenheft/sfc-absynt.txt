@@ -1,45 +1,41 @@
 function_block_body = string
 
-sequential_function_chart ::=  steps  : step list
-			       trans  : transition list
-			       action : action     list
-                     step ::=           simplestep
-                           |            actionstep 
-               actionstep ::=  xxx    : string
-                               yyy    : action_association
-             initial_step ::=  step
+sequential_function_chart ::=  istep   : step
+                               steps   : step list
+			       trans   : transition list
+			       actions : action   list
+                     step ::=  a_name:  string
+	                       actions : action list
 
-
-
-                    steps ::=  string list 
-               more_steps ::=  string list
-                step_name ::=  string
-              action_name ::=  string
-       action_association ::=  SimpleAction of string * action_qualifier
-                           |   IndicatorAction of string * action_qualifier * string
-                   action ::=  string * function_block_body
-                   act_as ::=  action_association
-           indicator_name ::=  string
-            variable_name ::=  string
-                 duration ::=  int
+                   action ::=  qualifier: action_qualifier
+		               sap      : sap   (* simple assignement program *)
+                     sap  ::=             stmt list
+                   stmt   ::=             skip
+                           |              assign
+                   assign ::=             variable * expr
+                   variable ::=  name   : string
+                                 type   : type
          action_qualifier ::=  Nqual
-                           |   Rqual
-                           |   Squal
-                           |   P1qual
-                           |   P0qual 
-                           |   Tqual of timed_qualifier * action_time
-          timed_qualifier ::=  Lqual 
-                           |   Dqual 
-                           |   SDqual
-                           |   DSqual
-                           |   SLqual
-              action_time ::=  Duration of int
-                           |   VarName of string
-               transition ::=  TransEntry of steps * steps * transition_condition
-                           |   TransEntryName of string * steps * steps * transition_condition
-                           |   TransEntryPrio of int * steps * steps * transition_condition
-                           |   TransEntryNamePrio of string * int * steps * steps * transition_condition
-                 priority ::=  int
-          transition_name ::=  string
-     transition_condition ::=  string
+
+               transition ::=  source :   step list
+	                       guard  :   expr
+			       target :   step list
+
+               expr       ::=  b_expr
+                           |   u_expr
+                           |   constval
+			   |   variable
+             b_expr       ::=  left_expr :  expr
+                              right_expr :  expr
+                                     op  :  operand
+                                 type    :  type
+             u_expr      ::=   sub_expr  :  expr
+                                    op   :  operand             
+                                  type   :  type
+               operand   ::=     PLUS |MINUS |TIMES |DIV  (Operand als Konstanten in expr)
+                          |      AND |OR |NEG
+                          |      LESS |GREATER |LEQ |GEQ | EQ 
+                type     ::=     int
+		          |      bool
+
 
