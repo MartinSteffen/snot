@@ -7,7 +7,7 @@ import java.lang.*;
  *Diese Klasse macht bla bla!
  *
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.3 2001-05-22 14:24:28 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.4 2001-05-22 14:25:23 swprakt Exp $
  *
  */
 
@@ -25,3 +25,14 @@ public class Snotcheck{
     }
 
 }
+
+
+//----------------------------------------------------------------------
+//	package checks for Snot programs
+//	------------------------------------
+//
+//	$Id: Snotcheck.java,v 1.4 2001-05-22 14:25:23 swprakt Exp $
+//
+//	$Log: not supported by cvs2svn $
+//	
+//---------------------------------------------------------------------
