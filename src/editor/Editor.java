@@ -1,6 +1,6 @@
 package editor;
 
-import java.util.Enumeration;
+import java.util.LinkedList;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
@@ -18,7 +18,27 @@ public class Editor extends JFrame {
 
   private class ActInsertStep extends AbstractAction {
     public ActInsertStep() {
-      super("InsertStep"); //, new ImageIcon("Step.bmp"));
+      super("InsertStep"); 
+    }
+
+    public void actionPerformed(ActionEvent e) {
+      repaint();
+    }
+  }
+  
+  private class ActInsertTrans extends AbstractAction {
+    public ActInsertTrans() {
+      super("InsertTrans"); 
+    }
+
+    public void actionPerformed(ActionEvent e) {
+      repaint();
+    }
+  }
+  
+  private class ActDeleteAbsynt extends AbstractAction {
+    public ActDeleteAbsynt() {
+      super("Delete"); 
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -30,35 +50,39 @@ public class Editor extends JFrame {
 
     private void paintTrans(Transition Trans, Graphics2D G2D) {
       Step step;
-      StepList SL = Trans.source;
+      LinkedList stepLL = Trans.source;
       float minX = 10000.0f, maxX = 0.0f;
+      int i;
 
-      while (SL != null && SL.head != null) {
-        step = (Step)SL.head;
-        G2D.draw(new Rectangle2D.Float(step.pos.x*30f, step.pos.y*30f, 30.0f, 30.0f));
-        G2D.drawString(step.name, step.pos.x*30f, (step.pos.y+1)*30f);
-        if (step.pos.x < minX) minX=step.pos.x;
-        if (step.pos.x > maxX) maxX=step.pos.x;
-        SL = (StepList)SL.nextElement();
+      if (stepLL != null) {
+        for (i=0; i < stepLL.size(); i++) {
+          step = (Step)stepLL.get(i);
+          G2D.draw(new Rectangle2D.Float(step.pos.x*30f, step.pos.y*30f, 30.0f, 30.0f));
+          G2D.drawString(step.name, step.pos.x*30f, (step.pos.y+1)*30f);
+          if (step.pos.x < minX) minX=step.pos.x;
+          if (step.pos.x > maxX) maxX=step.pos.x;
+        }
       }
 
-      SL = Trans.target;
-      while (SL != null && SL.head != null) {
-        step = (Step)SL.head;
-        G2D.draw(new Rectangle2D.Float(step.pos.x*30f, step.pos.y*30f, 30.0f, 30.0f));
-        G2D.drawString(step.name, step.pos.x*30f, (step.pos.y+1)*30f);
-        SL = (StepList)SL.nextElement();
+      stepLL = Trans.target;
+      if (stepLL != null) {
+        for (i=0; i < stepLL.size(); i++) {
+          step = (Step)stepLL.get(i);
+          G2D.draw(new Rectangle2D.Float(step.pos.x*30f, step.pos.y*30f, 30.0f, 30.0f));
+          G2D.drawString(step.name, step.pos.x*30f, (step.pos.y+1)*30f);
+        }
       }
     }
 
     private void paintSFC(Graphics2D G2D) {
       Transition Trans;
-      TransitionList TS = sfc.transs;
+      LinkedList transLL = sfc.transs;
 
-      while (TS != null && TS.head != null) {
-        Trans = (Transition)TS.head;
-        paintTrans(Trans, G2D);
-        TS = (TransitionList)TS.nextElement();
+      if (transLL != null) {
+        for (int i=0; i < transLL.size(); i++) {
+          Trans = (Transition)transLL.get(i);
+          paintTrans(Trans, G2D);
+        }
       }
 
     }
@@ -80,7 +104,8 @@ public class Editor extends JFrame {
   private JScrollPane DrawScrPane;
   private DrawSFCPanel DrawPanel;
   private JScrollPane DataScrPane;
-  private JPanel DataPanel;
+  private JPanel DataPanel, DataDeclPanel, DataActPanel;
+  private JTable DataDeclTable, DataActTable;
 
   private String strName;
   private boolean boolModified;
@@ -108,51 +133,56 @@ public class Editor extends JFrame {
     boolModified = false;
   }
 
-  private void setSFC(SFC anSFC) {
-    sfc = anSFC;
-    // hier noch neuzeichen
+  private void setSFC(SFC anSFC) throws EditorException {
+    if (sfc != null) 
+      sfc = anSFC;
+    else       
+      throw new EditorException("Anwendungsfehler: SFC = null");
   }
 
   private void proccessTrans(Transition Trans, int PosY) {
     Step step;
-    StepList SL = Trans.source;
-    int numStep = 0;
+    LinkedList stepLL = Trans.source;
+    int numStep = 0, i = 0;
 
-   System.out.println("  " + "SourceSteps:");
-    while (SL != null && SL.head != null) {
-      step = (Step)SL.head;
-      System.out.print("    " + "Step " + step.name + " : PosY=" + PosY + " - ");
-      if (step.pos == null || step.pos.x == -1)
-        step.pos = new Position((float)numStep*2f, (float)PosY);
-      numStep+=1;
-      SL = (StepList)SL.nextElement();
+    System.out.println("  " + "SourceSteps:");
+    if (stepLL != null) {
+      for (i=0; i < stepLL.size(); i++) {
+        step = (Step)stepLL.get(i);
+        System.out.print("    " + "Step " + step.name + " : PosY=" + PosY + " - ");
+        if (step.pos == null || step.pos.x == -1)
+          step.pos = new Position((float)numStep*2f, (float)PosY);
+        numStep+=1;
+      }
     }
     System.out.println("");
 
-    SL = Trans.target;  PosY+=1;  numStep=0;
+    stepLL = Trans.target;  PosY+=1;  numStep=0;
     System.out.println("  " + "TargetSteps:");
-    while (SL != null && SL.head != null) {
-      step = (Step)SL.head;
-      System.out.print("    " + "Step " + step.name + " : PosY=" + PosY + " - ");
-      if (step.pos == null || step.pos.x == -1)
-        step.pos = new Position(numStep, PosY);
-      numStep+=1;
-      SL = (StepList)SL.nextElement();
+    if (stepLL != null) {
+      for (i=0; i < stepLL.size(); i++) {
+        step = (Step)stepLL.get(i);
+        System.out.print("    " + "Step " + step.name + " : PosY=" + PosY + " - ");
+        if (step.pos == null || step.pos.x == -1)
+          step.pos = new Position(numStep, PosY);
+        numStep+=1;
+      }
     }
     System.out.println("");
   }
 
   public void realignSFC() {
     Transition Trans;
-    TransitionList TS = sfc.transs;
-    int PosY = 0, TransNum = 1;
+    LinkedList transLL = sfc.transs;
+    int PosY = 0, TransNum = 1, i= 0;
 
-    while (TS != null && TS.head != null) {
-      Trans = (Transition)TS.head;
-      System.out.println("Transition-Nr.: " + TransNum);
-      proccessTrans(Trans, PosY);
-      PosY+=3;  TransNum+=1;
-      TS = (TransitionList)TS.nextElement();
+    if (transLL != null) {
+      for (i = 0; i < transLL.size();  i++) {
+        Trans = (Transition)transLL.get(i);
+        System.out.println("Transition-Nr.: " + TransNum);
+        proccessTrans(Trans, PosY);
+        PosY+=3;  TransNum+=1;
+      }
     }
 
   }
@@ -164,29 +194,49 @@ public class Editor extends JFrame {
 
   /**
    * baut ein Editor-Fenster (momentan JFrame-Ableitung) auf.
-   * Übergeben werden muss ein SFC<>nul
+   * Übergeben werden muss ein SFC<>null
    */
-  public Editor(SFC anSFC) {
+  public Editor(SFC anSFC) throws EditorException {
     setFilename("NoName");
-    setSize(400, 420);
+    setSize(600, 420);
     setSFC(anSFC);
 
     // ToolBar:
     ToolBar = new JToolBar();
-    ToolBar.add(new ActInsertStep());  ToolBar.setSize(400, 80);
-    getContentPane().add(ToolBar, BorderLayout.NORTH);
+    ToolBar.add(new ActInsertStep());
+    ToolBar.add(new ActInsertTrans());
+    ToolBar.add(new ActDeleteAbsynt());
+    
+    ToolBar.setSize(400, 80);
+    getContentPane().add(ToolBar, BorderLayout.NORTH);    
 
     // Panel für Variablen- / Aktionen-Deklaration:
     DataPanel = new JPanel();
     DataPanel.setSize(200, 0);
     DataPanel.setLayout(new GridLayout(0, 1));
-    DataPanel.add(new JLabel("Deklarationen:"));
-    DataPanel.add(new JLabel("Aktionen:"));
+    DataDeclPanel = new JPanel();
+    DataDeclPanel.setLayout(new BorderLayout());
+    DataDeclPanel.add(new JLabel("Deklarationen:"), BorderLayout.NORTH);
+    DataDeclTable = new JTable(1, 3);
+    // DataDeclTable.setTableHeader(new JTableHeader());
+    DataDeclPanel.add(DataDeclTable, BorderLayout.CENTER);
+    DataDeclPanel.add(new JButton("Neu"), BorderLayout.SOUTH);
+    DataDeclPanel.add(new JButton("Entf"), BorderLayout.SOUTH);
+    DataPanel.add(DataDeclPanel);
+    DataActPanel = new JPanel();
+    DataActPanel.setLayout(new BorderLayout());
+    DataActPanel.add(new JLabel("Aktionen:"), BorderLayout.NORTH);
+    DataActTable = new JTable(1, 2);
+    // DataActTable.setTableHeader(new JTableHeader());
+    DataActPanel.add(DataActTable, BorderLayout.CENTER);
+    DataActPanel.add(new JButton("Neu"), BorderLayout.SOUTH);
+    DataActPanel.add(new JButton("Entf"), BorderLayout.SOUTH);
+    DataPanel.add(DataActPanel);
+    
     // DataPanel.add(new JTable, BorderLayout.NORTH);
     DataScrPane = new JScrollPane(DataPanel);
     DataScrPane.setSize(200, 0);
     getContentPane().add(DataScrPane, BorderLayout.WEST);
-
 
     // Zeichenfläche für SFC:
     DrawPanel = new DrawSFCPanel();
