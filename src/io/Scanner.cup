@@ -9,8 +9,8 @@ import java.io.*;
 /**
  * Offers the methods  parseFile and parseExpression 
  *
- * @author Martin Steffen
- * @version $Id: Scanner.cup,v 1.6 2001-06-29 13:58:10 swprakt Exp $
+ * @author Karsten Stahl, Martin Steffen
+ * @version $Id: Scanner.cup,v 1.7 2001-06-30 10:14:37 swprakt Exp $
  *
  * */
 
