@@ -1,0 +1,679 @@
+ package parser;
+
+import java_cup.runtime.*;
+import java.lang.String;
+import absynt.*;
+import utils.*;
+import java.io.*;
+
+/**
+ * Stellt die Methoden parseFile und parseExpression der
+ * Oeffentlichkeit zur Verfuegung
+ *
+ * @author Martin Steffen
+ * @version $Id: Scanner.cup,v 1.1 2001-06-13 14:21:05 swprakt Exp $
+ *
+ * */
+
+action code {:
+    String tab = "";
+       
+    int state_counter = 0;
+    absynt.Astate         source    = null;
+    absynt.Astate         target    = null;
+    absynt.Astate         tmp_state = null;
+
+
+    absynt.Transition     trans     = null;
+    absynt.Transition     tmp_trans = null;
+
+    absynt.Expr           tmp_expr  = null;
+
+    absynt.VardecList     varlist   = null;
+    absynt.TransitionList translist = null;
+    absynt.AstateList     statelist = null;
+
+    absynt.Initstate      snode     = null;
+
+    absynt.Constval  empty_guard = new absynt.Constval(true);
+
+    private void init_lists(){
+        state_counter = 0;
+
+        /*
+         * Quellknoten erzeugen und eintragen
+         */
+		source    = new absynt.Initstate(
+                        new Integer( state_counter ).toString(), 
+                        new absynt.Constval(true)); 
+        statelist = new absynt.AstateList(source, null);
+
+
+        /*
+         * Zielknoten erzeugen
+         */
+        state_counter++;
+		target    = new absynt.State(
+                        new Integer(state_counter).toString(), 
+                        new absynt.Constval(true));
+
+        /*
+         * "leere" Transition erzeugen
+         */
+        trans     = new absynt.Transition(
+                          source, 
+                          target, 
+                          new absynt.Label(
+                              empty_guard,
+                              new absynt.Tau_action()));
+
+        varlist   = new absynt.VardecList(null, null);
+	snode     = (absynt.Initstate)source;
+    }
+
+    
+    private void more(){
+        tab = tab + "  ";
+    }
+    
+    private void less(){
+        tab = tab.substring(0, tab.length()-2);
+    }
+
+:}
+
+parser code {:
+    Yylex lexer;
+
+    public void report_fatal_error(String message, Object info) throws ParseException{
+        System.err.println(message);
+        throw new ParseException(message);
+    }
+
+	public void report_error(String message, Object info){
+	    System.err.println("[modul parser2] "+message);
+	}
+
+	public void syntax_error(Symbol cur_token){
+        report_error("Syntax Fehler! aktuelles Symbol: "+cur_token, null);
+    }
+
+    public void unrecovered_syntax_error(Symbol cur_token) throws ParseException{
+        done_parsing();       
+        report_fatal_error("[modul parser2] Parsing wird abgebrochen", null);
+    }
+
+
+   /** 
+    * public Methode um eine Datei zu parsen
+    *
+    * @parameter 
+    * sourcefile - zu parsende Datei
+    * @return 
+    * der abstrakte Syntaxbaum mit absynt.Program als Wurzel
+    * @throws 
+    * java.Exception bei Fehler.
+    */
+    public absynt.Program parseFile(java.io.File sourcefile) throws Exception {
+        lexer   = new Yylex(new FileInputStream(sourcefile));
+	setScanner(lexer);
+        absynt.Program proggi = (absynt.Program)parse().value;
+	return proggi;
+    }
+
+    
+    /**
+     * public method to parse a single expression<br><br>
+     *
+     * public Methode um einen einzelnen Ausdruck zu parsen
+     *
+     * @parameter
+     * die zu parsende Zeichenkette 
+     * @return 
+     * ein Ausdruck wie absynt.Expr* parser.ParseException falls ein Syntax-Fehler in der Datei vorliegt
+     * @throws
+     * java.Exception bei Fehler.
+     */
+    public absynt.Expr parseExpression(java.lang.String expression) throws Exception {
+      lexer = new Yylex(new StringReader(expression));
+      setScanner(lexer);
+      absynt.Expr expr = (absynt.Expr)parse().value;
+      return expr;
+    }
+    
+//      public static void main(String args[]) throws Exception {
+//          new Parser().parseFile(new File(args[0]));    
+//      //    new Parser().parseExpression(args[0]);
+//      }
+
+:}
+
+/** 
+ * Terminale ohne Typ
+ */ 
+terminal         PROGRAM, LBRACE, RBRACE, CHANNEL, ASSIGN, ASSERT;
+terminal         INT, LPAREN, RPAREN, ELSE, PROCESS, COMMA, SEMICOL;  
+terminal         IF, BOOL, WHILE, PUT, GET, NEQ, OR, PLUS, TIMES;
+terminal         AND, DIV, EQ, GEQ, GREATER, LEQ, LESS, MINUS, NEG;
+terminal         TRUE, FALSE;
+
+
+
+/** 
+ * Terminale mit Typ
+ */ 
+terminal String  NAME;
+terminal Integer NUMBER;
+
+
+
+/** 
+ * Nichtterminale ohne Typ
+ */ 
+non terminal    stmt_list, stmt, block, atomic, if_else_stmt, loop;
+non terminal    input, output, assertion, var_dec, assignment;
+
+/** 
+ * Nichtterminale mit Typ
+ */ 
+non terminal    absynt.Absyn      alles;
+non terminal    absynt.Program    program, dec_list;
+non terminal    absynt.Process    process;
+non terminal    absynt.Channel    chan_dec;
+non terminal    absynt.Expr       expr;
+non terminal    absynt.M_AtomType type;
+non terminal    Integer           op;
+non terminal    absynt.Transition if_stmt;
+
+
+
+
+precedence left BOOL, INT;
+precedence left NAME, error;
+precedence left PUT, GET, ASSERT;
+
+precedence left PLUS, MINUS;
+precedence left TIMES, DIV;
+precedence left AND, OR, NEQ, LESS, LEQ, GREATER, GEQ, EQ;
+precedence left NEG;
+
+
+precedence left ELSE, WHILE;
+precedence left IF;
+
+precedence left LBRACE, RBRACE;
+precedence left LPAREN, RPAREN;
+
+start with alles;
+
+alles        ::= program:p {: RESULT=p; :}
+             |   expr:e    {: RESULT=e; :}
+             ;
+
+/** 
+ * Produktion:
+ * Program   ::= "program" NAME "{" dec_list "}"
+ */
+program      ::= PROGRAM NAME:name LBRACE 
+                 {: System.out.println ("Programm \""+name+"\"{"); more(); :}
+                 dec_list:p RBRACE 
+                 {: 
+			less();
+                    System.out.println ("\n} /* Ende "+name+" */"); 
+                    p.name = name; 
+		    RESULT = p; 
+                 :} 
+
+             ;
+
+//==========================================================================
+
+/** 
+ * Produktion:
+ * dec_list  ::= process  dec_list
+ *           |   chan_dec dec_list
+ *           |   process
+ *           |   chan_dec
+ */
+dec_list     ::= process:proc dec_list:prog
+                 {: prog.procs = new absynt.ProcessList(proc,prog.procs); 
+                    RESULT = prog; 
+                 :} 
+             |   chan_dec:chan dec_list:prog
+                 {: prog.chans = new absynt.ChandecList(new Chandec(chan), prog.chans);
+                    RESULT = prog;
+                 :}                 
+             |   process:proc
+                 {: absynt.ProcessList procs = new absynt.ProcessList(proc,null); 
+                    RESULT = new absynt.Program(null, procs); 
+                 :} 
+             |   chan_dec:chan
+                 {: absynt.ChandecList chans = new absynt.ChandecList(new Chandec(chan), null);
+                    RESULT = new absynt.Program(chans, null);
+                 :}
+             ;
+
+//==========================================================================
+
+/** 
+ * Produktion:
+ * chan_dec  ::= "channel" type NAME ";"
+ */
+chan_dec     ::= CHANNEL {: System.out.print(tab+"channel "); :} 
+                 type:typ NAME:name SEMICOL 
+                 {: System.out.println(name+" ;"); 
+                    RESULT = new absynt.Channel(name, typ);
+                 :}
+             ;
+
+//==========================================================================
+
+/** 
+ * Produktion:
+ * process   ::= "process" NAME "{" stmt_list "}"
+ */
+process      ::= {: /* alle Listen zurueck setzen */ 
+                    init_lists();
+                 :}
+                 PROCESS NAME:name LBRACE 
+                 {: System.out.println ("\n"+tab+"Prozess \""+name+"\"\n"+tab+"{"); 
+                    more();
+                 :}
+                 stmt_list RBRACE 
+                 {: less();
+                    System.out.println (tab+"} /* Ende "+name+" */");
+                    RESULT = new absynt.Process(name, varlist, translist, statelist, snode);
+                 :} 
+             ;
+
+//==========================================================================
+
+/** 
+ * Produktion:
+ * stmt_list ::= stmt stmt_list 
+ *           |   stmt 
+ */
+stmt_list    ::= stmt stmt_list 
+             |   stmt 		  
+             ;
+
+//==========================================================================
+
+/** 
+ * Produktion:
+ * stmt      ::=  block
+ *           |    if_stmt
+ *           |    if_else_stmt
+ *           |    loop
+ *           |    atomic             
+ */
+stmt         ::= block
+             |   if_stmt
+             |   if_else_stmt
+             |   loop
+             |   atomic
+             ;
+
+//==========================================================================
+
+/** 
+ * Produktion:
+ * block     ::=  "{" stmt_list "}"
+ */
+block        ::= LBRACE {: less(); System.out.println(tab+"{"); more(); :} 
+                 stmt_list RBRACE 
+                 {: System.out.println(tab+"}"); 
+                 :} 
+             ;
+
+//==========================================================================
+
+/** 
+ * Produktion:
+ * if_stmt   ::= "if" "(" expr ")" stmt
+ */
+if_stmt      ::= // TODO:
+                 // "merken" der Einsprungszustands, 
+                 // "merken" der Einsprungstransition, entsprechend veraendern (mit e) 
+                 // zusaetzliche Transition "tau" von Einsprungszustand zum folgenden
+                 // mit guard !e
+                 IF LPAREN 
+                 {: System.out.print(tab+"if ("); :}
+                 {: tmp_trans = trans; :}
+                 expr:e RPAREN 
+                 {: System.out.println(")"); more(); 
+                 :}
+                 stmt
+                 {: less();
+		    tmp_trans.lab.guard = new absynt.B_expr(e, 
+					        absynt.Expr.AND,
+					        tmp_trans.lab.guard);
+	                   translist = new absynt.TransitionList(
+                                  new absynt.Transition(
+                                    tmp_trans.source,
+                                    source,
+                                    new absynt.Label(
+                                      new absynt.B_expr(
+                                        new absynt.U_expr(
+                                            absynt.Expr.NEG,
+					    e), 
+                                        absynt.Expr.AND,
+					trans.lab.guard),
+                                      new absynt.Tau_action())),
+                                  translist);
+                                    
+		    RESULT=tmp_trans;
+		  :} 
+             ;
+
+//==========================================================================
+
+/** 
+ * Produktion:
+ * if_else_stmt ::= "if" "(" expr ")" stmt "else" stmt
+ */
+if_else_stmt ::= // TODO:
+                 // zusaetzliche Transition "tau" von Einsprungszustand zum ersten
+                 // des "false"-Zweiges
+                 if_stmt:t 
+                 ELSE 
+                 {: System.out.println(tab+"else"); 
+                    more(); 
+		    tmp_state = source;
+		    source = t.source;
+		    translist.head.target = target;
+		    trans = translist.head;
+		    translist = translist.next;
+                 :}
+                 stmt
+                 {: less();
+		    translist.head.target = tmp_state;
+		    statelist = statelist.next;
+		    state_counter--;
+		    target.name = new Integer(state_counter).toString();
+		    trans.source = tmp_state;
+		    source = tmp_state;
+                 :}
+             ;
+
+//==========================================================================
+ 
+/** 
+ * Produktion:
+ * loop      ::= "while" "(" expr ")" stmt
+ */
+loop         ::= // TODO:
+                 // Schleife basteln :-)
+                 // zusaetzliche Transition "tau" von folgender Zustand von Statements stmt  
+                 // zum Einsprungszustand.
+                 // zusaetzliche Transition "tau" von Einsprungszustand bis hinter die
+                 // Schleife mit negierter Bedingung 
+                 {: System.out.print(tab+"while ("); :} 
+                    WHILE LPAREN expr:e 
+                 {: System.out.println(")"); more(); :}
+                    RPAREN 
+                 {: tmp_trans = trans; :}
+		    stmt
+                 {: less(); 
+                    tmp_trans.lab.guard = new absynt.B_expr(e, 
+					        absynt.Expr.AND,
+					        tmp_trans.lab.guard);
+                    /* springt zum Schleifenanfang */
+		    translist.head.target = tmp_trans.source;
+
+		    /* fuehrt an der Schleife vorbei */
+		    trans.source = tmp_trans.source;
+                    trans.lab.guard =  new absynt.B_expr(
+                                          new absynt.U_expr(
+                                            absynt.Expr.NEG,
+					    e), 
+                                          absynt.Expr.AND,
+					  trans.lab.guard);
+		    target = statelist.head;
+		    trans.target = target;
+		    statelist = statelist.next;
+		    state_counter--;		   
+                 :}
+             ;
+
+//==========================================================================
+
+/** 
+ * Produktion:
+ * atomic    ::= output
+ *           |   input
+ *           |   assignment
+ *           |   assertion
+ *           |   var_dec
+ */
+atomic       ::= output
+             |   input
+             |   assignment
+             |   assertion
+             |   var_dec
+             ;
+
+//==========================================================================
+
+/** 
+ * Produktion:
+ * output    ::= "put "(" NAME "," expr ")" ";"
+ */
+output       ::= // TODO:
+                 // state_counter erhohen
+                 // aktuelle Transition anpassen und eintragen
+				 // Ziel eintragen
+                 // neuen "Ziel"-Zustand erzeugen
+                 // neue leere Transition erzeugen
+                 // 
+                 PUT LPAREN NAME:name COMMA 
+                 {: System.out.print(tab+"put("+name+","); :}
+                 expr:e RPAREN SEMICOL
+                 {: System.out.println(") ;"); 
+                    /* hier beginnt die wahre Action */
+                    state_counter++;
+                    /* Transition aendern, Transition und Ziel eintragen */
+                    trans.lab.act = new absynt.Output_action(
+                                        new absynt.Channel(name),
+                                        e);
+                    translist = new absynt.TransitionList(trans,translist);
+                    statelist = new absynt.AstateList(target, statelist);
+
+                    /* neue Quelle wird altes Ziel, neues Ziel, neue Transition */ 
+                    source = target; 
+                    target = new absynt.State(
+                                 new Integer(state_counter).toString(), 
+                                 new absynt.Constval(true));				
+
+
+                    /* leere Transition erzeugen */
+                    trans = new absynt.Transition(source, target,
+                                    new absynt.Label(
+						     empty_guard,
+                                        new absynt.Tau_action()));
+                 :}
+             ;
+
+//==========================================================================
+
+/** 
+ * Produktion:
+ * input     ::= "get "(" NAME "," NAME ")" ";"
+ */
+input        ::= // TODO:
+                 // state_counter erhohen
+                 // aktuelle Transition anpassen und eintragen
+				 // Ziel eintragen
+                 // neuen "Ziel"-Zustand erzeugen
+                 // neue leere Transition erzeugen
+                 // 
+                 GET LPAREN NAME:cname COMMA NAME:vname RPAREN SEMICOL
+                 {: System.out.println(tab+"get("+cname+","+vname+") ;"); 
+                    /* hier beginnt die wahre Action */
+                    state_counter++;
+                    /* Transition aendern, Transition und Ziel eintragen */
+                    trans.lab.act = new absynt.Input_action(
+                                        new absynt.Channel(cname),
+                                        new absynt.Variable(vname));
+                    translist = new absynt.TransitionList(trans,translist);
+                    statelist = new absynt.AstateList(target, statelist);
+
+                    /* neue Quelle wird altes Ziel, neues Ziel, neue Transition */ 
+                    source = target; 
+                    target = new absynt.State(
+                                 new Integer(state_counter).toString(), 
+                                 new absynt.Constval(true));				
+
+                    /* leere Transition erzeugen */
+                    trans = new absynt.Transition(source, target,
+                                    new absynt.Label(
+						     empty_guard,
+                                        new absynt.Tau_action()));
+                 :}
+             ;
+
+//==========================================================================
+
+/** 
+ * Produktion:
+ * assignment::= NAME "=" expr ";"
+ */
+assignment   ::= // TODO:
+                 // state_counter erhohen
+                 // aktuelle Transition anpassen und eintragen
+				 // Ziel eintragen
+                 // neuen "Ziel"-Zustand erzeugen
+                 // neue leere Transition erzeugen
+                 // 
+                 NAME:name ASSIGN 
+                 {: System.out.print(tab+name+"="); :}
+                 expr:e SEMICOL
+                 {: System.out.println(" ;"); 
+                    /* hier beginnt die wahre Action */
+                    state_counter++;
+                    /* Transition aendern, Transition und Ziel eintragen */
+                    trans.lab.act = new absynt.Assign_action(
+                                        new absynt.Variable(name), e);
+
+                    translist = new absynt.TransitionList(trans, translist);
+                    statelist = new absynt.AstateList(target, statelist);
+
+                    /* neue Quelle wird altes Ziel, neues Ziel, neue Transition */ 
+                    source = target; 
+                    target = new absynt.State(
+                                 new Integer(state_counter).toString(), 
+                                 new absynt.Constval(true));				
+
+                    /* leere Transition erzeugen */
+                    trans = new absynt.Transition(source, target,
+                                    new absynt.Label(
+                                        empty_guard,
+                                        new absynt.Tau_action()));
+
+                 :}
+             ;
+
+//==========================================================================
+
+/** 
+ * Produktion:
+ * assertion ::=  "assert" "(" expr ")" ";"
+ */
+assertion    ::= // TODO:
+                 // "source"-Zustand der naechsten Transition muss den Ausdruck 
+                 // im Feld assert erhalten. Also source.assert=e
+                 {: System.out.print(tab+"assert("); :} 
+                 ASSERT LPAREN expr:e RPAREN  SEMICOL
+                 {: System.out.println(") ;"); 
+		 source.assert = e;     
+		 :}  
+             ;
+
+//==========================================================================
+
+/** 
+ * Produktion:
+ * var_dec   ::= type NAME "=" expr ";"
+ */
+var_dec      ::= {: System.out.print(tab); :}
+                 type:typ NAME:name ASSIGN 
+                 {: System.out.print(name+"="); :}           
+                 expr:val SEMICOL
+                 {: System.out.println(" ;"); 
+                    varlist = new absynt.VardecList(
+                                  new Vardec(
+                                      new Variable(name), 
+                                      val,
+                                      typ), 
+                                  varlist);
+                 :}  
+             ;
+
+//==========================================================================
+
+/** 
+ * Produktion:
+ * type      ::= "int"
+ *           |   "bool"
+ */
+type         ::= INT  {: System.out.print("int ");  RESULT = new M_Int();  :} 
+             |   BOOL {: System.out.print("bool "); RESULT = new M_Bool(); :} 
+             ;
+          
+//==========================================================================
+
+/** 
+ * Produktion:
+ * expr      ::= NUMBER
+ *           |   "true"
+ *           |   "false"
+ *           |   NAME
+ *           |   op expr
+ *           |   "(" expr ")"
+ *           |   expr op expr
+ */
+expr         ::= NUMBER:n       {: System.out.print(n);       RESULT = new absynt.Constval(n.intValue()); :}
+             |   TRUE           {: System.out.print("true");  RESULT = new absynt.Constval(true); :}
+             |   FALSE          {: System.out.print("false"); RESULT = new absynt.Constval(false); :}
+             |   NAME:name      {: System.out.print(name);    RESULT = new absynt.Variable(name); :} 
+             |   op:o expr:e    {: RESULT = new absynt.U_expr(o.intValue(), e); :}
+             |   LPAREN expr:e RPAREN {: RESULT = e; :}
+             |   expr:l op:o expr:r   {: RESULT = new absynt.B_expr(l, o.intValue(), r); :}
+             ;
+
+//==========================================================================
+
+/** 
+ * Produktion:
+ * op        ::= "&&"
+ *           |   "/"
+ *           |   "=="
+ *           |   ">="
+ *           |   ">"
+ *           |   "<="
+ *           |   "<"
+ *           |   "-"
+ *           |   "!"
+ *           |   "!="
+ *           |   "||"
+ *           |   "+"
+ *           |   "*"
+ */
+op           ::= AND       {: System.out.print("&&"); RESULT=new Integer(absynt.Expr.AND);     :}
+             |   DIV       {: System.out.print("/") ; RESULT=new Integer(absynt.Expr.DIV);     :}
+             |   EQ        {: System.out.print("=="); RESULT=new Integer(absynt.Expr.EQ);      :}
+             |   GEQ       {: System.out.print(">="); RESULT=new Integer(absynt.Expr.GEQ);     :}
+             |   GREATER   {: System.out.print(">") ; RESULT=new Integer(absynt.Expr.GREATER); :}
+             |   LEQ       {: System.out.print("<="); RESULT=new Integer(absynt.Expr.LEQ);     :}
+             |   LESS      {: System.out.print("<") ; RESULT=new Integer(absynt.Expr.LESS);    :}
+             |   MINUS     {: System.out.print("-") ; RESULT=new Integer(absynt.Expr.MINUS);   :}
+             |   NEG       {: System.out.print("!") ; RESULT=new Integer(absynt.Expr.NEG);     :}
+             |   NEQ       {: System.out.print("!="); RESULT=new Integer(absynt.Expr.NEQ);     :}
+             |   OR        {: System.out.print("||"); RESULT=new Integer(absynt.Expr.OR);      :}
+             |   PLUS      {: System.out.print("+") ; RESULT=new Integer(absynt.Expr.PLUS);    :}
+             |   TIMES     {: System.out.print("*") ; RESULT=new Integer(absynt.Expr.TIMES);   :}
+//             |	 error	   {: parser.report_fatal_error("unbekannter Operator"+parser.yyline(), null); :}
+             ;
+
+
+
