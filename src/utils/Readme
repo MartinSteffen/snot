@@ -1,0 +1,17 @@
+######################################################
+# $Id: Readme,v 1.1 2001-06-13 13:11:41 swprakt Exp $
+######################################################
+
+
+The utils packages contains auxiliary routines and 
+classes.
+
+	- PrettyPrinter
+	
+	- PrExample:  stand-alone class containing
+	              an example. To test the pretty
+	              printer, do
+	 
+	                      java utils.PrExample
+
+	
