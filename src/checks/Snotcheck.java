@@ -6,7 +6,7 @@ import java.lang.*;
 /**
  *Diese Klasse macht bla bla!
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@$version: 0.0.1 Beta$
+ *@version: $Id: Snotcheck.java,v 1.2 2001-05-22 14:16:08 swprakt Exp $
  *
  */
 
