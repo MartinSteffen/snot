@@ -1,19 +1,17 @@
 // textual representation of SFC1
 
-begin sfc1
+begin
  vars =
  [
    x : bool = false;
    y : bool = false;
    z : bool = false
-   
  ];
 
  init =  s1;
 
-
- steps = [ 
-
+ steps =
+ [ 
    (s1,[(N,act1)]);
    (s2,[(N,act2)]);
    (s3,[(N,act3)]);
@@ -22,32 +20,27 @@ begin sfc1
    (s6,[]);
    (s7,[]);
    (s8,[])
+ ];
 
-   ];
-
- actions = [
-    act1 = [ x := false];
-    act2 = [ y := x];
-    act3 = [ x := not x; y:=x ]];
-
+ actions =
+ [
+   act1 = [ x := false];
+   act2 = [ y := x];
+   act3 = [ x := not x; y:=x ]
+ ];
   
  transitions = 
-
-   [
-
-    [ s1 ] -> [s2;s3];
-    [ s2 ] -> [s4]  when x and y;
-    [ s3 ] -> [s5;s6];
-    [ s5 ] -> [s7];
-    [ s6 ] -> [s7];
-    [ s3 ] -> [s5] when y;
-    [ s3 ] -> [s6] when (not y);
-   [s4,s7] -> [s8];
-    [s8]   -> [s1];
-
-    ;
+ [
+   [ s1 ] -> [s2;s3];
+   [ s2 ] -> [s4]  when x and y;
+   [ s3 ] -> [s5;s6];
+   [ s5 ] -> [s7];
+   [ s6 ] -> [s7];
+   [ s3 ] -> [s5] when y;
+   [ s3 ] -> [s6] when (not y);
+  [s4,s7] -> [s8];
+   [s8]   -> [s1];
+ ];
 
 end
-
-
 

@@ -10,7 +10,7 @@ import java.io.*;
  * Offers the methods  parseFile and parseExpression 
  *
  * @author Martin Steffen
- * @version $Id: Scanner.cup,v 1.4 2001-06-13 15:25:40 swprakt Exp $
+ * @version $Id: Scanner.cup,v 1.5 2001-06-29 13:17:00 swprakt Exp $
  *
  * */
 
@@ -121,6 +121,12 @@ non terminal    input, output, assertion, var_dec, assignment;
  */ 
 non terminal    absynt.SFC        sfc;
 non terminal    absynt.SFC        program;
+non terminal	absynt.Step	  istep;
+non terminal	LinkedList	  steps;
+non terminal	LinkedList	  transitions;
+non terminal	LinkedList	  actions;
+non terminal	LinkedList	  declist;
+
 non terminal    absynt.Expr       expr;
 non terminal    Integer           op;
 
@@ -135,20 +141,37 @@ precedence left AND, OR, NEQ, LESS, LEQ, GREATER, GEQ, EQ;
 precedence left NEG;
 
 
-
-
 start with sfc;
 
 
 
-sfc          ::= program:p {: RESULT=p; :}
-             ;
 
 /** 
  * Produktion:
  * Program   ::= "program" IDENT "[" "]" ""
  */
-program      ::= SFC IDENT:name LBRACKET
+
+sfc          ::= program:p {: RESULT=p; :}
+                 ;
+
+program      ::= BEGIN
+		 declist SEM
+		 istep SEM
+		 steps SEM
+		 actions SEM
+		 transitions SEM
+		 END
+		 ;
+
+declist      ::= VARS EQ LBRACKET
+		 declarations
+		 RBRACKET SEM
+
+declarations ::= IDENT:
+
+istep	     ::= INIT EQ IDENT:stepname SEM
+
+
                  {: System.out.println ("Programm \""+name+"\"{"); more(); :}
                  INTEGER:i
                  VARS:v
