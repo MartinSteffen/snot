@@ -1,6 +1,6 @@
 #----------------------------------------------------------------------
 # developers' top-level Makefile for the Snot project
-# $Id: Makefile,v 1.35 2001-05-28 06:20:59 swprakt Exp $
+# $Id: Makefile,v 1.36 2001-06-05 14:00:01 swprakt Exp $
 #----------------------------------------------------------------------
 
 # The targets installing gobal web-infos can be executed only
@@ -12,6 +12,8 @@ TOOLNAME      = Snot
 
 WEBDIR        = /home/info/www/inf/deRoever/SS01/Java/$(TOOLNAME)
 WEBDOCDIR     = $(WEBDIR)/doc
+BASELINESDIR  = $(WEBDIR)/baselines
+
 SNAPSHOTSDIR  = $(WEBDIR)/snapshots
 LOCALDOCDIR   = doc
 PACKAGEDIRS   = absynt\
@@ -47,9 +49,15 @@ packets:
 jar:
 	jar cvf snot.jar ./absynt/*.class \
 	    ./utils/*.class \
+            ./editor/*.class\
+            ./gui/*.class\
+            ./smv/*.class\
+	    ./simulator/*.class\
+	    ./checks/*.class
+
 
 jarinstall: 
-	cp mist_v*.jar $(BASELINESDIR)
+	cp snot_v*.jar $(BASELINESDIR)
 
 
 clean:
