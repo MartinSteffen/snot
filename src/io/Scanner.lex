@@ -30,6 +30,7 @@ name    = ({letter}({letter}|{digit})*)
 "["                   { return new Symbol(sym.LBRACKET);        }
 "]"                   { return new Symbol(sym.RBRACKET);        }
 ";"                   { return new Symbol(sym.SEM);             }
+":"                   { return new Symbol(sym.COLON);           }
 "("                   { return new Symbol(sym.LPAREN);          }
 ")"                   { return new Symbol(sym.RPAREN);          }
 ":="                  { return new Symbol(sym.ASSIGN);          }
