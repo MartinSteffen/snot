@@ -10,7 +10,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.50 2001-07-18 13:37:00 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.51 2001-07-18 13:37:24 swprakt Exp $
  *
  */
 
@@ -304,10 +304,12 @@ public class Snotcheck{
 
 
 
-
-
-
-
+    ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+    // Ab hier beginnen die Methoden, die aus den Hauptmethoden heraus aufgerufen
+    // werden, und die die oben beschriebenen Methoden nutzen
+    ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
 
 
 
@@ -317,7 +319,9 @@ public class Snotcheck{
 
 
     private static boolean isDeclarationOk(SFC aSFCObject) throws DecListFailure {
-	//Diese Methode prueft, ob in den Dekarationen keine NULL-Werte stehen, ob keine Variable doppelt deklariert ist und ob der in der Deklaration angegebene Typ gleich dem Typ der Variable ist.
+	// Diese Methode prueft, ob in den Dekarationen keine NULL-Werte stehen, ob
+	// keine Variable doppelt deklariert ist und ob der in der Deklaration angegebene 
+	// Typ gleich dem Typ der Variable ist.
 
 
 	//Pruefung auf NULL-Werte:
@@ -330,64 +334,50 @@ public class Snotcheck{
 
 
 
-	if (decList != null){
-	    for (int i=0; i < decList.size(); i++){
-		decl = (Declaration)decList.get(i);
-		if (decl.var == null || decl.type == null || decl.val == null){
-		    //Wenn einer dieser Eintr"age fehlt, dann werfe eine Exception (DeclarationFailure) mit der entsprechenden Declaration als Argument
-		    throw new DecListFailure(decl, "Missing argument(s) in declaration.");
-			}
+	if (decList == null){throw new DecListFailure(null, "Declaration is missing.");}
+
+	for (int i=0; i < decList.size(); i++){
+	    decl = (Declaration)decList.get(i);
+	    if (decl.var == null || decl.type == null || decl.val == null){
+		// Wenn einer dieser Eintr"age fehlt, dann werfe eine Exception
+		// (DeclarationFailure) mit der entsprechenden Declaration als Argument
+		throw new DecListFailure(decl, "Missing argument(s) in declaration.");
 	    }
 	}
-
-
-
-
-
+	
 	//Pr"ufung, ob Variable doppelt vorkommt:
-
-	if (decList != null){
-	    for (int i=0; i < decList.size(); i++){
-		decl = (Declaration)decList.get(i);                          //durchgehen aller Deklarationen
-		var = decl.var;                                 //auslesen der entsprechenden Variable
-		if (var != null){
-		    for (int j=i+1; j < decList.size(); j++){
-			decl2 = (Declaration)decList.get(j);                 //durchgehen aller nachfolgenden Deklarationen
-			var2 = decl2.var;
-			if (var.name == null || var2.name == null){
-			    throw new DecListFailure(decl, "One or more variables have no name!");}
-			if (var.name == var2.name){            //vergleich aller Variablennamen
-			    throw new DecListFailure(decl, "This variable is declared twice!");
-			}
-		    }
+	
+	for (int i=0; i < decList.size(); i++){
+	    decl = (Declaration)decList.get(i);             //durchgehen aller Deklarationen
+	    var = decl.var;                                 //auslesen der entsprechenden Variable
+	    for (int j=i+1; j < decList.size(); j++){
+		decl2 = (Declaration)decList.get(j);        //durchgehen aller nachfolgenden Deklarationen
+		var2 = decl2.var;
+		if (var.name == null){
+		    throw new DecListFailure(decl, "This Variable has no name!");}
+		if (var2.name == null){
+		    throw new DecListFailure(decl2, "This Variable has no name!");}
+		if (var.name == var2.name){                 //vergleich aller Variablennamen
+		    throw new DecListFailure(decl, "This variable is declared twice!");
 		}
 	    }
 	}
-
-
-
-
 
 	//Pr"ufung auf Typgleichheit:
 
-	if (decList != null){
-	    for (int i=1; i < decList.size(); i++){
-		decl = (Declaration)decList.get(i);
-		var = decl.var;
-		typeClass1 = decl.type.getClass();
-		className1 = typeClass1.getName();
-		if (var != null){
-		    if (var.type == null){
-			throw new DecListFailure(decl, "Variable has no Type!");}
-		    typeClass2 = var.type.getClass();
-		    className2 = typeClass2.getName();
-		    if (className1 != className2){
-			throw new DecListFailure(decl, "Type Error!");}   //Der Typ der Variable stimmt nicht mit dem Typ der Deklaration "uberein
-		}
-	    }
+	for (int i=1; i < decList.size(); i++){
+	    decl = (Declaration)decList.get(i);
+	    var = decl.var;
+	    typeClass1 = decl.type.getClass();
+	    className1 = typeClass1.getName();
+	    if (var.type == null){
+		throw new DecListFailure(decl, "Variable has no Type!");}
+	    typeClass2 = var.type.getClass();
+	    className2 = typeClass2.getName();
+	    if (className1 != className2){
+		throw new DecListFailure(decl, "Type Error! Variable and Declaration must have the same type.");}   //Der Typ der Variable stimmt nicht mit dem Typ der Deklaration "uberein
 	}
 	return true;
-	
     }
     
 
@@ -401,7 +391,9 @@ public class Snotcheck{
     /**Diese Funktion prueft, ob alle Actions vollstaendig und korrekt sind
      */
     private static boolean isAllActionOk(SFC aSFCObject) throws ActionFailure {
-	//Diese Methode pr"uft zuerst, ob bei den actions aus der actionList keine Null-Werte stehen. Anschliessend wird noch geprueft, ob die Namen eindeutig, d.h. nicht doppelt, sind.
+	//Diese Methode pr"uft zuerst, ob bei den actions aus der actionList keine
+	//Null-Werte stehen. Anschliessend wird noch geprueft, ob die Namen
+	//eindeutig, d.h. nicht doppelt, sind.
 
 	LinkedList actionList = aSFCObject.actions;
 	String name1,name2;
@@ -426,7 +418,6 @@ public class Snotcheck{
 		name2 = action2.a_name;
 		if (name1 == name2){throw new ActionFailure(action, "Action with a name, which is already used.");}
 	    }
-
 	}
 
 	LinkedList stmtList;
@@ -678,9 +669,12 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.50 2001-07-18 13:37:00 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.51 2001-07-18 13:37:24 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.50  2001/07/18 13:37:00  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.49  2001/07/18 12:37:30  swprakt
 //	*** empty log message ***
 //	
