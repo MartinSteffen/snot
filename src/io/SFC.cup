@@ -1,4 +1,24 @@
- package io;
+
+/**
+ * Grammar (yacc) definition of the syntax of textual sfc's.
+ * Offers the methods  parseFile and parseExpression 
+ *
+ * @author Karsten Stahl, Martin Steffen
+ * @version $Id: SFC.cup,v 1.1 2001-06-30 12:19:36 swprakt Exp $
+ *
+ * The grammar definition contains 4 parts:
+ *    -  initialization declarations and how to generate the parser
+ *    -  declaration of terminals and non-terminals
+ *    -  precedence, associativity
+ *    -  grammar proper
+ * */
+
+
+
+/*  ---- Preliminaries to set up and use the scanner.  ---- */
+
+
+package io;
 
 import java_cup.runtime.*;
 import java.lang.String;
@@ -6,51 +26,45 @@ import absynt.*;
 import utils.*;
 import java.io.*;
 
-/**
- * Offers the methods  parseFile and parseExpression 
- *
- * @author Karsten Stahl, Martin Steffen
- * @version $Id: Scanner.cup,v 1.7 2001-06-30 10:14:37 swprakt Exp $
- *
- * */
+init with {: scanner.init() :};
+scan with {: return scanner.next_token(); :};
+
+
 
 action code {:
-    String tab = "";
-       
+  String tab = "";
+  /* --- removed  */    int state_counter = 0;
 
-/* --- removed  */    int state_counter = 0;
-
-    
-    private void more(){
-        tab = tab + "  ";
-    }
-    
-    private void less(){
-        tab = tab.substring(0, tab.length()-2);
-    }
-
-:}
+  private void more(){
+    tab = tab + "  ";
+  }
+  
+  private void less(){
+    tab = tab.substring(0, tab.length()-2);
+  }
+  
+  :}
 
 parser code {:
-    Yylex lexer;
-
-    public void report_fatal_error(String message, Object info) throws ParseException{
-        System.err.println(message);
-        throw new ParseException(message);
-    }
-
-	public void report_error(String message, Object info){
-	    System.err.println("[modul parser2] "+message);
-	}
-
-	public void syntax_error(Symbol cur_token){
-        report_error("Syntax Fehler! aktuelles Symbol: "+cur_token, null);
-    }
-
-    public void unrecovered_syntax_error(Symbol cur_token) throws ParseException{
-        done_parsing();       
-        report_fatal_error("[modul parser2] Parsing wird abgebrochen", null);
-    }
+  Yylex lexer;
+  
+  public void report_fatal_error(String message, Object info) throws ParseException{
+    System.err.println(message);
+    throw new ParseException(message);
+  }
+  
+  public void report_error(String message, Object info){
+    System.err.println("[modul parser2] "+message);
+  }
+  
+  public void syntax_error(Symbol cur_token){
+    report_error("Syntax Fehler! aktuelles Symbol: "+cur_token, null);
+  }
+  
+  public void unrecovered_syntax_error(Symbol cur_token) throws ParseException{
+    done_parsing();       
+    report_fatal_error("[modul parser2] Parsing wird abgebrochen", null);
+  }
 
 
    /** 
@@ -63,16 +77,15 @@ parser code {:
     * @throws 
     * java.Exception when broken.
     */
-    public absynt.SFC  parseFile(java.io.File sourcefile) throws Exception {
-        lexer   = new Yylex(new FileInputStream(sourcefile));
-	setScanner(lexer);
-        absynt.SFC  sfc = (absynt.SFC)parse().value;
-	return sfc;
-    }
-
-    
+  public absynt.SFC  parseFile(java.io.File sourcefile) throws Exception {
+    lexer   = new Yylex(new FileInputStream(sourcefile));
+    setScanner(lexer);
+    absynt.SFC  sfc = (absynt.SFC)parse().value;
+    return sfc;
+  }
+  
     /**
-     * public method to parse a single expression<br><br>
+     * public method to parse a single expression
      *
      * @parameter
      * The string to parse
@@ -81,26 +94,28 @@ parser code {:
      * @throws
      * java.Exception when not parseable.
      */
-    public absynt.Expr parseExpression(java.lang.String expression) throws Exception {
-      lexer = new Yylex(new StringReader(expression));
-      setScanner(lexer);
-      absynt.Expr expr = (absynt.Expr)parse().value;
-      return expr;
-    }
-    
-//      public static void main(String args[]) throws Exception {
-//          new Parser().parseFile(new File(args[0]));    
-//      //    new Parser().parseExpression(args[0]);
-//      }
+  public absynt.Expr parseExpression(java.lang.String expression) throws Exception {
+    lexer = new Yylex(new StringReader(expression));
+    setScanner(lexer);
+    absynt.Expr expr = (absynt.Expr)parse().value;
+    return expr;
+  }
+  
+  //      public static void main(String args[]) throws Exception {
+  //          new Parser().parseFile(new File(args[0]));    
+  //      //    new Parser().parseExpression(args[0]);
+  //      }
 
-:}
+  :}
 
+
+/* ------ Declaration of terminals and non-terminals ----- */
 /** 
  * Terminals 
  */ 
 terminal         SFC, LBRACKET, RBRACKET, ASSIGN;
 terminal         LPAREN, RPAREN,  COMMA, SEM, FROMTO;  
-terminal         INIT, WHEN, ACTIONS, BEGIN, VARS, STEPS, TRANSITIONS;
+terminal         INIT, WHEN, ACTIONS, BEGIN, END, VARS, STEPS, TRANSITIONS;
 terminal         INT, BOOL, GET, NEQ, OR, PLUS, TIMES;
 terminal         AND, DIV, EQ, GEQ, GREATER, LEQ, LESS, MINUS, NEG;
 terminal         TRUE, FALSE;
@@ -116,9 +131,6 @@ terminal Integer INTEGER;
 non terminal    stmt_list, stmt, block, atomic, if_else_stmt, loop;
 non terminal    input, output, assertion, var_dec, assignment;
 
-/** 
- * Nichtterminale mit Typ
- */ 
 non terminal    absynt.SFC        sfc;
 non terminal    absynt.SFC        program;
 non terminal	absynt.Step	  istep;
@@ -131,16 +143,16 @@ non terminal    absynt.Expr       expr;
 non terminal    Integer           op;
 
 
+/* ---        precedences and associativity ------- */
 
 
-precedence left BOOL, INT;
-precedence left IDENT, error;
 precedence left PLUS, MINUS;
 precedence left TIMES, DIV;
 precedence left AND, OR, NEQ, LESS, LEQ, GREATER, GEQ, EQ;
 precedence left NEG;
 
 
+/* -----      The grammar proper ----------------- */
 start with sfc;
 
 
