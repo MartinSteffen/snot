@@ -10,7 +10,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.46 2001-07-11 12:05:25 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.47 2001-07-11 13:21:56 swprakt Exp $
  *
  */
 
@@ -401,11 +401,12 @@ public class Snotcheck{
 	//Pruefung auf Null-Werte
 	for (int i=0; i < actionList.size(); i++){
 	    action = (Action)actionList.get(i);
+	    if (action == null){throw new ActionFailure(null, "Nullpointer in list of actions.");}
 	    if (action.sap == null){throw new ActionFailure(action, "Missing sap in this Action.");}
 	    if (action.a_name == null){throw new ActionFailure(action, "Action without a name.");}
 	}
 
-	//Namenspruefung
+	//Namenspruefung (kommt ein Name doppelt vor?)
 	for (int i=0; i < actionList.size(); i++){
 	    action = (Action)actionList.get(i);
 	    name1 = action.a_name;
@@ -429,16 +430,15 @@ public class Snotcheck{
 	    stmtList = action.sap;                           //auslesen der i-ten sap
 	    for (int j=0; j < stmtList.size(); j++){
 		stmt1 = (Stmt)stmtList.get(j);               //auslesen des j-ten Statements aus der sap
-
+		if (stmt1 == null){throw new ActionFailure(action, "Statement is missing (nullpointer).");}
 		class1 = stmt1.getClass();
 		class1Name = class1.getName();
-		//	if (stmt1 == null){throw new ActionFailure(action, "neuer fehler.");}
 		if (class1Name == "absynt.Assign" || class1Name == "absynt.Skip"){
 		    if (class1Name == "Assign"){             //wenn das statement eine Zuweisung ist, dann muessen noch einige Dinge geprueft werden, naehmlich:
 			// - sind val und var ungleich null
 			// - ist val eine gueltige Expression
 			// - ist val ein gueltiger Wert fuer var (richtiger Typ?)
-			ass = (Assign)stmt1;
+			ass = (Assign) stmt1;
 
 			//pruefen, ob var und val vernuenftig sind (d.h. ungleich null)
 			if (ass.var == null){throw new ActionFailure(action, "This statement has no var.");}
@@ -666,9 +666,12 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.46 2001-07-11 12:05:25 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.47 2001-07-11 13:21:56 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.46  2001/07/11 12:05:25  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.45  2001/07/11 09:25:18  swprakt
 //	*** empty log message ***
 //	
