@@ -1,0 +1,83 @@
+
+\newif\ifweb\webfalse %%%%%% htmlonly geht irgendwie nicht
+\newif\ifsolution\solutionfalse
+
+\documentclass[11pt]{article}
+
+\usepackage[english, german]{babel}
+\usepackage{hevea}
+
+\usepackage{handout}
+\usepackage[latin1]{inputenc}
+
+\ifweb\else
+%%---------
+\uebungfalse
+\handoutfalse
+\freeformtrue
+%%----------
+\fi
+
+\ifweb
+\htmlfoot{\copyright Public License}
+\renewcommand{\@bodyargs}{bgcolor="white" alink="red" vlink="\#407999"  link="\#7070ff"}    
+\title{Pflichtenheft(1):  \Siff}
+\else
+\fi
+
+\input{../tex/inputs/macros}
+
+
+
+\begin{document}
+\ifweb
+\maketitle{}
+\else
+\ausgabe{10.\ Juli 2000}
+\abgabe{x}
+\maketitle{Pflichtenheft (5): \Mist}{}
+\fi
+
+
+
+\thispagestyle{empty}
+
+
+\input{abstract}
+\input{einleitung}
+\input{zeitplan}
+\input{konventionen}
+\input{gui}
+\input{editor}
+\input{platzierung}
+\input{parser}
+\input{checks}
+\input{simulator}
+\input{smv}
+\input{assert}
+\input{codegenerierung}
+\input{utils}
+\appendix
+
+
+\input{syntax}
+\input{absynt}
+\input{semantik}
+
+
+%\input{literatur}
+
+
+
+
+\end{document}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%ende blatt1.tex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End: 

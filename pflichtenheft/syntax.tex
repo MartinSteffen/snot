@@ -1,0 +1,107 @@
+\section{Konkrete Syntax}
+\label{sec:KonkreteSyntax}
+
+
+Folgendes ist ein \emph{Vorschlag} f"ur eine konkrete Syntax. Die Syntax
+ist noch nicht vollst"andig.
+
+\begin{tabular}{rcll}
+  program
+  & \bnfdef &
+  processes
+  \\
+  processes 
+  & \bnfdef &
+  process
+  \\
+  & \bnfbar &
+  processes process
+  \\
+  process & \bnfdef &
+  'Process' vardec \{ stmt \}
+  \\
+  expr
+  &
+  \bnfdef
+  &
+  const
+  \\
+  &
+  \bnfbar
+  &
+  expr
+  '+'
+  expr
+  \\
+  &
+  \bnfbar
+  &
+  expr
+  '-'
+  expr
+  \\
+  &
+  \bnfbar
+  &
+  expr
+  '*'
+  expr
+  \\
+  &
+  \bnfbar
+  &
+  expr
+  '/'
+  expr
+  \\
+  &
+  \bnfbar
+  &
+  '('expr')'
+  \\
+  & & \ldots
+  \\
+  stmt
+  & \bnfdef &
+  varref 
+  ':='
+  expr
+  \\
+  & \bnfbar &
+  ASSERT expr
+  \\
+  & \bnfbar &
+  stmt ';' stmt
+  \\
+  &\bnfbar&
+  '\{' stmt '\}'
+  \\
+  & \bnfbar &
+  stop
+  \\
+  &\bnfbar&
+  IF options FI
+  \\
+  & \bnfbar &
+  DO options OD
+  \\
+  & \bnfbar &
+  BREAK 
+  \\
+  options
+  &\bnfdef &
+  option
+  \\
+  &\bnfbar &
+  option options
+  \\
+  option
+  &\bnfdef&
+  '::' cond '-$>$' stmt
+\end{tabular}
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End: 

@@ -1,0 +1,84 @@
+\section{Editor}
+\label{sec:editor}
+
+\team{}
+
+
+Es soll ein graphischer \emph{Editor} für die SFC's mit den folgenden
+Eigenschaften implementiert werden.
+
+\begin{itemize}
+\item\textbf{Aufbau:} Es soll möglich sein, ein SFC aus \emph{Schablonen}
+  von \emph{Schritten} (\textit{steps}, Transitionen, und Pfaden zu
+  zeichnen.
+\item \textbf{Speichern und Laden:}
+  Die Systeme sollen gespeichert und geladen werden können.
+\item \textbf{Selektieren:} Einzelne Komponenten sollen selektiert werden
+  können. Das dient zur Vorbereitung weiterer Aktionen.
+\item \textbf{Löschen \& Kopieren:} Es soll möglich sein, selektierte
+  Komponenten zu entfernen und zu kopieren.
+\item \textbf{Highlight}: der Editor soll eine Highlightfunktion zur
+  Verfügung stellen.  Es soll möglich sein, bestimmte Schritte und
+  Transitionen  hervorzuheben,
+\end{itemize}
+
+
+
+
+
+
+
+\subsubsection*{Designentscheidungen der Editorgruppe/Gui-Gruppe/Graphplatzierungsgruppe:}
+\begin{itemize}
+\item Es wird dem Editor ein \emph{gesamtes Programm} (Klasse
+  \texttt{absynt.Program}) übergeben, welches der Editor anzuzeigen
+  hat.\footnote{In einer früheren Version des Pflichtenheftes (siehe
+    Version 3) wurde dem Editor nur einzelne Prozesse übergeben. Um die
+    Schnittstellen nicht zu verkomplizieren, wurde die Entscheidung
+    zurückgenommen}.
+\item Es wird mit \emph{Swing} gearbeit, um ein einheitliches
+  \textit{Schau-und-fühl} zu bekommen. Falls es Probleme mit der Effizienz
+  gibt, wird es nicht schwer sein, auf AWT umzusatteln.
+\item Koordinaten werden relativ genommen, und zwar in Fließkommawerten
+  \textbf{zwischen $0$ und $1$}. Dies sind die Werte die für Zustände die
+  Position relativ zur Umgebenden Fläche bestimmen.
+\item Speichern und laden wird von der Gui übernommen.???
+\item Schnittstellen: Gui ruft Editor auf. 
+\end{itemize}
+
+
+
+\paragraph{Temporäre Vereinbarung}
+Der Parser (Abschnitt~\ref{sec:parser}) soll dem Editor ein Methode/Klasse
+zur Verfügung stellen, die es erlaubt, Expresssions zu parsen (für die
+Transitionen).  Solange diese noch nicht bereitgestellt ist, werden diese
+Fälle als \texttt{absynt.Constval} eingegeben (d.h., ein möglicherweise
+eingegebener String wird ignoriert, da der Konstruktor
+\texttt{absynt.Constval} nur boolsche Werte oder Integerwerte akzeptiert.
+
+\subsubsection*{Schnittstelle}
+
+Mit der Gui (Abschnitt~\ref{sec:gui}). Desweiterern mit dem Simulator
+(Abschnutt~\ref{sec:simulator}). Es jedoch ist noch zu diskutieren, ob der
+Simulator sich \emph{direkt} an den Editor werdet oder ob dies
+\emph{vermittels} der Gui passiert, da ein Editor nur due Übersicht über
+einen Prozess hat.
+
+Auf jeden Fall: eine Methode \texttt{highlight\_state}, als Übergabe
+entweder
+\begin{itemize}
+\item der Bezeichner des Zustandes, oder
+\item der Zustand als Objekt.
+\end{itemize}
+Die Wahl muß mit dem Simulator oder der Gui vereinbart werden, abhängig
+davon, wer die Methode aufruft.
+
+Eine \emph{wichtige} Schnittstelle (wie bei allen) ist die abstrakte
+Syntax. Um das Zeichnen zu unterstützen, wurde in die abstrakte Syntax
+\emph{Koordinaten} mit aufgenommen.
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End: 

@@ -1,0 +1,41 @@
+\section{Graphische Benutzerschnittstelle (Gui)}
+\label{sec:gui}
+
+\team{}
+
+\Siff{} besteht aus verschiedenen Komponenten, die ihrerseits mit dem
+Benutzer interagieren. Es gibt eine übergeordnete Schnittstelle, die
+folgende Aufgaben bewältigt:
+
+
+\begin{itemize}
+\item\textbf{Start:} Beim Start einer \Siff-Session erscheint ein Fenster,
+  von dem aus es möglich ist, verschiedene Komponenten des Systems
+  aufzurufen.
+\item\textbf{Abhängigkeitsverwaltung:} Eine Simulation kann erst dann
+  aufgerufen werden, wenn das Programm syntaktisch korrekt ist.  Das
+  gleiche gilt für den Modelchecker. Die Aufgabe besteht darin, eine
+  Definition der Abhängigkeiten zwischen den Komponenten festzulegen und
+  sie im Tool zu implementieren.
+\item\textbf{Sessionsverwaltung:} (2te Priorität) Es soll möglich sein,
+  eine Session (geöffnete Fenster, geladene Dateien, gewählte Optionen) zu
+  speichern.  Eine gespeicherte Session sollte wieder hergestellt werden
+  können.
+\end{itemize}
+Die Benutzeroberfläche \emph{integriert} alle anderen Komponenten, aus
+diesem Grund ist in dieser Gruppe besonders auf die \emph{Konsistenz} bzw.\ 
+Verletzung der Konsistenz zu achten.
+
+\subsubsection*{Schnittstellen}
+
+Mit allen anderen Paketen. Siehe die entsprechenden Abschnitte dort.
+
+
+
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End: 

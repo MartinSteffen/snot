@@ -1,0 +1,36 @@
+\section{Checks}
+\label{sec:checks}
+
+\team{}
+
+Nur syntaktisch korrekte Systeme können simuliert und als Basis für die
+Codegenerierung verwendet werden.  Deshalb soll die syntaktische
+Korrektheit überprüft werden.
+
+Die Aufgabe beinhaltet die Definition der syntaktischen Korrektheit, d.h.\ 
+der Begriff der Korrektheit (was soll alles gecheckt werden) soll
+formuliert und als Modul implementiert werden.
+
+
+
+
+\subsubsection*{Schnittstelle}
+
+Mit der Gui. Die Gui stellt darüber hinaus sicher, daß die Pakete der
+Graphplatzierung, Simulation, und Model-Checking nur gecheckte Syntax
+bekommen. Nicht gecheckt wird ``graphische'' Notation (ob Zustände
+übereinanderliegen etc.) dafür ist der Editor aus
+Abschnitt~\ref{sec:editor}) da.
+
+Die Schnittstelle sei (zumindest) eine Methode \texttt{start\_check} mit
+Parameter einer Objekte der abstrakten Syntax.
+
+Was genau gecheckt wird, bleibt zu \emph{diskutieren!}
+
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End: 

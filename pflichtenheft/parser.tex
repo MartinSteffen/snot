@@ -1,0 +1,48 @@
+
+\section{Parser}
+\label{sec:parser}
+
+
+\team{}
+
+
+
+
+Es soll eine nicht-graphische einfache, imperative Sprache als
+Eingabesprache erlaubt sein.  Die Sprache soll in \Siff{} so unterstützt
+werden, daß man textuelle Spezifikationen eingeben kann, ohne daß man auf
+die graphische Darstellung verzichten muß.  Die graphische Darstellung der
+Zustände wird von \Siff{} berechnet.
+
+
+Ein Vorschlag für eine konkrete Syntax findet sich in
+Abschnitt~\ref{sec:KonkreteSyntax}. Im ersten Schritt der Transformation
+(in diesem Modul) wird das textuelle Programm geparst und als abstrakter
+Syntaxbaum (ohne graphische Platzierung) dargestellt.
+
+
+Die Implementierung wird \textsl{JLex} und \textsl{CUP} verwenden, welche
+auf \texttt{\home{unix01}} installiert sind.
+
+\subsubsection*{Schnittstelle}
+Mit der Gui (Abschnitt~\ref{sec:gui}). Es wird eine Methode
+\texttt{parse\_file} zur Verfügung gestellt. Der Parameter ist ein String,
+welcher die Datei bezeichnet, die das Programm enthält.  Die Dateien sollen
+als Standard-Extension \texttt{.mist}-besitzen. Der Parser kann die
+Ausnahme \texttt{Parser\_Exception} werfen. Wünschenswert ist, wenn der
+Parser zumindest die Zeilennummer des Fehlers in der Ausnahme zurückgibt.
+
+Eine weitere Schnittstelle ist vom \emph{Editor}
+(Abschnitt~\ref{sec:editor}) gefordert: Das Parserpaket soll für den Editor
+das \emph{parsen} eines \emph{Ausdruckes} (also einer \texttt{absynt.Expr})
+bereitstellen. Die Eingabe soll ein \emph{String} sein. Bei Fehlschlag soll
+eine Ausnahme geworfen werden.
+
+
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End: 

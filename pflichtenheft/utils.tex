@@ -1,0 +1,33 @@
+\section{Hilfsprogramme}
+\label{sec:utils}
+
+Verschiedene Programme, die keinem anderen Paket zugeteilt sind und die
+mehreren Paketen n"utzen.
+
+
+\subsection{Pretty-Printer}
+\label{sec:prettyprinter}
+
+\team{}
+
+Ein einfacher Pretty-Printer mit tabuliertem ascii-Output, er soll vor
+allem zu Diagnosezwecken dienen. Dieser Teil sollte einfach sein. Es ist
+wichtig, da"s der Pretty-Printer relativ schnell bereitgestellt ist, da er
+das Testen und Debuggen der anderen Teile unterst"utzt.
+
+
+\subsubsection*{Schnittstelle}
+
+Jeder darf (und soll) den Pretty-Printer benutzen, er dient hauptsächlich
+zur Diagnose. Die einzige Schnittstelle die zählt ist, daß er abstrakte
+Syntax ausgeben können muß.  Die Schnittstelle ist bereits teilweise
+implementiert (zur Verwendung siehe \texttt{utils.PpExample}). Es werden
+neben der \texttt{print}-Funktion für ganze Programme gleichlautende
+Methoden für andere syntaktische Konstrukte zur Verfügung gestellt
+(\texttt{public}), damit man auch von außen Teilprogramme ausdrucken kann.
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End: 

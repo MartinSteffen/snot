@@ -1,0 +1,56 @@
+\section{Simulator}
+\label{sec:simulator}
+
+\team{}
+
+
+
+Interaktive Simulation eines Programmes ist deren schrittweise Ausführung,
+sodaß der Benutzer die Schritte initiieren und sie anhand der
+Quell-\Siff-Prozesse nachvollziehen kann.  Der Simulator realisiert die
+\emph{Semantik} aus Anhang~\ref{sec:semantik}.
+
+Die Funktionalität umfaßt folgende Punkte:
+
+\paragraph{Berechnung des Nachfolgezustandes:}
+Der Algorithmus zur Berechnung des Nachfolgezustandes soll implementiert
+werden. Sollte externe Kommunikation für einen Schritt notwendig sein, soll
+der Benutzer sie eingeben können.
+
+\paragraph{Anzeige eines Schrittes:}
+Der vom Simulator genommene Schritt muß im Editor angezeigt werden. Dazu
+wird die Highlight-Funktion des Editors genutzt.
+
+
+\paragraph{Nichtdeterminismus:}
+
+Sollten mehrere Nachfolgerzustände möglich sein, soll der Simulator zwei
+Möglichkeiten zur Verfügung stellen:
+\begin{enumerate}
+\item Der Benutzer wird in den Entscheidungsprozeß einbezogen.
+\item Der Simulator  entscheidet, welcher Schritt genommen wird.
+\end{enumerate}
+
+Für die erste Möglichkeit muß man zwischen externen und internen
+Kommunikationen entscheiden. Wie machen es auf die einfachst-mögliche Art:
+jedes Label, welches \emph{sowohl} als Eingabe als auch als Ausgabe label
+vorkommt, sei ein \emph{internes Label,} alle anderen \emph{extern.}
+
+Der letzte Punkt |Unterscheiden zwischen externer und interner
+Kommunikation |kann in einer ersten Stufe der Implementierung noch
+unberücksichtigt bleiben.
+
+Weiteres für erweiterte Funktionalität, was in der ersten Stufe
+unberücksichtigt bleibt:
+\begin{itemize}
+\item Back-stepping
+\item Aufzeichnen (und Speichern) der genommenen Schritte.
+\end{itemize}
+
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End: 

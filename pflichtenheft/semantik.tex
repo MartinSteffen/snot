@@ -1,0 +1,92 @@
+\section{Informelle Semantik}
+\label{sec:semantik}
+
+
+Die Programme stellen \emph{kommunizierende, parallele Prozesse} dar. Der
+Abschnitt beschreibt informell die Bedeutung der \Siff-Programme. Die
+Semantik ist nur für \emph{gecheckte} Programme definiert (s.\ 
+Abschnitt~\ref{sec:checks}); nicht-gecheckte Programme sind bedeutungslos.
+Insbesondere können der Simulator und der Model-Checker
+(Abschnitt~\ref{sec:simulator} und \ref{sec:assert}), die die Semantik
+realisieren, von gecheckter Syntax ausgehen.
+
+
+
+\subsection{Zustände}
+
+
+Der globale Zustand eines Programmes ist festgelegt aus den lokalen
+Zuständen der \emph{Prozesse} des Programmes: der globale Zustand ist also
+das \emph{Produkt} der lokalen Zustände.  Ein lokaler Zustand eines
+Prozesses besteht aus dem \emph{state,} in dem sich der Prozeß befindet
+und der \emph{Variablenbelegung,} d.h., der Werte aller seiner lokalen
+Variable. Es gibt keine globalen Variablen.
+
+
+
+
+
+
+
+
+\subsection{Kommunikationsmodell und Schritte}
+
+Die Bedeutung der Konstrukte wie Wertzuweisung, Anfangszustand etc., sollte
+unstrittig sein. Interpretationsspielraum gibt es für die
+Kommunikationskonstrukte und das Wesen der Parallelität.
+
+Aufgrund der informellen Diskussion haben wir uns auf folgendes Modell
+geeinigt:
+
+\begin{itemize}
+\item Interleaving-Parallelität
+\item zwei-Weg Kommnuikation (kein Broadcast)
+\item synchroner Nachrichtenaustausch
+\end{itemize}
+Das heißt genauer folgendes: Der Zustand des Programmes ändert sich in
+den \emph{Transitionen}. Es gibt 4 Arten davon
+\begin{enumerate}
+\item interne Aktionen (``tau'')
+\item Zuweisung
+\item Input
+\item Output
+\end{enumerate}
+Die ersten beiden Aktionen werden von einem einzigen Prozeß \emph{alleine}
+ausgeführt, d.h., wir haben eine
+\emph{Interleaving}-Interpretation.\footnote{Nicht-Interleaving wäre, wenn
+  mehrere gleichzeitig Wertzuweisungen und $\tau$-Aktionen machen
+  könnten.} Die $\tau$-Aktion läßt die Variablenbelegung unverändert,
+die Verwertzuweisung ändert sie. Daneben wechselt der Betroffene Prozess
+von einem \textit{state} und einen Nachfolgezustand entsprechend der
+Transition.
+
+
+Daneben gibt es zwei Arten von \emph{Kommunikationstransitionen} (input und
+output) die immer \emph{komplementär und gleichzeitig} ausgeführt werden
+(synchones Modell) und bei der immer genau zwei Partner beteiligt sind
+(zwei-Wege Kommunikation).\footnote{Falls es ``grundsätzlich'' keinen
+  Kommunikationspartner gibt, wird anngenommen, daß Kommunikation mit der
+  \emph{Umgebung} gemeint ist. Das ist für den Simulator von Bedeutung,
+  bei dem der Benutzer die Rolle der Umgebung spielen kann. Siehe die
+  Diskussion dort.} Eine Kommunikation zwischen zwei Prozessen kann dann
+stattfinden, wenn sich beide in einem Zustand befinden, bei dem der eine
+eine Eingabe-, der andere eine Ausgabeaktion durchführen können (d.h.
+auch, ihre Guards evaluieren zu \emph{true}). Falls daß der Fall ist,
+wechseln \emph{beide synchron} in ihren Nachfolge-state, wobei der
+Empfängerprozeß auch noch seine Variablenbelegung durch den empfangenen
+Wert ändert. 
+
+
+
+
+Die Transitionen können mit einem \textit{Guard} ausgestattet sein, einem
+\emph{booleschen Ausdruck.}  Eine Transition kann nur genommen werden,
+falls der Guard sich zu \emph{true} evaluiert.
+
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End: 
