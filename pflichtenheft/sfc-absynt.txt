@@ -1,16 +1,16 @@
-sequential_function_chart ::=  istep      : step
+                      SFC ::=  istep      : step
                                steps      : step list
-                               trans      : transition list
+                               transs     : transition list
                                actions    : action   list
                      step ::=  a_name     : string
                                actions    : action list
 
                    action ::=  qualifier  : action_qualifier
-                               sap        : sap                 (* simple assignment program *)
-                     sap  ::=               stmt list
+                               sap        : stmt list           (* simple assignment program *)
                     stmt  ::=               skip
                            |                assign
-                   assign ::=               variable * expr
+                   assign ::=  var        : variable
+                               val        : expr
                  variable ::=  name       : string
                                type       : type
          action_qualifier ::=  Nqual                            (* may be extended *)
@@ -35,7 +35,3 @@ sequential_function_chart ::=  istep      : step
                            |                LESS | GREATER | LEQ | GEQ | EQ 
                 type      ::=               int
                            |                bool
-
-
-
-
