@@ -1,5 +1,5 @@
 ###########################################################
-## $Id: Status,v 1.6 2001-05-28 06:20:59 swprakt Exp $
+## $Id: Status,v 1.7 2001-05-29 13:09:51 swprakt Exp $
 ###########################################################
 
 
@@ -7,26 +7,28 @@ The file contains the overall status of the source files.  The status
 is ``memoriless'' we don't keep a status  history here.
 
 ------------------------------------------------------------------------
-Status as of $Date: 2001-05-28 06:20:59 $
+Status as of $Date: 2001-05-29 13:09:51 $
 
 
-Monday, 28. May:   
+Tuesday, 29. May:   
 
               comp.   doc.  int.  err.  time req. spec. 
-- overall:     +       +     -      -     -    -    o   : late in integration
+- overall:     +       +     -      -     -    -    o   : late(r) in integration
 
 
-- gui:         o       o                                : nothing provided
+- gui:         (o)     +                                : 
 
-- absynt:      +       +                      1
+- absynt:      +       +                      ?
 
 - utils        +       +
 
-- checks       o                                        : nothing provided
+- checks       +       +                                 : 
 
 - smv          +       +                        
 
-- editor       +       +
+- editor       -       +
+
+- simulator    -       -
 
 
 -------------------------------------------------------------------
@@ -69,4 +71,48 @@ The entries in the table are
 
 
 
+
+
+------------ Specific things to mention for meeting 29th May
+
+  absynt/utils:          We did the requested changes to java.utils.LinkedList?
+	                 everyone content?
+
+  editor:                - comilation error (reported) => gui can't be compiled, too
+                         - versioning => cvs
+
+                         - interface ok? 
+
+                         - are the fields necessarily public? problems with threads!
+ 
+                         - Java conventions: Element -> element etc in method highlight_state
+
+
+   gui:                  - cannot be compiled, because of editor
+	                 - deprecated features? 
+
+	                     are they harmful? 
+	                     should the Makefile be changed? 
+
+	                    ``Recompile with -deprecation for details.''
+
+                         - add version tags
+
+                         - what are the command-line arguments
+                          
+                         - class Project: why static
+
+                         - what is the difference between session and project
+
+	                 - SnotFilter: violation of copyright possible?
+
+   smv:                  + Exception: ok
+                         - versioning mit cvs
+
+   checks:               - better comments what the thing does
+                         - versioning in Java doc
+                         -
+  
+
+   similator:            - does the group exists?
 
