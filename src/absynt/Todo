@@ -1,12 +1,14 @@
 #####################################################
-# $Id: Todo,v 1.6 2001-05-02 05:48:07 swprakt Exp $
+# $Id: Todo,v 1.7 2001-05-16 07:03:06 swprakt Exp $
 #####################################################
+
+
 
 
 
 o Next thing to do:
 
-   - implement the abstract syntax from the req. spec.
+   add class for Positions
 
 
 o general stuff:
