@@ -1,5 +1,5 @@
 #######################################################
-# $Id: Todo,v 1.1 2001-06-13 13:00:55 swprakt Exp $
+# $Id: Todo,v 1.2 2001-06-13 13:03:50 swprakt Exp $
 #######################################################
 
       
@@ -8,6 +8,6 @@
 The file lists things to be done.
 
 
-    o Output
+    o output
 
-    o input (parser)
+    o input (parser with jlex and cup)
