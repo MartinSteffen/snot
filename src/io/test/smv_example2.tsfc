@@ -1,4 +1,4 @@
-// dieses beispiel erfuellt die invariante  NOT(cs1 AND cs2)
+// dieses beispiel erfüllt NICHT die Invariante   NOT(cs1 AND cs2)
 
 
 begin
@@ -19,7 +19,6 @@ begin
    (s1_4,[(N,act4)]);
    (s2_1,[(N,act5)]);
    (s2_2,[(N,act6)]);
-   (s2_3,[]);
    (s2_4,[(N,act7)]);
    (s2_5,[(N,act8)])
  ];
@@ -46,9 +45,7 @@ begin
     [ s1_3 ] -> [ s1_4 ];
     [ s1_4 ] -> [ s1_1 ];
     [ s2_1 ] -> [ s2_2 ] when (not want1);
-    [ s2_2 ] -> [ s2_3 ] when want1;
-    [ s2_2 ] -> [ s2_4 ] when (not want1);
-    [ s2_3 ] -> [ s2_1 ];
+    [ s2_2 ] -> [ s2_4 ];
     [ s2_4 ] -> [ s2_5 ];
     [ s2_5 ] -> [ s2_1 ]
  ]
