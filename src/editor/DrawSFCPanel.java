@@ -8,21 +8,17 @@ import java.awt.event.*;
 import javax.swing.*;
 import absynt.*;
 import editor.StepPosition;
+import editor.TransPosition;
 
 public class DrawSFCPanel extends JPanel { 
 
      private Editor editor;
      private SFC sfc;     
-
-     
-     
-     private Step SourceStep;     
-
-     private void paintTrans(Transition Trans, Graphics2D G2D) { 
-      Step step; 
+             
+     private void paintTrans(Transition Trans, Graphics2D G2D) {       
       LinkedList stepLL = Trans.source; 
       Step SourceStep = (Step)Trans.source.get(0), DestStep = (Step)Trans.target.get(0);
-      Rectangle2D SourceRect = ((StepPosition)(SourceStep.pos)).Bounds, DestRect = ((StepPosition)(DestStep.pos)).Bounds;
+      Rectangle2D SourceRect = ((StepPosition)(SourceStep.pos)).Bounds, DestRect = ((StepPosition)(DestStep.pos)).Bounds;      
       double deltaX, deltaY;
       GeneralPath TransLine = new GeneralPath();
       int i; 
@@ -30,11 +26,66 @@ public class DrawSFCPanel extends JPanel {
       deltaX = SourceRect.getCenterX() - DestRect.getCenterX();
       deltaY = SourceRect.getCenterY() - DestRect.getCenterY();
       
+      G2D.setClip(null);
+      Area ClipArea = new Area(getBounds(null));
+      Rectangle SourceUnion = new Rectangle(), DestUnion = new Rectangle();      
+      
+      for (i = 0; i < Trans.source.size(); i++) {
+        Step step = (Step)Trans.source.get(i);
+        Rectangle2D StepRect = ((StepPosition)(step.pos)).Bounds;
+        ClipArea.subtract(new Area(StepRect));
+        //SourceUnion = SourceUnion.createUnion(StepRect.getBounds());
+      }
+      for (i = 0; i < Trans.target.size(); i++) {
+        Step step = (Step)Trans.target.get(i);
+        Rectangle2D StepRect = ((StepPosition)(step.pos)).Bounds;
+        ClipArea.subtract(new Area(StepRect));
+        //DestUnion = DestUnion.createUnion(StepRect.getBounds());
+      }
+        
+      G2D.clip(ClipArea);
+      /*
+      int Sects = 4;  Direction = 1;
+      if (Trans.source.size() = 1) Sects--;
+      if (Trans.target.size() = 1) Sects--;
+      if (DestUnion.getMaxY() < SourceUnion.getMinY()) Direction = -1;
+      for (i = 0; i < Trans.source.size(); i++) {
+        Step step = (Step)Trans.source.get(i);
+        Rectangle2D StepRect = ((StepPosition)(step.pos)).Bounds;
+        TransLine.moveTo((new Double(StepRect.getCenterX())).floatValue(), (new Double(StepRect.getCenterY())).floatValue());      
+        TransLine.lineTo((new Double(StepRect.getCenterX())).floatValue(), (new Double(StepRect.getCenterY() - deltaY/Sects)).floatValue());
+        TransLine.lineTo((new Double(DestRect.getCenterX())).floatValue(), (new Double(StepRect.getCenterY() - deltaY/Sects)).floatValue());
+        TransLine.lineTo((new Double(DestRect.getCenterX())).floatValue(),(new Double(DestRect.getCenterY())).floatValue());
+      }
+      for (i = 0; i < Trans.target.size(); i++) {
+        Step step = (Step)Trans.target.get(i);
+        Rectangle2D StepRect = ((StepPosition)(step.pos)).Bounds;
+        ClipArea.subtract(new Area(StepRect));
+        DestUnion = DestUnion.createUnion(StepRect);
+	}
+      
+      
+      
       TransLine.moveTo((new Double(SourceRect.getCenterX())).floatValue(), (new Double(SourceRect.getCenterY())).floatValue());
       TransLine.lineTo((new Double(SourceRect.getCenterX())).floatValue(), (new Double(SourceRect.getCenterY() - deltaY/2)).floatValue());
       TransLine.lineTo((new Double(DestRect.getCenterX())).floatValue(), (new Double(SourceRect.getCenterY() - deltaY/2)).floatValue());
       TransLine.lineTo((new Double(DestRect.getCenterX())).floatValue(),(new Double(DestRect.getCenterY())).floatValue());
-      G2D.draw(TransLine);
+      */
+      
+      //SourceRect = ((TransPosition)Trans.pos).sourceBounds;
+      //DestRect = ((TransPosition)Trans.pos).targetBounds;
+      TransPosition transPos = (TransPosition)Trans.pos;
+      if (transPos.autoAlign && transPos.transAlignInfo != null) {      	
+        deltaY = transPos.transAlignInfo.bendPos;
+      
+	      TransLine.moveTo((new Double(SourceRect.getCenterX())).floatValue(), (new Double(SourceRect.getCenterY())).floatValue());
+	      TransLine.lineTo((new Double(SourceRect.getCenterX())).floatValue(), (new Double(deltaY)).floatValue());
+	      TransLine.lineTo((new Double(DestRect.getCenterX())).floatValue(), (new Double(deltaY)).floatValue());
+	      TransLine.lineTo((new Double(DestRect.getCenterX())).floatValue(),(new Double(DestRect.getCenterY())).floatValue());
+	      	      
+	      G2D.draw(TransLine);
+	      G2D.setClip(null);
+	    }
       
       /*
       if (stepLL != null) { 

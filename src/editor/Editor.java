@@ -8,6 +8,7 @@ import javax.swing.*;
 import javax.swing.event.*; 
 import absynt.*; 
 import editor.DrawSFCPanel;
+import editor.TransPosition;
  
 /** 
  * Editor - Klasse 
@@ -15,7 +16,7 @@ import editor.DrawSFCPanel;
  * @author Natalja Froidenberg, Andreas Lukosch 
  * @version 1.0 
  */ 
- 
+
 public class Editor extends JFrame { 
 
   // ----------------------- visuelle Komponenten ------------------------------
@@ -27,6 +28,35 @@ public class Editor extends JFrame {
   private JPanel DataPanel, DataDeclPanel, DataActPanel; 
   private JTable DataDeclTable, DataActTable;
   private JToggleButton SelectToggleBtn; 
+
+  // ---------------- Klassen zum Manipulieren des SFC's -----------------------
+
+  private class StepLL extends LinkedList {
+      public Step getStep(int i) { return((Step)(super.get(i))); }
+      public Step getFirstStep() { return((Step)(super.getFirst())); }      
+  }
+
+  private class TransLL extends LinkedList {
+      public Transition getTrans(int i) { return((Transition)(super.get(i))); }
+      public Transition getFirstTrans() { return((Transition)(super.getFirst())); }      
+  }
+
+  private class StepIterator {   
+    public StepIterator(LinkedList stepLL) {
+      for (int i = 0; i < stepLL.size(); i++) 
+				withEachStepDo((Step)stepLL.get(i));
+    }
+    public void withEachStepDo(Step step) {}  // muss ueberschrieben werden
+  }
+
+  private class TransIterator {
+    public TransIterator(LinkedList transLL) {
+      for (int i = 0; i < transLL.size(); i++) 
+				withEachTransDo((Transition)(transLL.get(i)));
+    }
+    public void withEachTransDo(Transition trans) {}  // muss ueberschrieben werden
+
+  }
   
   // --------------------------- Editor-Action ---------------------------------
   // gibt an, mit welcher Aktion der Editor bei folgenden MausEvents im SFCPabnel
@@ -129,6 +159,8 @@ public class Editor extends JFrame {
   // MouseAdapter für den "editorAction-Modus" SELECT
   private class MASelect extends MouseInputAdapter {
     Rectangle SelectedRect;
+    int selectedOldX, selectedOldY;
+    int selectedMouseX, selectedMouseY;
     boolean MouseDragging = false;
     public void mousePressed(MouseEvent e) {
       double mouseX = (new Integer(e.getX())).doubleValue();
@@ -137,7 +169,7 @@ public class Editor extends JFrame {
       if (step != null) {
         if (e.isShiftDown()) 
           switchSelected(step); 
-        else {
+        else if (!SelectedLL.contains(step) || SelectedLL.size() == 1) {
           setSelected(step);         
           if (isStepNameHit(step, mouseX, mouseY)) editStepName(step);
         }
@@ -153,7 +185,9 @@ public class Editor extends JFrame {
         StepPosition StepPos = (StepPosition)(((Step)(SelectedLL.get(i))).pos);
         SelectedRect = SelectedRect.union(StepPos.Bounds.getBounds());
       }
-      SelectedRect.setLocation(0, 0);
+      selectedOldX = (new Double(SelectedRect.getX())).intValue();
+      selectedOldY = (new Double(SelectedRect.getY())).intValue();
+      selectedMouseX = e.getX();  selectedMouseY = e.getY();
       
     }
     
@@ -169,7 +203,7 @@ public class Editor extends JFrame {
           
         } else {
           // Selektion verschieben;
-          SelectedRect.setLocation(e.getX(), e.getY());
+          SelectedRect.setLocation(e.getX() - selectedMouseX + selectedOldX, e.getY() - selectedMouseY + selectedOldY);
           G2D.draw(SelectedRect);
         }        
         MouseDragging = true;
@@ -178,9 +212,14 @@ public class Editor extends JFrame {
     
     public void mouseReleased(MouseEvent e) {
       if (MouseDragging) {
+        // Graphic-Objekt vom DrawSFCPanel holen:
         Graphics2D G2D = (Graphics2D)(((JComponent)(e.getSource())).getGraphics());
-        G2D.setXORMode(Color.green);  G2D.draw(SelectedRect);
-        G2D.setPaintMode();  
+        // letztes Rechteck löschen:
+        G2D.setXORMode(Color.green);  G2D.draw(SelectedRect);   G2D.setPaintMode();
+        // Selection verschieben:
+        double deltaX = (new Integer(e.getX() - selectedMouseX)).doubleValue();
+        double deltaY = (new Integer(e.getY() - selectedMouseY)).doubleValue();
+        moveSelection(deltaX, deltaY);
       }
       MouseDragging = false;  SelectedRect = null;
     }
@@ -222,7 +261,8 @@ public class Editor extends JFrame {
           LinkedList DestSteps = new LinkedList();
           DestSteps.add(step);
           Transition Trans = new Transition(SourceSteps, null, DestSteps);
-          sfc.transs.add(Trans);  DrawPanel.repaint();
+          insertTrans(Trans);          
+          DrawPanel.repaint();
         }                    
       } // if (SourceStep ... 
     else 
@@ -241,6 +281,7 @@ public class Editor extends JFrame {
   }
   
   public LinkedList SelectedLL;  // Liste der momentan selektierten Elemente (für Verschieben, Löschen usw.)
+  public LinkedList transAlignInfoLL = new LinkedList();  
  
   private String strName; 
   private boolean boolModified;   
@@ -407,6 +448,74 @@ public class Editor extends JFrame {
  
   } 
  
+  private boolean isSimpleTrans(Transition trans) {
+    return((trans.source.size() == 1) && (trans.target.size() == 1));
+  }
+  
+  // liefert LinkedList aller Steps, die Vorgaenger von Step sind (nur nicht-paral. Trans werden berücksichtig):
+  private LinkedList getPredLL(Step step) {
+    LinkedList predLL = new LinkedList();
+    for (int i=0; i < sfc.transs.size(); i++) {
+      Transition trans = (Transition)(sfc.transs.get(i));
+      if (isSimpleTrans(trans) && trans.target.contains(step)) predLL.add(trans.source.getFirst());
+    }
+    return(predLL);
+  }  
+  
+  // liefert LinkedList aller Steps, die Nachfolger von step sind (nur nicht-paral. Trans werden berücksichtig):
+  private void getSuccLL(Step step, StepLL succLL, TransLL transLL) {
+    succLL.clear();    transLL.clear();    
+    for (int i=0; i < sfc.transs.size(); i++) {
+      Transition trans = (Transition)(sfc.transs.get(i));
+      if (isSimpleTrans(trans) && trans.source.contains(step)) {
+      	succLL.add(trans.target.getFirst());
+      	transLL.add(trans);
+      }
+    }    
+  }
+   
+  private TransLL getTranss(Step step) {
+  	TransLL resultLL = new TransLL();
+  	LinkedList transPosLL = new LinkedList();
+  	// alle Transitionen durchsuchen:
+  	for (int i=0; i < sfc.transs.size(); i++) {
+      Transition trans = (Transition)(sfc.transs.get(i));
+      // ist Transition nicht-parallel und hat irgendwas mit unserem step zu tun?:
+      if (isSimpleTrans(trans) && (trans.source.contains(step) || trans.target.contains(step))) {
+      	TransPosition transPos=(TransPosition)(trans.pos);
+      	// wenn zugehörige TransPosition noch nicht berücksichtigt wurde
+      	if (!transPosLL.contains(transPos)) {
+      		transPosLL.add(transPos);  resultLL.add(trans);
+      	}
+      }
+    }
+    return(resultLL);
+  }
+  
+  private void realignTrans(Transition trans) {
+  	TransPosition transPos = (TransPosition)trans.pos;
+  	if (transPos.autoAlign) ((TransAlignInfo)transPos.transAlignInfo).updateBounds();
+  }
+  
+  // Transition einfügen - BEDINGUNG: diese Transition hat genau einen source- und target-Step:
+  private void insertTrans(Transition trans) {
+    Step sStep = (Step)(trans.source.getFirst()),  tStep = (Step)(trans.target.getFirst());        
+    StepLL succLL = new StepLL();    // alle Nachfolger vom sourceStep holen
+    TransLL transLL = new TransLL();
+    boolean TransLinked = false;     // wurde schon eine Stelle gefunden, wo die neue Trans sich einklinken kann?
+    
+    getSuccLL(sStep, succLL, transLL);  
+    succLL.add(tStep);  transLL.add(trans);
+    for (int i = 0; i < transAlignInfoLL.size(); i++) {    	
+      if (((TransAlignInfo)transAlignInfoLL.get(i)).insertSourceStep(sStep, succLL, transLL)) {
+      	System.out.println("TransPos gefunden");        
+        TransLinked = true;  break;        
+      }      
+    }
+    if (!TransLinked) transAlignInfoLL.add(new TransAlignInfo(trans));
+    sfc.transs.add(trans);
+  }
+  
   /** 
    * setzt den Highlight-Status eines Absynt-Elements - 
    * @see #HILIGHT_ON 
@@ -420,9 +529,11 @@ public class Editor extends JFrame {
     // 1. alle vorher selektierten Elemente aus SelectedLL raus und neu (unselektiert) zeichnen:
     while (SelectedLL.size() > 0) 
       DrawPanel.paintStep((Step)SelectedLL.removeFirst(), (Graphics2D)DrawPanel.getGraphics(), false);         
-    // 2. Element in SelectedLL rein und neu (selektiert) zeichnen:
-    SelectedLL.add(Element);
-    DrawPanel.paintStep((Step)(Element), (Graphics2D)DrawPanel.getGraphics(), true); 
+    // 2. Falls Element <> null, Element in SelectedLL rein und neu (selektiert) zeichnen:
+    if (Element != null) {
+      SelectedLL.add(Element);
+      DrawPanel.paintStep((Step)(Element), (Graphics2D)DrawPanel.getGraphics(), true); 
+    }
   } 
  
   private void switchSelected(Absynt Element) {
@@ -433,7 +544,7 @@ public class Editor extends JFrame {
     } else {
       SelectedLL.add(Element);
       DrawPanel.paintStep((Step)(Element), (Graphics2D)DrawPanel.getGraphics(), true); 
-    }    
+    }
   }
   
   public void editStepName(Step step) {    
@@ -446,7 +557,7 @@ public class Editor extends JFrame {
       DrawPanel.repaint(Rect);      
       DrawPanel.paintStep(step, (Graphics2D)DrawPanel.getGraphics());
       */
-      DrawPanel.repaint();  // *** immer alles neuzeichnen???
+      DrawPanel.repaint();  // *** intelligentes Zeichnen der geänderten Teile?
     }
   }
   
@@ -462,11 +573,25 @@ public class Editor extends JFrame {
       Trans = (Transition)(sfc.transs.get(i));
       if (Trans.source.contains(step) || Trans.target.contains(step)) sfc.transs.remove(i); else i++;
     }
-    DrawPanel.repaint();
+    DrawPanel.repaint();  // *** intelligentes Zeichnen der geänderten Teile?
   }
   
   public void deleteSelection() {
     while (SelectedLL.size() > 0) deleteStep((Step)SelectedLL.getFirst());      
+  }
+  
+  public void moveStep(Step step, double deltaX, double deltaY) {
+  	// Step verschieben:
+    StepPosition StepPos = (StepPosition)(step.pos);
+    StepPos.Bounds.setRect(StepPos.Bounds.getX() + deltaX, StepPos.Bounds.getY() + deltaY, StepPos.Bounds.getWidth(), StepPos.Bounds.getHeight());        
+    DrawPanel.repaint();  // *** intelligentes Zeichnen der geänderten Teile?
+  }
+  
+  public void moveSelection(double deltaX, double deltaY) {
+    for (int i=0; i < SelectedLL.size(); i++) {
+    	moveStep((Step)SelectedLL.get(i), deltaX, deltaY);
+    	
+    }
   }
   
   /** 
