@@ -10,7 +10,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.38 2001-07-03 15:06:30 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.39 2001-07-10 14:00:01 swprakt Exp $
  *
  */
 
@@ -224,6 +224,7 @@ public class Snotcheck{
 		typeClass1 = decl.type.getClass();
 		className1 = typeClass1.getName();
 		if (var != null){
+		    if (var.type == null) throw new DecListFailure(decl, "Variable has no Type!");}
 		    typeClass2 = var.type.getClass();
 		    className2 = typeClass2.getName();
 		    if (className1 != className2){
@@ -509,9 +510,12 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.38 2001-07-03 15:06:30 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.39 2001-07-10 14:00:01 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.38  2001/07/03 15:06:30  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.37  2001/07/03 14:57:34  swprakt
 //	guards werden gecheckt (zumindest ein wenig)
 //	
