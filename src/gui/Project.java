@@ -25,7 +25,7 @@ import editor.Editor;
  *  It also keeps the name and status flags of the SFC.
  *
  * @author  Hans Theman and Ingo Schiller
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class Project extends java.lang.Object implements Serializable {
 
@@ -36,9 +36,9 @@ public class Project extends java.lang.Object implements Serializable {
 
     private boolean is_named;   // determines if a name is set
     private boolean is_checked;   // indicates if it is checked
-    private boolean is_well_defined;  // ?????????????????????????
+    private boolean is_only_bool;  // for the isOnlyBool() test of the ckecker Group
     private boolean is_active;    // indicates whether the Project is opened in the Editor
-    
+
     private Point location; // the position of the editor frame
     private Dimension size; // the size of the editor frame
     private int state;      // the state ... (iconified, normal, ...)
@@ -51,9 +51,9 @@ public class Project extends java.lang.Object implements Serializable {
     public Project () {
         sfc = new SFC(null, null, null, null, null);
         name = "unknown";
-        is_named = false;   
+        is_named = false;
         is_checked = false;
-        is_well_defined = false;
+        is_only_bool = false;
         is_active = true;   // on creation Project is opened in Editor!
     }
 
@@ -70,7 +70,7 @@ public class Project extends java.lang.Object implements Serializable {
         is_active = p.is_active;
     }
 */
-    
+
     public void restoreEnvironment() {
         Editor e = this.getEditor();
         if (e!=null) {
@@ -79,7 +79,7 @@ public class Project extends java.lang.Object implements Serializable {
             e.setState(state);
         }
     }
-    
+
     public void setEnvironment() {
         Editor e = this.getEditor();
         if (e!=null) {
@@ -88,11 +88,11 @@ public class Project extends java.lang.Object implements Serializable {
             this.state = e.getState();
         }
     }
-    
+
     public boolean isNamed() {
         return this.is_named;
     }
-    
+
     /** Return the projet checked flag.
      *  @return is_checked  Indicates whether the project SFC is checked.
      */
@@ -107,18 +107,18 @@ public class Project extends java.lang.Object implements Serializable {
         this.is_checked = status;
     }
 
-    /** Returns the project welldefined flag.
-     *  @return is_well_defined The status of the SFC of the project.
+    /** Returns the project isOnlyBool flag.
+     *  @return is_only_bool The status of the SFC of the project.
      */
-    public boolean isWellDefined() {
-        return this.is_well_defined;
+    public boolean isOnlyBool() {
+        return this.is_only_bool;
     }
 
     /** Sets the project welldefined flag.
      *  @param status   The specified status of the SFC of the project.
      */
-    public void setWellDefined(boolean status) {
-        this.is_well_defined = status;
+    public void setOnlyBool(boolean status) {
+        this.is_only_bool= status;
     }
 
     /** Returns the project active flag.
@@ -183,7 +183,7 @@ System.out.print("\nSFC exported");
         ObjectInputStream inStream = new ObjectInputStream(new FileInputStream(_file));
         try {
            p = (Project)inStream.readObject();
-System.out.print("\nImported SFC name: "+p.name+" is active: "+p.is_active+" is_checked: "+p.is_checked);           
+System.out.print("\nImported SFC name: "+p.name+" is active: "+p.is_active+" is_checked: "+p.is_checked);
         }
         finally {
             inStream.close();
@@ -191,7 +191,7 @@ System.out.print("\nImported SFC name: "+p.name+" is active: "+p.is_active+" is_
         inStream.close();
         p.is_checked = false;
         p.is_active = false;
-        p.is_well_defined = false;
+        p.is_only_bool = false;
 
 System.out.print("\nSFC imported");
         return p;

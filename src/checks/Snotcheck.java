@@ -9,7 +9,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.27 2001-06-14 11:52:23 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.28 2001-06-19 13:30:35 swprakt Exp $
  *
  */
 
@@ -23,18 +23,18 @@ public class Snotcheck{
 
     private static boolean isDeclarationOk(SFC aSFCObject) throws DecListFailure {
 	//Diese Methode prueft, ob in den Dekarationen keine NULL-Werte stehen, ob keine Variable doppelt deklariert ist und ob der in der Deklaration angegebene Typ gleich dem Typ der Variable ist.
-	
-	
+
+
 	//Pruefung auf NULL-Werte:
-	
+
 	LinkedList decList = aSFCObject.declist;
 	Declaration decl,decl2;
 	Variable var,var2;
 	String className1, className2;
 	Class typeClass1, typeClass2;
-	
 
-	
+
+
 	if (decList != null){
 	    for (int i=0; i < decList.size(); i++){
 		decl = (Declaration)decList.get(i);
@@ -44,10 +44,10 @@ public class Snotcheck{
 			}
 	    }
 	}
-	
-	
+
+
 	//Pr"ufung, ob Variable doppelt vorkommt:
-	
+
 	if (decList != null){
 	    for (int i=0; i < decList.size(); i++){
 		decl = (Declaration)decList.get(i);                          //durchgehen aller Deklarationen
@@ -61,12 +61,12 @@ public class Snotcheck{
 			}
 		    }
 		}
-	    }	
+	    }
 	}
-	
-	
+
+
 	//Pr"ufung auf Typgleichheit:
-	
+
 	if (decList != null){
 	    for (int i=1; i < decList.size(); i++){
 		decl = (Declaration)decList.get(i);
@@ -81,16 +81,16 @@ public class Snotcheck{
 		}
 	    }
 	}
-	
-	
-	
-	
-	
-	return true;	
-	
+
+
+
+
+
+	return true;
+
     }
-    
-    
+
+
 
 
 
@@ -106,7 +106,7 @@ public class Snotcheck{
 	LinkedList actionList = aSFCObject.actions;
 	String name1,name2;
 	Action action,action2;
-	
+
 	if (actionList == null){return true;}    //wenn in der actionList keine Eintraege vorhanden sind, kann auch kein Eintrag fehlerhaft sein, also sind alle Eintraege korrekt
 
 	//Pruefung auf Null-Werte
@@ -125,7 +125,7 @@ public class Snotcheck{
 		name2 = action2.a_name;
 		if (name1 == name2){throw new ActionFailure(action, "Action with a name, which is already used.");}
 	    }
-	    
+
 	}
 
 	LinkedList stmtList;
@@ -133,9 +133,9 @@ public class Snotcheck{
 	Class class1,valClass,varClass,varTypeClass,valTypeClass;
 	String class1Name,valClassName,varTypeName,valTypeName;
 	Assign ass;
-	
-	
-	
+
+
+
 	//nun muessen nur noch die einzelnen sap`s ueberprueft werden:
 	for (int i=0; i < actionList.size(); i++){
 	    action = (Action)actionList.get(i);
@@ -185,11 +185,11 @@ public class Snotcheck{
 		} else {throw new ActionFailure(null, "Error, that can`t be solved.");}
 	    }        //Ende der inneren for-Schleife
 	}            //Ende der ausseren for-Schleife
-	
+
 
 	return true;
-	
-	
+
+
 }
 
 
@@ -205,12 +205,12 @@ public class Snotcheck{
      */
 private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 
-    LinkedList stepList = aSFCObject.steps;	
+    LinkedList stepList = aSFCObject.steps;
     String stepName;
     Step aStep;
-    
+
     if (stepList != null){
-       
+
         //Pruefung auf Null-Werte von Stepparameter
 	for (int i=0; i < stepList.size(); i++){
 	    aStep = (Step)stepList.get(i);
@@ -219,8 +219,8 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 	}
 
     }else throw new StepFailure(null,"Where are the steps?!!");
-       
-    return true; 
+
+    return true;
 }
 
 
@@ -250,7 +250,7 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 
 	LinkedList translist = aSFCObject.transs;
 	Transition trans;
-	
+
 	if (translist!=null){
 	    for (int i=0; i < translist.size(); i++){
 		trans = (Transition)translist.get(i);
@@ -260,11 +260,11 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 		}
 	    }
 	}
-	
-	
-	
+
+
+
 	return true;
-	
+
     }
 
 
@@ -280,7 +280,7 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 	String nameOfClass;
 	Class typeClass;
 	boolean nurBool = true;
-	
+
 	for (int i=0; i < decList.size(); i++){
 	    decl = (Declaration)decList.get(i);
 	    typeClass = decl.type.getClass();
@@ -295,7 +295,7 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 
 
     /**Diese Funktion prueft, ob der angegebene SFC korrekt ist
-       
+
      */
 
     public static boolean isWellDefined(SFC aSFCObject) throws CheckException {
@@ -320,71 +320,74 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.27 2001-06-14 11:52:23 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.28 2001-06-19 13:30:35 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.27  2001/06/14 11:52:23  swprakt
+//	*** empty log message ***
+//
 //	Revision 1.26  2001/06/13 13:34:30  swprakt
 //	g
-//	
+//
 //	Revision 1.25  2001/06/12 15:14:25  swprakt
 //	I removed a file
-//	
+//
 //	Revision 1.23  2001/06/12 14:55:02  swprakt
 //	*** empty log message ***
-//	
+//
 //	Revision 1.21  2001/06/08 09:00:56  swprakt
 //	*** empty log message ***
-//	
+//
 //	Revision 1.20  2001/06/08 08:56:17  swprakt
 //	*** empty log message ***
-//	
+//
 //	Revision 1.19  2001/06/07 12:04:25  swprakt
 //	*** empty log message ***
-//	
+//
 //	Revision 1.18  2001/06/07 11:24:00  swprakt
 //	*** empty log message ***
-//	
+//
 //	Revision 1.17  2001/06/07 11:00:12  swprakt
 //	*** empty log message ***
-//	
+//
 //	Revision 1.16  2001/06/05 14:42:17  swprakt
 //	*** empty log message ***
-//	
+//
 //	Revision 1.15  2001/06/05 14:33:52  swprakt
 //	*** empty log message ***
-//	
+//
 //	Revision 1.14  2001/06/05 14:17:34  swprakt
 //	*** empty log message ***
-//	
+//
 //	Revision 1.13  2001/06/05 13:21:31  swprakt
 //	*** empty log message ***
-//	
+//
 //	Revision 1.12  2001/05/30 14:01:58  swprakt
 //	*** empty log message ***
-//	
+//
 //	Revision 1.11  2001/05/29 15:08:01  swprakt
 //	*** empty log message ***
-//	
+//
 //	Revision 1.10  2001/05/22 14:54:59  swprakt
 //	*** empty log message ***
-//	
+//
 //	Revision 1.9  2001/05/22 14:50:36  swprakt
 //	*** empty log message ***
-//	
+//
 //	Revision 1.8  2001/05/22 14:49:31  swprakt
 //	alles ok
-//	
+//
 //	Revision 1.7  2001/05/22 14:41:53  swprakt
 //	*** empty log message ***
-//	
+//
 //	Revision 1.6  2001/05/22 14:31:47  swprakt
 //	*** empty log message ***
-//	
+//
 //	Revision 1.5  2001/05/22 14:28:04  swprakt
 //	*** empty log message ***
-//	
+//
 //	Revision 1.4  2001/05/22 14:25:23  swprakt
 //	ok
-//	
-//	
+//
+//
 //--------------------------------------------------------------------
