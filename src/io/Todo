@@ -1,5 +1,5 @@
 #######################################################
-# $Id: Todo,v 1.8 2001-07-01 07:25:03 swprakt Exp $
+# $Id: Todo,v 1.9 2001-07-01 11:09:54 swprakt Exp $
 #######################################################
 
       
@@ -21,3 +21,4 @@ The file lists things to be done.
 
   o Grammar:
 	- make  the empty step-list possible, same for actions etc
+	- repair the determine_qualifier!

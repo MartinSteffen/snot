@@ -4,7 +4,7 @@
  * Offers the methods  parseFile and parseExpression 
  *
  * @author Karsten Stahl, Martin Steffen
- * @version $Id: SFC.cup,v 1.10 2001-07-01 08:44:58 swprakt Exp $
+ * @version $Id: SFC.cup,v 1.11 2001-07-01 11:09:54 swprakt Exp $
  *
  * The grammar definition contains 4 parts:
  *    -  initialization declarations and how to generate the parser
@@ -32,7 +32,7 @@ import java.io.*;
 * The following 4 (optional) entries are for user-code insertions to the generated parser:
 *   - init:   executed before start parsing
 *   - scan:   how the parser asks for the next token
-*   - action: code will be placed int the action class. Used as auxiliary
+*   - action: code will be placed in the action class. Used as auxiliary
 *             routines usable int the actions of the grammar.
 *   - parser: code will be _directly_ placed int the parser class
 **/
@@ -53,6 +53,15 @@ action code {:
   private void less(){
     tab = tab.substring(0, tab.length()-2);
   }
+
+  public absynt.ActionQualifier determine_qualifier(String s) {
+    /**
+     * Gives back the action qualifier. The method allows to avoid to give
+     * the qualifiers, which are one-letter strings, the status of lexical keywords.
+     */
+    return (new absynt.Nqual());
+  }
+  
   
   :}
 
@@ -186,43 +195,47 @@ sfc          ::= program:p {: RESULT=p; :}
 
 
 program      ::= BEGIN 
-                 declist SEM
-	         istep SEM
-	         steps SEM
-                 actions SEM
-                 transitions
-                 END;
+                 declist:dl     SEM
+	         istep:i        SEM
+	         steps:sl       SEM
+                 actions:al     SEM
+                 transitions:tl
+                 END
+                    {:  RESULT = new absynt.SFC(i,sl,tl,al,dl);  :}
+;
 
-
-
-/** program      ::= BEGIN
-		 declist SEM
-		 istep SEM
-		 steps SEM
-		 actions SEM
-		 transitions SEM
-		 END
-		 ;
-**/
 
 
 declist      ::= VARS EQ LBRACKET  RBRACKET
-              |  VARS EQ LBRACKET  declarations RBRACKET
+                    {:  RESULT = new LinkedList();  :}
+              |  VARS EQ LBRACKET  declarations:dl  RBRACKET
+                    {:  RESULT = dl;  :}
 		 ;
-declarations ::= declaration
-              |  declaration SEM declarations
+declarations ::= declaration:d
+                    {:  RESULT = new LinkedList();
+                        RESULT.addFirst(d); :}
+              |  declaration:d SEM declarations:dl
+                    {:  RESULT = dl; RESULT.addFirst(d); :}
 		 ;
 
-declaration  ::= IDENT:var COLON type:type EQ constval:val;
+declaration  ::= var:v COLON type:t EQ constval:e
+                    {:  RESULT = new absynt.Declaration(v, t, e);  :}
+;
   
 
 type         ::= INT 
-              |  BOOL;
+                    {:  RESULT = new absynt.IntType();  :}
+              |  BOOL
+                    {:  RESULT = new absynt.BoolType();  :}
+;
 
 
 constval        ::= TRUE 
+                    {:  RESULT = new absynt.Constval(true);  :}
                  |  FALSE
+                    {:  RESULT = new absynt.Constval(false);  :}
 	         |  INTEGER:i 
+                    {:  RESULT = new absynt.Constval(i.intValue());  :}
   ;
 
 
@@ -235,71 +248,97 @@ istep	     ::= INIT EQ IDENT:stepname // init = s1
 
 steps       ::=  STEPS EQ 
                  LBRACKET
-                 steplist
+  steplist:sl
                  RBRACKET
+                    {:  RESULT = sl;  :}
   ;
 
-steplist    ::=  step
-             |   step SEM steplist
+steplist    ::=  step:s
+                    {:  RESULT = new LinkedList();
+                        RESULT.addFirst(s); :}
+             |   step:s SEM steplist:sl
+                    {:  RESULT = sl; RESULT.addFirst(s); :}
   ;
 
 step        ::=  LPAREN 
                  IDENT:s COMMA 
                  LBRACKET
-                 stepactionlist
+                 stepactionlist:sal
                  RBRACKET
                  RPAREN
+                    {:  RESULT = new absynt.Step(s,sal);  :}
   ;
 
 
-stepactionlist   ::= stepaction
-                   |  stepaction SEM stepactionlist
+stepactionlist   ::= stepaction:sa
+                    {:  RESULT = new LinkedList();
+                        RESULT.addFirst(sa); :}
+                   |  stepaction:sa SEM stepactionlist:sal
+                    {:  RESULT = sal; RESULT.addFirst(sa); :}
   ;
 
 stepaction      ::= LPAREN
-                      qualifier COMMA IDENT:a
+                      qualifier:q COMMA IDENT:a
                       RPAREN
+                    {: RESULT = new absynt.StepAction(q,a); :}
   ;
 
 qualifier       ::= IDENT:q       // not as reserved word
+                    {: RESULT = determine_qualifier(q); :}
   ;
 
 
 actions         ::= ACTIONS EQ
                     LBRACKET
-                    actionlist
+                    actionlist:al
                     RBRACKET
+                    {: RESULT = al; :}
   ;
 
 
-actionlist      ::= sfcaction
-                 |  sfcaction SEM actionlist
+actionlist      ::= sfcaction:a
+                    {:  RESULT = new LinkedList();
+                        RESULT.addFirst(a); :}
+                 |  sfcaction:a SEM actionlist:al
+                    {:  RESULT = al; RESULT.addFirst(a); :}
   ;
 
-sfcaction       ::=  IDENT:a EQ
-                     sap
+sfcaction       ::=  IDENT:a EQ sap:s
+                    {: RESULT = new absynt.Action(a,s); :}
   ;
 
 
-sap             ::=  LBRACKET stmtlist RBRACKET
+sap             ::=  LBRACKET stmtlist:sl RBRACKET
+                    {: RESULT = sl; :}
   ;
 
-stmtlist        ::=  stmt
-                 |   stmt SEM stmtlist
+stmtlist        ::=  stmt:s
+                    {:  RESULT = new LinkedList();
+                        RESULT.addFirst(s); :}
+                 |   stmt:s SEM stmtlist:sl
+                    {:  RESULT = sl; RESULT.addFirst(s); :}
   ;
 
 stmt            ::= SKIP
-                 |  assign
+                    {: RESULT = new absynt.Skip(); :}
+                 |  assign:s
+                    {: RESULT = s; :}
   ;
 
-assign          ::= IDENT:x ASSIGN expr:e
+assign          ::= var:x ASSIGN expr:e
+                    {: RESULT = new absynt.Assign(x, e); :}
   ;
 
-expr            ::= op expr
-                 |  expr op expr
-                 |  LPAREN expr RPAREN
-                 |  var
-                 | constval
+expr            ::= op:o expr:e
+                    {: RESULT = new absynt.U_expr(o.intValue(),e); :}
+                 |  expr:e1 op:o expr:e2
+                    {: RESULT = new absynt.B_expr(e1,o.intValue(),e2); :}
+                 |  LPAREN expr:e RPAREN
+                    {: RESULT = e; :}
+                 |  var:v
+                    {: RESULT = v; :}
+                 | constval:v
+                    {: RESULT = v; :}
   ;
 
 op              ::= PLUS     {: RESULT= new Integer(absynt.Expr.PLUS); :}
@@ -318,6 +357,7 @@ op              ::= PLUS     {: RESULT= new Integer(absynt.Expr.PLUS); :}
   ;
 
 var             ::= IDENT:v
+                     {: RESULT = new absynt.Variable(v); :}
   ;
 
 
@@ -327,17 +367,25 @@ transitions     ::=  TRANSITIONS EQ
                      RBRACKET
   ;
 
-transitionlist  ::=  transition
-                 |   transition SEM transitionlist
+transitionlist  ::=  transition:t
+                    {:  RESULT = new LinkedList();
+                        RESULT.addFirst(t); :}
+                 |   transition:t SEM transitionlist:tl
+                    {:  RESULT = tl; RESULT.addFirst(t); :}
   ;
 
-transition      ::=  LBRACKET stepnames RBRACKET FROMTO LBRACKET stepnames RBRACKET
-                 |   LBRACKET stepnames RBRACKET FROMTO LBRACKET stepnames RBRACKET
-                     WHEN expr
+transition      ::=  LBRACKET stepnames:s RBRACKET FROMTO LBRACKET stepnames:t RBRACKET
+                         {: RESULT = new absynt.Transition(s,t); :}
+                 |   LBRACKET stepnames:s RBRACKET FROMTO LBRACKET stepnames:t RBRACKET
+                     WHEN expr:g
+                         {: RESULT = new absynt.Transition(s,g,t); :}
   ;
                   
 
 
 stepnames       ::= IDENT:s
-                 |  IDENT:s SEM stepnames
+                    {:  RESULT = new LinkedList();
+                        RESULT.addFirst(s); :}
+                 |  IDENT:s SEM stepnames:sl
+                    {:  RESULT = sl; RESULT.addFirst(s); :}
   ;
