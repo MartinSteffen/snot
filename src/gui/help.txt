@@ -105,6 +105,8 @@ If everything works fine you can save the resulting code into a file which can b
 
 
 7.)
-
+When you have build an SFC and you want to translate it or simulate
+it, you have to check it first. By pressing the CHECK-Button you
+activate the integrated checker, which checks the whole SFC.
 8.)
 
