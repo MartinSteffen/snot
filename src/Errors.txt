@@ -1,3 +1,30 @@
 ###########################################################
-## $Id: Errors.txt,v 1.1 2001-05-22 07:28:36 swprakt Exp $
+## $Id: Errors.txt,v 1.2 2001-05-28 06:56:33 swprakt Exp $
 ###########################################################
+
+
+//------------------------------------------------------------------------
+//	Error List of Snot
+//------------------------------------------------------------------------
+
+--------------------------------------------------------------------------
+// Das ist ein Kommentar
+// Muster
+//
+// #Number: 	<Error number> 
+// #Autor: 	<name> <e-mail>
+// #Subject: 	<short title>
+// #Status: 	reported | processing | fixed (by whom) | confirmed
+// #Description: 
+// <long description how to generate>
+//------------------------------------------------------------------------------
+
+
+#Number: 	1
+#Autor:   	Martin Steffen (ms)
+#Subject:	Kompilationsfehler editor
+#Status:        reported
+#Description:   cd $SNOT/src/editor; make  
+		kompiliert nicht; Grund (vermutlich): 
+		die "Anderung in der Abstrakten Syntax nach
+		java.utils.LinkedList
