@@ -198,11 +198,16 @@ Aufgabenstellung findet sich im Pflichtenheft.<BR>
 die Nummber des Schnappschusses ist. Als Entwickler mit Zugriff auf das
 Quellcoderepositorium kann man die Entwicklungsschritte sie natürlich
 mittels cvs wieder zurückholen. Zum Ausführen der Archivs speichere man
-die Datei <TT>snot_v[x].jar</TT> an einen geeigneten Platz, und setze<BR>
+die Datei <TT>snot_v[x].jar</TT> an einen geeigneten Platz, und rufe<BR>
 <BR>
 <PRE>
+  java -classpath [geeigneter_platz]/snot_v[x].jar gui.Gui
+</PRE>auf; alternativ kann man auch fest
+<PRE>
  export CLASSPATH=[geeigneter_platz]/snot_v[x].jar
-</PRE><TABLE CELLSPACING=2 CELLPADDING=0>
+</PRE>setzen, dann kann man sich die option <TT>-classpath</TT> schenken.<BR>
+<BR>
+<TABLE CELLSPACING=2 CELLPADDING=0>
 <TR><TD ALIGN=left NOWRAP>1.</TD>
 <TD ALIGN=left NOWRAP><A HREF="baselines/snot_v1.0.jar">Baseline 1</A></TD>
 <TD ALIGN=left NOWRAP>erste Gesamtkompilation</TD>
