@@ -6,7 +6,7 @@ import java.io.Serializable;
  * A transition of an SFC connects source and target step
  * and is labelled with a guard.
  * @author Initially provided by Martin Steffen.
- * @version $Id: Transition.java,v 1.3 2001-05-03 14:02:08 swprakt Exp $	
+ * @version $Id: Transition.java,v 1.4 2001-05-04 09:01:05 swprakt Exp $	
  */
 
 
@@ -20,6 +20,12 @@ public class Transition extends Absynt implements Serializable {
     guard  = _g;
     target = _t;
   }
+  public Transition (StepList _s, StepList _t) //overloading: empty guard = true
+    source = _s;
+    guard  = new Constval (true);
+    target = _t;
+  }
+
 }
 
 
@@ -29,9 +35,12 @@ public class Transition extends Absynt implements Serializable {
 //	Abstract syntax for Snot programs
 //	------------------------------------
 //
-//	$Id: Transition.java,v 1.3 2001-05-03 14:02:08 swprakt Exp $
+//	$Id: Transition.java,v 1.4 2001-05-04 09:01:05 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.3  2001/05/03 14:02:08  swprakt
+//	Variablen sind jetzt public
+//	
 //	Revision 1.2  2001/05/02 07:03:37  swprakt
 //	Abstract syntax compiles.
 //	
