@@ -1,3 +1,4 @@
+
 package checks;
 
 import java.util.*;
@@ -9,7 +10,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.35 2001-07-03 14:40:04 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.36 2001-07-03 14:47:00 swprakt Exp $
  *
  */
 
@@ -373,7 +374,6 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 		}
 	    }
 	}
-
 	//Pruefung auf Doppeltvorkommene Namen von Steps
 	for (int i=0; i < stepListSize; i++){
 	    aStep = (Step)stepList.get(i);
@@ -420,7 +420,6 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 
 	if (translist!=null){
 	    for (int i=0; i < translist.size(); i++){
-		//	System.out.println(i);
 		trans = (Transition)translist.get(i);
 		if (trans.source == null || trans.target == null || trans.guard == null){
 		    //Wenn einer der Werte fehlt, dann werfe eine Exception (TransitionFailure) mit der entsprechenden Transition als Argument
@@ -493,9 +492,12 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.35 2001-07-03 14:40:04 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.36 2001-07-03 14:47:00 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.35  2001/07/03 14:40:04  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.34  2001/07/03 14:36:33  swprakt
 //	*** empty log message ***
 //	

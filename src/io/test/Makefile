@@ -1,12 +1,12 @@
 ###################################################################
-## $Id: Makefile,v 1.3 2001-07-02 10:10:47 swprakt Exp $
+## $Id: Makefile,v 1.4 2001-07-03 14:49:41 swprakt Exp $
 ###################################################################
 
 
 all:
-	java io.Main "sfc1.snot"
+	java io.Main "sfc1.tsfc"
 
 
 sfc2:
-	java io.Main "sfc2.snot"
+	java io.Main "sfc2.tsfc"
 
