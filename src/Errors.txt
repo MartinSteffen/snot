@@ -1,5 +1,5 @@
 ###########################################################
-## $Id: Errors.txt,v 1.6 2001-05-31 05:15:59 swprakt Exp $
+## $Id: Errors.txt,v 1.7 2001-06-05 13:58:46 swprakt Exp $
 ###########################################################
 
 
@@ -22,23 +22,33 @@
 
 
 
--------------------- Liste der aktuellen Fehler (die neuen sollen _oben_ angeh"angt werden) ------
+--------- Liste der aktuellen Fehler ---
+--	  die neuen sollen _oben_ angeh"angt werden ------
 
 
 
 
-#Number: 	3
+
+#number: 	5
+#reporter:   	Martin Steffen (ms)
+#package:       gui
+#subject:	compilation error
+#status:        reported
+#description:   javac  Gui.java
+/home/ms/Praktikum/Snot/src/gui/Project.java:181: setModified(boolean) has private access in editor.Editor
+        editor.setModified(false);
+
+
+
+#Number: 	4
 #Reporter:   	Martin Steffen (ms)
-#package:       editor
-#Subject:	Compilationsfehler
+#package:       gui
+#Subject:	Feature request
 #Status:        reported
-#Description:   make erzeugt:
-                DrawSFCPanel.java:78: cannot resolve symbol
-                 editor.DrawSFCPanel
-                  protected void processMouseEvent(MouseEvent e) {
-		                                   ^^
+#Description:   Warum gibt es keinen Knopf zum Verlassen des ganzen 
 
-                 Er scheint das MouseEvent nicht zu finden
+
+
 
 
 
@@ -65,4 +75,21 @@
 
 
 
-=========================================== Unterhalb von hier: alte Fehler, die behoben wurden sind ==========
+================== Unterhalb von hier: alte Fehler, die behoben wurden sind ==========
+
+
+
+#Number: 	3
+#Reporter:   	Martin Steffen (ms)
+#package:       editor
+#Subject:	Compilationsfehler
+#Status:        ok now
+#Description:   make erzeugt:
+                DrawSFCPanel.java:78: cannot resolve symbol
+                 editor.DrawSFCPanel
+                  protected void processMouseEvent(MouseEvent e) {
+		                                   ^^
+
+                 Er scheint das MouseEvent nicht zu finden
+
+
