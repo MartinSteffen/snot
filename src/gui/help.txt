@@ -1,0 +1,29 @@
+   User Manual and Documentation for Snot 1.0
+     ******************************************
+
+Contents:
+---------
+
+1.) Introduction
+
+2.) The Elements of Snot
+
+3.) The Editor
+
+4.) The SMV - Translator
+
+5.) The Simulator
+
+6.) The Parser
+
+7.) Checks
+
+8.) Pretty Printer
+*********************************************
+
+
+1.) 
+Snot is a project of some students at the CAU (Christian Albrechts University in Kiel, Germany). It was developed during the summer term 2001. 
+
+
+
