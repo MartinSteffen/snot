@@ -2,6 +2,8 @@
 \section{Abstrakte Syntax}
 \label{sec:AbstrakteSyntax}
 
+\team{Karsten Stahl, Martin Steffen, und alle anderen}
+
 Folgende \emph{erweiterte BNF}-Notation faßt die \emph{abstrakte Syntax}
 als gemeinsame Zwischenrepresentierung zusammen. Abgesehen von einigen
 Namenkonventionen (Großschreibung) ist die Umsetzung in \Java{} trivial.
@@ -13,7 +15,10 @@ bis auf die Reihenfolge der Argumente, durch die Felder der Klasse
 festgelegt.\footnote{Es gibt Ausnahmen von der letzten Regel, n"amlich f"ur
   die (\Snot-)Typen in den Ausdr"ucken. Die Typen sind nicht in die
   Konstruktoren mit aufgenommen. Die entsprechenden Felder werden
-  nachtr"aglich eingetragen.}
+  nachtr"aglich eingetragen.} Die Listen der EBNF wurden als
+\texttt{java.lang.Enumeration}-Klassen implementiert. Graphische
+Information zur Positionierung, die nur für den Editor relevant ist, wurde
+nicht mit in die EBNF mit aufgenomment.
 
 
 \medskip

@@ -12,15 +12,16 @@ Eigenschaften implementiert:
   von \emph{Schritten} (\textit{steps}), Transitionen und Pfaden zu
   zeichnen. Ein Vorschlag, wie SFCs aussehen können, ist in
   Abbildung~\ref{fig:SFC} zu sehen.
-\item \textbf{Speichern und Laden:}
-  Die Systeme sollen gespeichert und geladen werden können.
+\item \textbf{Speichern und Laden:} Die Systeme sollen gespeichert und
+  geladen werden können. Die Verwaltung des Speicherns liegt in der
+  Zuständigkeit der Gui
 \item \textbf{Selektieren:} Einzelne Komponenten sollen selektiert werden
   können. Das dient zur Vorbereitung weiterer Aktionen.
 \item \textbf{Löschen \& Kopieren:} Es soll möglich sein, selektierte
   Komponenten zu entfernen und zu kopieren.
 \item \textbf{Highlight}: der Editor soll eine Highlightfunktion zur
   Verfügung stellen.  Es soll möglich sein, bestimmte Schritte und
-  Transitionen  hervorzuheben.
+  Transitionen  hervorzuheben. 
 \end{itemize}
 
 
@@ -33,7 +34,8 @@ Eigenschaften implementiert:
 
 Mit der Gui (Abschnitt~\ref{sec:gui}). Die Aufgabenverteilung zwischen Gui
 und Editor ist zu diskutieren. Desweiteren mit dem Simulator
-(Abschnitt~\ref{sec:simulator}). 
+(Abschnitt~\ref{sec:simulator}), was das Highlighten betrifft. Ob es auch
+ein De-Highlighten gibt, ist noch ungeklärt.
 
 Auf jeden Fall: eine Methode \texttt{highlight\_state}, als Übergabe
 entweder
@@ -43,6 +45,13 @@ entweder
 \end{itemize}
 Die Wahl muß mit dem Simulator oder der Gui vereinbart werden, abhängig
 davon, wer die Methode aufruft.
+
+Weitere Methoden, die der Editor zur verfügung stellen muß, sind  der Zugriff
+auf
+\begin{enumerate}
+\item das gespeicherte SFC und
+\item Zugriff auf den Status (unveräandert, gespeichert \ldots)
+\end{enumerate}
 
 Eine \emph{wichtige} Schnittstelle (wie bei allen) ist die abstrakte Syntax.
 Um das Zeichnen zu unterstützen, müssen eventuell \emph{Koordinaten} in die
