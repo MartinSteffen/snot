@@ -1,5 +1,5 @@
 ###########################################################
-## $Id: Errors.txt,v 1.5 2001-05-30 05:37:47 swprakt Exp $
+## $Id: Errors.txt,v 1.6 2001-05-31 05:15:59 swprakt Exp $
 ###########################################################
 
 
@@ -13,6 +13,7 @@
 //
 // #Number: 	<Error number> 
 // #Reporter: 	<name> <e-mail>
+// #where:      Paket (und Klasse)
 // #Subject: 	<short title>
 // #Status: 	reported | processing | fixed (by whom) | confirmed
 // #Description: 
@@ -22,6 +23,23 @@
 
 
 -------------------- Liste der aktuellen Fehler (die neuen sollen _oben_ angeh"angt werden) ------
+
+
+
+
+#Number: 	3
+#Reporter:   	Martin Steffen (ms)
+#package:       editor
+#Subject:	Compilationsfehler
+#Status:        reported
+#Description:   make erzeugt:
+                DrawSFCPanel.java:78: cannot resolve symbol
+                 editor.DrawSFCPanel
+                  protected void processMouseEvent(MouseEvent e) {
+		                                   ^^
+
+                 Er scheint das MouseEvent nicht zu finden
+
 
 
 #Number: 	2
