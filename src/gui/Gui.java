@@ -14,6 +14,9 @@ import javax.swing.*;
 import javax.swing.ImageIcon;
 import java.io.File;
 import java.io.IOException;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 import java.lang.Integer;
 import java.lang.String;
 import java.util.*;
@@ -30,7 +33,7 @@ import simulator.Simulator;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.30 $
+ * @version $Revision: 1.31 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -43,6 +46,7 @@ public class Gui extends javax.swing.JFrame {
     private final String TITLE = "Snot";    // the Gui title
     private final String SessionFileExtension = ".snot"; // the session file extension
     private final String ProjectFileExtension = ".sfc";  // the exported SFC file extension
+    private final String SmvFileExtension = ".smv";   // the SMV - translated file extension
     private final Point GuiLocation = new Point(100,50);
     private final Point EditorLocation = new Point(350, 220);
     private Point ProjectListLocation = new Point(100,220);
@@ -567,8 +571,6 @@ public class Gui extends javax.swing.JFrame {
         // Feed the main frame with all bits n bytes
 
         getContentPane().setLayout(new GridLayout(3,1));
-        getContentPane().add(ToolBarFiles);
-        getContentPane().add(ToolBarTools);
         getContentPane().add(PanelStatus);
 
         setJMenuBar(jMenuBar);
@@ -591,7 +593,7 @@ public class Gui extends javax.swing.JFrame {
           ToolBarFiles.setVisible(true);
       else
           ToolBarFiles.setVisible(false);
-      this.pack();
+      pack();
   }
 
 
@@ -602,7 +604,7 @@ public class Gui extends javax.swing.JFrame {
           ToolBarTools.setVisible(true);
       else
           ToolBarTools.setVisible(false);
-      this.pack();
+      pack();
   }
 
 
@@ -766,39 +768,63 @@ public class Gui extends javax.swing.JFrame {
   }
 
   private void SMVActionPerformed(java.awt.event.ActionEvent evt) {
-      Project project = activeProject;
       int response;
+      File file = null;
+      ByteArrayOutputStream stream = null;
 
-      if (project == null) {
+      if (activeProject == null) {
           SnotOptionPane.showMessageDialog(null, "Please select a SFC first!\n", "Error: no SFC", JOptionPane.ERROR_MESSAGE);
           return;
       }
 
-      if (!project.isChecked()) {
-          response = SnotOptionPane.showConfirmDialog(null, "The SFC \""+project.getName()+"\" needs to be checked\nbefore the SMV translator can be run!\n\nDo you want to check the SFC now?\n",
+      if (!activeProject.isChecked()) {
+          response = SnotOptionPane.showConfirmDialog(null, "The SFC \""+activeProject.getName()+"\" needs to be checked\nbefore the SMV translator can be run!\n\nDo you want to check the SFC now?\n",
                                             "Warning: SFC is not checked", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
           if (response == JOptionPane.OK_OPTION)
               CheckSFCActionPerformed(null);
           else
               return;
 
-      if (!project.isOnlyBool()) {
-         SnotOptionPane.showMessageDialog(null, "The SFC \""+project.getName()+"\" is buggy!\n Aborting SMV translation",
+      if (!activeProject.isOnlyBool()) {
+         SnotOptionPane.showMessageDialog(null, "The SFC \""+activeProject.getName()+"\" is buggy!\n Aborting SMV translation",
                                         "Error: SFC is buggy", JOptionPane.ERROR_MESSAGE);
               return;
           }
       }
 
       try {
-          new SMVTranslator(project.getSFC());
+          SMVTranslator trans = new SMVTranslator(activeProject.getSFC());
+	  stream = new ByteArrayOutputStream();
+	  stream = trans.toStream();
       }
-      /*catch (SMVException smvex) {
+      catch (SMVException smvex) {
          SnotOptionPane.showMessageDialog(null, smvex.getMessage(), "SMV - Error", JOptionPane.ERROR_MESSAGE);
-      }*/
+      }
       catch (Exception ex) {
           SnotOptionPane.showMessageDialog(null, "Whatever:\n"+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
       }
+
 System.out.print("\nlaunching SMVTranslator ...");
+
+      try {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setFileFilter(new SnotFileFilter("smv","SMV output"));
+        chooser.setDialogTitle("Save SMV - Output as");
+        int result = chooser.showDialog(null, "Save as");
+        if (result == JFileChooser.APPROVE_OPTION) {
+            file = Utilities.createFileDialog(chooser.getSelectedFile(), SmvFileExtension);
+	    FileOutputStream output = new FileOutputStream(file);
+	    byte[] array =  stream.toByteArray();
+	    output.write(array);
+	    output.close();
+	    System.out.print("\nFile saved succesfully");
+          }
+	}
+	catch(FileNotFoundException fnfe){
+	  SnotOptionPane.showMessageDialog(null, fnfe.getMessage(), "File - Error", JOptionPane.ERROR_MESSAGE);
+	}
+	catch(Exception e){ SnotOptionPane.showMessageDialog(null, e.getMessage(), "File - Error", JOptionPane.ERROR_MESSAGE);}
+
   }
 
   /**
@@ -806,11 +832,9 @@ System.out.print("\nlaunching SMVTranslator ...");
    */
 
   private void SimulatorActionPerformed(java.awt.event.ActionEvent evt) {
-      int response = 0;
-      Project project = activeProject;
-      SFC _sfc = project.getSFC();
+     int response = 0;
 
-       if (project == null) {
+     if (activeProject == null) {
           SnotOptionPane.showMessageDialog(null, "Please select a SFC first!\n", "Error: no SFC", JOptionPane.ERROR_MESSAGE);
           return;
         }
@@ -818,6 +842,7 @@ System.out.print("\nlaunching SMVTranslator ...");
       else if (activeProject.isChecked()==true)
       {
         try{
+	        SFC _sfc = activeProject.getSFC();
 		Simulator sim = new Simulator(_sfc);	// Simulator erzeugen
 
 		sim.Initialize();						// Simulator initialisieren
@@ -838,7 +863,7 @@ System.out.print("\nlaunching SMVTranslator ...");
                           "Error", JOptionPane.ERROR_MESSAGE);}
       }
       else {
-          response = SnotOptionPane.showConfirmDialog(null, "The SFC \""+project.getName()+"\" needs to be checked\nbefore the SMV translator can be run!\n\nDo you want to check the SFC now?\n",
+          response = SnotOptionPane.showConfirmDialog(null, "The SFC \""+activeProject.getName()+"\" needs to be checked\nbefore the SMV translator can be run!\n\nDo you want to check the SFC now?\n",
                                             "Warning: SFC is not checked", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
           if (response == JOptionPane.OK_OPTION)
               CheckSFCActionPerformed(null);
@@ -1172,7 +1197,7 @@ System.out.print("\n"+ex.getClass());
 
   private boolean SaveAsSessionActionPerformed(java.awt.event.ActionEvent evt) {
       int response;
-      boolean status = false;
+      //boolean status = false;
       File file = null;
 
       JFileChooser chooser = new JFileChooser();
@@ -1321,6 +1346,7 @@ System.out.print(ex.getClass());
         enableSession(false);
 	enableFilesToolBar(false);
         session = null;
+	activeProject = null;
         this.setTitle(TITLE);
 System.out.print("\nSession is closed!");
     }
