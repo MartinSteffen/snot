@@ -9,18 +9,14 @@ import javax.swing.*;
 import absynt.*;
 import editor.StepPosition;
 
- public class DrawSFCPanel extends JPanel { 
+public class DrawSFCPanel extends JPanel { 
 
-     private SFC sfc;
+     private Editor editor;
+     private SFC sfc;     
 
-     public int editorAction;
-
-     final static public int SELECT = 0;
-     final static public int INSERT_STEP = 1;
-     final static public int INSERT_TRANS = 2;
-     final static public int DELETE = 3;
      
-     private Step SourceStep;
+     
+     private Step SourceStep;     
 
      private void paintTrans(Transition Trans, Graphics2D G2D) { 
       Step step; 
@@ -55,14 +51,24 @@ import editor.StepPosition;
        */
     } 
  
-    private void paintStep(Step step, Graphics2D G2D) { 
+    double StepBorder = 8.0f;
+    
+    public void paintStep(Step step, Graphics2D G2D, boolean selected) {
       StepPosition StepPos = (StepPosition)(step.pos);
       Rectangle2D StrBounds = G2D.getFontMetrics().getStringBounds(step.name, G2D);
       LineMetrics LnMetrics = G2D.getFontMetrics().getLineMetrics(step.name, G2D);
-      StepPos.Bounds.setFrame(StepPos.Bounds.getX(), StepPos.Bounds.getY(), StrBounds.getWidth(), StrBounds.getHeight());
-      G2D.draw(StepPos.Bounds); 
-      G2D.drawString(step.name, 
-        (new Double(StepPos.Bounds.getX())).floatValue(), (new Double(StepPos.Bounds.getMaxY() - LnMetrics.getDescent())).floatValue()); 
+      StepPos.Bounds.setFrame(StepPos.Bounds.getX(), StepPos.Bounds.getY(), StrBounds.getWidth() + 2*StepBorder, StrBounds.getHeight() + 2*StepBorder);
+      /* Rectangle ClipRect = G2D.getClipBounds();
+      if (ClipRect != null && ClipRect.intersects(StepPos.Bounds)) { */
+        if (selected) G2D.setColor(Color.blue); else G2D.setColor(Color.black);
+        G2D.draw(StepPos.Bounds); 
+        G2D.drawString(step.name, 
+          (new Double(StepPos.Bounds.getX() + StepBorder)).floatValue(), (new Double(StepPos.Bounds.getMaxY() - LnMetrics.getDescent() - StepBorder)).floatValue()); 
+      /* }  */
+    }
+    
+    public void paintStep(Step step, Graphics2D G2D) { 
+      paintStep(step, G2D, editor.SelectedLL.contains(step));
     }
       
     
@@ -99,63 +105,8 @@ import editor.StepPosition;
       //G2D.draw(Path); 
     } 
 
-    public DrawSFCPanel(SFC anSFC) {
-      sfc = anSFC;
+    public DrawSFCPanel(Editor _editor) {
+      editor = _editor;  sfc = editor.getSFC();
       enableEvents(AWTEvent.MOUSE_EVENT_MASK);
-    } 
-
-    private Step checkStepHit(double PosX, double PosY) {
-      LinkedList stepsLL = sfc.steps;
-      Step step;
-      StepPosition StepPos;
-       
-      if (stepsLL != null) {
-        for (int i=0; i < stepsLL.size(); i++) { 
-          step = (Step)stepsLL.get(i); 
-          StepPos = (StepPosition)(step.pos);
-          if (StepPos.Bounds.contains(new Point2D.Double(PosX, PosY))) return(step);          
-        }   
-      }
-      return(null);                
     }
-    
-    protected void processMouseEvent(MouseEvent e) {      
-      Step step;
-	//super.processMouseEvent(e);
-      if (e.getID() == MouseEvent.MOUSE_PRESSED) {
-        switch (editorAction) {
-          case INSERT_STEP : { 
-            step = new Step("Neuer Step");        
-            step.pos = new StepPosition((new Integer(e.getX())).doubleValue(), (new Integer(e.getY())).doubleValue(), 100f, 100f);
-            sfc.steps.add(step);
-          }
-          case INSERT_TRANS : {
-            SourceStep = checkStepHit((new Integer(e.getX())).doubleValue(), (new Integer(e.getY())).doubleValue());
-          }  
-        }
-	repaint();	                                            
-      }
-      if (e.getID() == MouseEvent.MOUSE_RELEASED) {
-        switch (editorAction) {
-            case INSERT_TRANS : {
-                if (SourceStep != null) {
-                    step = checkStepHit((new Integer(e.getX())).doubleValue(), (new Integer(e.getY())).doubleValue());
-                    if (step == null) {
-                      SourceStep = null;
-                      System.out.println("DestStep = null");
-                    } else { 
-                        LinkedList SourceSteps = new LinkedList();
-                        SourceSteps.add(SourceStep);
-                        LinkedList DestSteps = new LinkedList();
-                        DestSteps.add(step);
-                        Transition Trans = new Transition(SourceSteps, null, DestSteps);
-                        sfc.transs.add(Trans);
-                        repaint();
-                    }                    
-                } // if (SourceStep ... 
-                else System.out.println("SourceStep = null");
-            }
-        } // switch     
-      }  // if
-    } 
-  } 
+} 

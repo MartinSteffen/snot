@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.*; 
 import java.awt.geom.*; 
 import javax.swing.*; 
+import javax.swing.event.*; 
 import absynt.*; 
 import editor.DrawSFCPanel;
  
@@ -17,14 +18,57 @@ import editor.DrawSFCPanel;
  
 public class Editor extends JFrame { 
 
+  // ----------------------- visuelle Komponenten ------------------------------
+  
+  private JToolBar ToolBar; 
+  private JScrollPane DrawScrPane; 
+  private DrawSFCPanel DrawPanel; 
+  private JScrollPane DataScrPane; 
+  private JPanel DataPanel, DataDeclPanel, DataActPanel; 
+  private JTable DataDeclTable, DataActTable;
+  private JToggleButton SelectToggleBtn; 
+  
+  // --------------------------- Editor-Action ---------------------------------
+  // gibt an, mit welcher Aktion der Editor bei folgenden MausEvents im SFCPabnel
+  // reagiert (wird geändert durch die Buttons in der ToolBar):
+  
+  private int editorAction;
+
+  final static public int SELECT = 0;
+  final static public int INSERT_STEP = 1;
+  final static public int INSERT_TRANS = 2;
+  final static public int DELETE = 3;
+   
+  private MouseInputAdapter SFCPanelsMouseAdapter;
+   
+  private void setEditorAction(int newEditAct) {
+    // Wenn Button gedrückt wird, der schon aktiv ist, dann wird das wie "Ausschalten"
+    // behandelt und der "Grundzustand" SELECT wird aktiviert:
+    if (newEditAct != SELECT && newEditAct == editorAction) 
+      SelectToggleBtn.doClick();
+    else
+      editorAction = newEditAct;
+    DrawPanel.removeMouseListener(SFCPanelsMouseAdapter);
+    DrawPanel.removeMouseMotionListener(SFCPanelsMouseAdapter);
+    switch (editorAction) {
+      case SELECT       : SFCPanelsMouseAdapter = new MASelect();  break;
+      case INSERT_STEP  : SFCPanelsMouseAdapter = new MAInsertStep();  break;
+      case INSERT_TRANS : SFCPanelsMouseAdapter = new MAInsertTrans();  break;
+      case DELETE       : SFCPanelsMouseAdapter = new MADelete();  break;
+    }
+    DrawPanel.addMouseListener(SFCPanelsMouseAdapter);
+    DrawPanel.addMouseMotionListener(SFCPanelsMouseAdapter);
+  }
+  
+  // ----------------- Actions für Buttons in der ToolBar ----------------------
+       
   private class ActSelect extends AbstractAction { 
     public ActSelect() { 
       super("Select");  
     } 
  
     public void actionPerformed(ActionEvent e) { 
-      System.out.println("Select");  
-      DrawPanel.editorAction = DrawSFCPanel.SELECT;
+      setEditorAction(SELECT);
     } 
   } 
  
@@ -34,11 +78,7 @@ public class Editor extends JFrame {
     } 
  
     public void actionPerformed(ActionEvent e) { 
-      System.out.println("InsertStep");
-      if (DrawPanel.editorAction == DrawSFCPanel.INSERT_STEP)
-        SelectToggleBtn.doClick();
-      else
-        DrawPanel.editorAction = DrawSFCPanel.INSERT_STEP;
+      setEditorAction(INSERT_STEP);
     } 
   } 
    
@@ -48,11 +88,7 @@ public class Editor extends JFrame {
     } 
  
     public void actionPerformed(ActionEvent e) { 
-      System.out.println("InsertTrans");
-      if (DrawPanel.editorAction == DrawSFCPanel.INSERT_TRANS)
-        SelectToggleBtn.doClick();
-      else
-        DrawPanel.editorAction = DrawSFCPanel.INSERT_TRANS;
+      setEditorAction(INSERT_TRANS);
     } 
   } 
    
@@ -63,26 +99,151 @@ public class Editor extends JFrame {
  
     public void actionPerformed(ActionEvent e) { 
       System.out.println("Delete"); 
-      if (DrawPanel.editorAction == DrawSFCPanel.DELETE)
-        SelectToggleBtn.doClick();
-      else
-        DrawPanel.editorAction = DrawSFCPanel.DELETE;
+      setEditorAction(DELETE);
     } 
   } 
  
- 
- 
-  private JToolBar ToolBar; 
-  private JScrollPane DrawScrPane; 
-  private DrawSFCPanel DrawPanel; 
-  private JScrollPane DataScrPane; 
-  private JPanel DataPanel, DataDeclPanel, DataActPanel; 
-  private JTable DataDeclTable, DataActTable;
-  private JToggleButton SelectToggleBtn; 
+  // ----------- MouseAdapter für SFCPanel abhängig von editAction -------------
+  private Step checkStepHit(double PosX, double PosY) {
+    LinkedList stepsLL = sfc.steps;
+    Step step;
+    StepPosition StepPos;
+       
+    if (stepsLL != null) {
+      for (int i=0; i < stepsLL.size(); i++) { 
+        step = (Step)stepsLL.get(i); 
+        StepPos = (StepPosition)(step.pos);
+        if (StepPos.Bounds.contains(new Point2D.Double(PosX, PosY))) return(step);          
+      }   
+    }
+    return(null);                
+  }
+    
+  protected boolean isStepNameHit(Step step, double PosX, double PosY) {
+    StepPosition StepPos = (StepPosition)(step.pos);
+    return (StepPos.Bounds.contains(PosX - DrawPanel.StepBorder, PosY - DrawPanel.StepBorder, 2*DrawPanel.StepBorder, 2*DrawPanel.StepBorder));
+  }
+  
+  // (MA für _M_ouse_A_dapter)
+
+  // MouseAdapter für den "editorAction-Modus" SELECT
+  private class MASelect extends MouseInputAdapter {
+    Rectangle SelectedRect;
+    boolean MouseDragging = false;
+    public void mousePressed(MouseEvent e) {
+      double mouseX = (new Integer(e.getX())).doubleValue();
+      double mouseY = (new Integer(e.getY())).doubleValue();
+      Step step = checkStepHit(mouseX, mouseY);
+      if (step != null) {
+        if (e.isShiftDown()) 
+          switchSelected(step); 
+        else {
+          setSelected(step);         
+          if (isStepNameHit(step, mouseX, mouseY)) editStepName(step);
+        }
+      } else 
+        setSelected(null);  // kein Step selektiert
+      // Selektionsrechteck fuer Verschiebung erstellen (als Union der StepPosition-Rechtecke):
+      SelectedRect = new Rectangle();
+      if (!SelectedLL.isEmpty()) {
+        StepPosition StepPos = (StepPosition)(((Step)(SelectedLL.getFirst())).pos);
+        SelectedRect.setBounds(StepPos.Bounds.getBounds());
+      }
+      for (int i=0; i < SelectedLL.size(); i++) {
+        StepPosition StepPos = (StepPosition)(((Step)(SelectedLL.get(i))).pos);
+        SelectedRect = SelectedRect.union(StepPos.Bounds.getBounds());
+      }
+      SelectedRect.setLocation(0, 0);
+      
+    }
+    
+    public void mouseDragged(MouseEvent e) {
+      if (SelectedRect != null) {        
+        double mouseX = (new Integer(e.getX())).doubleValue();
+        double mouseY = (new Integer(e.getY())).doubleValue();
+        Graphics2D G2D = (Graphics2D)(((JComponent)(e.getSource())).getGraphics());
+        G2D.setXORMode(Color.green);
+        if (MouseDragging) G2D.draw(SelectedRect); 
+        if (SelectedLL.isEmpty()) {
+          // Rechteck zum selektieren aufziehen:
+          
+        } else {
+          // Selektion verschieben;
+          SelectedRect.setLocation(e.getX(), e.getY());
+          G2D.draw(SelectedRect);
+        }        
+        MouseDragging = true;
+      }
+    }
+    
+    public void mouseReleased(MouseEvent e) {
+      if (MouseDragging) {
+        Graphics2D G2D = (Graphics2D)(((JComponent)(e.getSource())).getGraphics());
+        G2D.setXORMode(Color.green);  G2D.draw(SelectedRect);
+        G2D.setPaintMode();  
+      }
+      MouseDragging = false;  SelectedRect = null;
+    }
+  }
+  
+  
+  // MouseAdapter für den "editorAction"-Modus INSERT_STEP
+  private class MAInsertStep extends MouseInputAdapter {
+    public void mousePressed(MouseEvent e) {
+      double mouseX = (new Integer(e.getX())).doubleValue();
+      double mouseY = (new Integer(e.getY())).doubleValue();
+      Step step = new Step("Neuer Step");
+      step.pos = new StepPosition(mouseX, mouseY, 100f, 100f);
+      sfc.steps.add(step);  DrawPanel.repaint();
+    }        
+  }
+  
+  // MouseAdapter für den "editorAction"-Modus INSERT_TRANS
+  private class MAInsertTrans extends MouseInputAdapter {
+    Step SourceStep;
+    
+    public void mousePressed(MouseEvent e) {
+      double mouseX = (new Integer(e.getX())).doubleValue();
+      double mouseY = (new Integer(e.getY())).doubleValue();
+      SourceStep = checkStepHit(mouseX, mouseY);
+    }
+    
+    public void mouseReleased(MouseEvent e) {
+      double mouseX = (new Integer(e.getX())).doubleValue();
+      double mouseY = (new Integer(e.getY())).doubleValue();
+      if (SourceStep != null) {
+        Step step = checkStepHit(mouseX, mouseY);
+        if (step == null) {
+          SourceStep = null;
+          System.out.println("DestStep = null");
+        } else { 
+          LinkedList SourceSteps = new LinkedList();
+          SourceSteps.add(SourceStep);
+          LinkedList DestSteps = new LinkedList();
+          DestSteps.add(step);
+          Transition Trans = new Transition(SourceSteps, null, DestSteps);
+          sfc.transs.add(Trans);  DrawPanel.repaint();
+        }                    
+      } // if (SourceStep ... 
+    else 
+      System.out.println("SourceStep = null");       
+    }
+  }
+  
+  // MouseAdapter für den "editorAction"-Modus DELETE
+  private class MADelete extends MouseInputAdapter {
+    public void mousePressed(MouseEvent e) {
+      double mouseX = (new Integer(e.getX())).doubleValue();
+      double mouseY = (new Integer(e.getY())).doubleValue();
+      Step step = checkStepHit(mouseX, mouseY);
+      // if (step != null) sfc.steps.delete(step);  // *** Transitions müssen auch noch raus
+    }
+  }
+  
+  public LinkedList SelectedLL;  // Liste der momentan selektierten Elemente (für Verschieben, Löschen usw.)
  
   private String strName; 
-  private boolean boolModified; 
-  private boolean boolChecked; 
+  private boolean boolModified;   
   private SFC sfc; 
 
   
@@ -99,7 +260,7 @@ public class Editor extends JFrame {
   final public boolean HILIGHT_ON = true; 
  
   /** 
-   * setzt den Dateinamen 
+   * setzt den Namen 
    * (nur zur Anzeige in der Titelleise, Datei-IO macht ansonsten die GUI-Gruppe) 
    */ 
   public void setSFCName(String Filename) { 
@@ -174,60 +335,69 @@ public class Editor extends JFrame {
     setSFCName("NoName"); 
     setSize(600, 420); 
     setSFC(anSFC); 
+    SelectedLL = new LinkedList();
  
-    // ToolBar: 
-    ToolBar = new JToolBar();     
-    ButtonGroup BtnGroup = new ButtonGroup();
+    // -- TOOL-BAR: ------------------------------------------------------------
+    // beinhaltet die Buttons, mit denen der User eine Aktion wählt
+    ToolBar = new JToolBar();
     SelectToggleBtn = new JToggleButton(new ActSelect());
+    // Die Buttons InsertStep, InsertTrans, Select, usw. geben die momentan 
+    // gewählte Aktion an, d.h. die Buttons schließen sich gegenseitig aus.
+    // Also: Buttons in eine ButtonGroup ...
+    ButtonGroup BtnGroup = new ButtonGroup();
     BtnGroup.add(SelectToggleBtn);
     BtnGroup.add(new JToggleButton(new ActInsertStep()));
     BtnGroup.add(new JToggleButton(new ActInsertTrans()));
     BtnGroup.add(new JToggleButton(new ActDeleteAbsynt()));    
-    
+    // ... UND natürlich in die ToolBar:
     Enumeration Enum = BtnGroup.getElements();
     while (Enum.hasMoreElements()) 
       ToolBar.add((JToggleButton)Enum.nextElement()); 
-      
-      /*
-    ToolBar.add(new JToggleButton(new ActInsertTrans())); 
-    ToolBar.add(new JToggleButton(new ActDeleteAbsynt())); 
-      */
-    ToolBar.setSize(400, 80); 
+    // Jetzt ToolBar ins Fenster:      
+    //ToolBar.setSize(400, 80); 
     getContentPane().add(ToolBar, BorderLayout.NORTH);     
     
- 
+    // -- DATA-PANEL: ----------------------------------------------------------
     // Panel für Variablen- / Aktionen-Deklaration: 
     DataPanel = new JPanel(); 
     DataPanel.setSize(200, 0); 
-    DataPanel.setLayout(new GridLayout(0, 1)); 
+    DataPanel.setLayout(new GridLayout(0, 1));
+    // 1. DataDeclPanel beinhaltet die Deklarationen (obere Hälfte des DataPanels):
     DataDeclPanel = new JPanel(); 
-    DataDeclPanel.setLayout(new BorderLayout()); 
+    DataDeclPanel.setLayout(new BorderLayout());
+    //   a) "Titelleiste":
     DataDeclPanel.add(new JLabel("Deklarationen:"), BorderLayout.NORTH); 
+    //   b) Tabelle mit Dekl.:
     String[] Header = {"Name", "Typ", "Wert"};
     String[][] Values = {{"x", "bool", "false"}};
-    DataDeclTable = new JTable(Values, Header); 
-    // DataDeclTable.setTableHeader(new JTableHeader()); 
+    DataDeclTable = new JTable(Values, Header);     
     DataDeclPanel.add(new JScrollPane(DataDeclTable), BorderLayout.CENTER); 
+    //   c) Buttons zum Löschen/Hinzufügen von Dekl.:
     DataDeclPanel.add(new JButton("Neu"), BorderLayout.SOUTH); 
-    DataDeclPanel.add(new JButton("Entf"), BorderLayout.SOUTH); 
-    DataPanel.add(DataDeclPanel); 
+    DataDeclPanel.add(new JButton("Entf"), BorderLayout.SOUTH);
+    //   d) nun zum DataPanel hinzufügen:
+    DataPanel.add(DataDeclPanel);
+    // 2. DataActPanel beinhaltet die Aktionen (unter Hälfte des DataPanels):
     DataActPanel = new JPanel(); 
     DataActPanel.setLayout(new BorderLayout()); 
+    //   a) "Titelleiste":
     DataActPanel.add(new JLabel("Aktionen:"), BorderLayout.NORTH); 
-    DataActTable = new JTable(1, 2); 
-    // DataActTable.setTableHeader(new JTableHeader()); 
-    DataActPanel.add(DataActTable, BorderLayout.CENTER); 
+    //   b) Tabelle mit Aktionen:
+    DataActTable = new JTable(1, 2);     
+    DataActPanel.add(new JScrollPane(DataActTable), BorderLayout.CENTER); 
+    //   c) Buttons zum Löschen/Hinzufügen von Aktionen:
     DataActPanel.add(new JButton("Neu"), BorderLayout.SOUTH); 
     DataActPanel.add(new JButton("Entf"), BorderLayout.SOUTH); 
+    //   d) nun zum DataPanel hinzufügen:
     DataPanel.add(DataActPanel); 
      
-    // DataPanel.add(new JTable, BorderLayout.NORTH); 
-    DataScrPane = new JScrollPane(DataPanel); 
-    DataScrPane.setSize(200, 0); 
-    getContentPane().add(DataScrPane, BorderLayout.WEST); 
+    
+    //DataScrPane = new JScrollPane(DataPanel); 
+    //DataScrPane.setSize(200, 0); 
+    getContentPane().add(DataPanel, BorderLayout.WEST); 
  
     // Zeichenfläche für SFC: 
-    DrawPanel = new DrawSFCPanel(sfc); 
+    DrawPanel = new DrawSFCPanel(this); 
     DrawPanel.setBackground(Color.white); 
  
     DrawScrPane = new JScrollPane(DrawPanel); 
@@ -245,27 +415,84 @@ public class Editor extends JFrame {
   public void highlight_state(Absynt Element, boolean Value) { 
   } 
  
-  private void setSelected(Absynt Element, boolean Value) { 
+  private void setSelected(Absynt Element) {
+    // *** momentan nur für Steps:
+    // 1. alle vorher selektierten Elemente aus SelectedLL raus und neu (unselektiert) zeichnen:
+    while (SelectedLL.size() > 0) 
+      DrawPanel.paintStep((Step)SelectedLL.removeFirst(), (Graphics2D)DrawPanel.getGraphics(), false);         
+    // 2. Element in SelectedLL rein und neu (selektiert) zeichnen:
+    SelectedLL.add(Element);
+    DrawPanel.paintStep((Step)(Element), (Graphics2D)DrawPanel.getGraphics(), true); 
   } 
  
+  private void switchSelected(Absynt Element) {
+    // *** momentan nur für Steps:
+    if (SelectedLL.contains(Element)) {
+      SelectedLL.remove(Element);
+      DrawPanel.paintStep((Step)(Element), (Graphics2D)DrawPanel.getGraphics(), false); 
+    } else {
+      SelectedLL.add(Element);
+      DrawPanel.paintStep((Step)(Element), (Graphics2D)DrawPanel.getGraphics(), true); 
+    }    
+  }
+  
+  public void editStepName(Step step) {    
+    String newStepName = (new JOptionPane()).showInputDialog("Please input a new step-name");
+    if (newStepName != null && newStepName != "") {
+      step.name = newStepName;
+      /*  ***
+      Rectangle Rect = ((StepPosition)(step.pos)).Bounds.getBounds();
+      Rect.setSize((new Double(Rect.getWidth())).intValue() + 1, (new Double(Rect.getHeight())).intValue() + 1);
+      DrawPanel.repaint(Rect);      
+      DrawPanel.paintStep(step, (Graphics2D)DrawPanel.getGraphics());
+      */
+      DrawPanel.repaint();  // *** immer alles neuzeichnen???
+    }
+  }
+  
+  public void deleteStep(Step step) {
+    // 1. Step aus der Selectedliste:
+    if (SelectedLL.contains(step)) SelectedLL.remove(step);
+    // 2. Step aus Stepliste des SFC:
+    sfc.steps.remove(step);
+    // 3. Alle Transitionen mit diesem Step (als Start oder Ziel) raus:
+    Transition Trans;
+    int i=0; 
+    while (i < sfc.transs.size()) {
+      Trans = (Transition)(sfc.transs.get(i));
+      if (Trans.source.contains(step) || Trans.target.contains(step)) sfc.transs.remove(i); else i++;
+    }
+    DrawPanel.repaint();
+  }
+  
+  public void deleteSelection() {
+    while (SelectedLL.size() > 0) deleteStep((Step)SelectedLL.getFirst());      
+  }
+  
   /** 
-   * gibt an, ob der SFC seit dem letzten Speichern/Laden geändert wurde 
+   * gibt an, ob der SFC (seit dem letzten Speichern/Laden) geändert wurde 
    */ 
   public boolean isModified() { 
     return(boolModified); 
   } 
  
-  public void setModified(boolean Value) { 
-    boolModified = Value; 
-    if (boolModified) boolChecked = false; 
+  private void setModified(boolean Value) { 
+    boolModified = Value;     
   } 
   
+  /** 
+   * hiermit besteht die Möglichkeit, das Modified-Flag zurückzusetzen
+   */   
   public void clearModified() {
     setModified(false);
   }
   
   public SFC getSFC() {
       return(sfc);
+  }
+  
+  protected void processKeyEvent(KeyEvent e) {
+    if (e.getKeyCode() == KeyEvent.VK_DELETE) deleteSelection();
   }
  
 } 
