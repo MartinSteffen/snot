@@ -1,6 +1,6 @@
 #----------------------------------------------------------------------
 # developers' top-level Makefile for the Siff project
-# $Id: Makefile,v 1.4 2001-04-24 10:08:50 swprakt Exp $
+# $Id: Makefile,v 1.5 2001-05-04 08:59:35 swprakt Exp $
 #----------------------------------------------------------------------
 
 # The targets installing gobal web-infos can be executed only
@@ -34,13 +34,11 @@ packets:
 	(cd ./utils; make)
 	(cd ./editor; make)
 	(cd ./gui; make)
-	(cd ./checks1; make) # -->  compilation error
-#	(cd ./checks2; make) -->  No code, no compilation
+	(cd ./checks; make)
 	(cd ./parser; make)
 	(cd ./simulator; make)
 	(cd ./modcheck; make)
-	(cd ./position1; make)
-	(cd ./position2; make)
+	(cd ./position; make)
 
 
 
