@@ -255,7 +255,7 @@ public class Editor extends JFrame {
     return(boolModified); 
   } 
  
-  private void setModified(boolean Value) { 
+  public void setModified(boolean Value) { 
     boolModified = Value; 
     if (boolModified) boolChecked = false; 
   } 

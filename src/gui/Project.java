@@ -18,7 +18,7 @@ import editor.Editor;
  *  It also keeps the name and status flags of the SFC.
  *
  * @author  Hans Theman and Ingo Schiller
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class Project extends java.lang.Object implements Serializable {
 
@@ -153,7 +153,7 @@ public class Project extends java.lang.Object implements Serializable {
         name = _name;
         if (editor != null)
 //            editor.setFilename(name);
-            editor.setName(name);
+            editor.setSFCName(name);
     }
 
     /** Sets the editor in the project.
