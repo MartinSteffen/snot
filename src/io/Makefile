@@ -16,7 +16,7 @@ Main.class: Parser.class Main.java
 	javac Main.java
 
 Parser.class:	Parser.java Yylex.java ParseException.java
-	javac Parser.java Sym.java Yylex.java ParseException.java
+	javac Parser.java sym.java Yylex.java ParseException.java
 
 Yylex.java:		SFC.lex
 	java JLex.Main SFC.lex >$(LEXLOGFILE)
@@ -24,7 +24,7 @@ Yylex.java:		SFC.lex
 
 
 Parser.java:	SFC.cup
-	java java_cup.Main -symbols Sym -parser Parser -nonterms -package $(PACKAGE) SFC.cup 
+	java java_cup.Main -symbols sym -parser Parser -nonterms -package $(PACKAGE) SFC.cup 
 
 
 
@@ -33,9 +33,9 @@ tests:
 	cd test; make all
 
 clean:
-	\rm -f *.class *~ Yylex.java Scanner.lex.java Sym.java Parser.java $(LEXLOGFILE) $(CUPLOGFILE)
+	\rm -f *.class *~ Yylex.java Scanner.lex.java sym.java Parser.java $(LEXLOGFILE) $(CUPLOGFILE)
 
-localdoc:	parser.java	Sym.java
+localdoc:	parser.java	sym.java
 	javadoc  -version -author -d $(LOCALDOCDIR) *.java
 
 www:
@@ -43,6 +43,9 @@ www:
 
 # ------------------------------------------------------------------
 #	$Log: not supported by cvs2svn $
+#	Revision 1.5  2001/06/30 15:03:22  swprakt
+#	OK
+#	
 #	Revision 1.4  2001/06/30 13:44:06  swprakt
 #	OK
 #	

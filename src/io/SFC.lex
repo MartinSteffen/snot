@@ -1,5 +1,4 @@
 package io;
-
 import java_cup.runtime.Symbol;
 
 %%
@@ -13,7 +12,7 @@ space   = [\ \t\n\b\015]+
 letter  = [A-Za-z_]
 digit   = [0-9]
 number  = {digit}+
-name    = ({letter}({letter}|{digit})*)
+ident   = ({letter}({letter}|{digit})*)
 %%
 
 
@@ -55,6 +54,6 @@ name    = ({letter}({letter}|{digit})*)
 "!="                  { return new Symbol(sym.NEQ);             }
 
 
-{name}                { return new Symbol(sym.IDENT, yytext()); }
+{ident}                { return new Symbol(sym.IDENT, yytext()); }
 {number}              { return new Symbol(sym.INTEGER, new Integer(yytext())); }
 .                     { System.err.println("[Modul io] in line "+yyline+": unknow char: "+yytext()); }

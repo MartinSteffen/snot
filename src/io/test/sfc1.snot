@@ -9,6 +9,8 @@ begin
 	  z1: int  = true
 
   ];
+
+  init = s1
 end
 
 
