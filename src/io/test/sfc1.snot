@@ -1,10 +1,12 @@
-
-
+// Example sfc 1
 
 begin 
  vars = [ 
 
-	  x : bool = true
+	  x : bool = true;
+	  y : bool = false;
+	  z : int  = 5;
+	  z1: int  = true
 
   ];
 end
