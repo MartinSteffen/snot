@@ -10,7 +10,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.41 2001-07-10 14:10:35 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.42 2001-07-10 14:25:34 swprakt Exp $
  *
  */
 
@@ -209,6 +209,8 @@ public class Snotcheck{
 		    for (int j=i+1; j < decList.size(); j++){
 			decl2 = (Declaration)decList.get(j);                 //durchgehen aller nachfolgenden Deklarationen
 			var2 = decl2.var;
+			if (var.name == null || var2.name == null){
+			    throw new DecListFailure(decl, "One or more variables have no name!");}
 			if (var.name == var2.name){            //vergleich aller Variablennamen
 			    throw new DecListFailure(decl, "This variable is declared twice!");
 			}
@@ -515,9 +517,12 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.41 2001-07-10 14:10:35 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.42 2001-07-10 14:25:34 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.41  2001/07/10 14:10:35  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.40  2001/07/10 14:07:13  swprakt
 //	*** empty log message ***
 //	
