@@ -1,5 +1,5 @@
 ###########################################################
-## $Id: Errors.txt,v 1.9 2001-06-05 14:27:47 swprakt Exp $
+## $Id: Errors.txt,v 1.10 2001-06-05 14:33:15 swprakt Exp $
 ###########################################################
 
 
@@ -52,16 +52,6 @@
 
 
 
-#Number: 	4
-#Reporter:   	Martin Steffen (ms)
-#package:       gui
-#Subject:	Feature request
-#Status:        reported
-#Description:   Warum gibt es keinen Knopf zum Verlassen des ganzen 
-
-
-
-
 
 
 #Number: 	2
@@ -103,5 +93,18 @@
 		                                   ^^
 
                  Er scheint das MouseEvent nicht zu finden
+
+
+
+#Number: 	4
+#Reporter:   	Martin Steffen (ms)
+#package:       gui
+#Subject:	Feature request
+#Status:        ok, das ist durch Fehler 6 abgedeckt,
+		der Knopf wird nur nicht angezeigt
+#Description:   Warum gibt es keinen Knopf zum Verlassen des ganzen 
+
+
+
 
 
