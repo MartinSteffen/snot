@@ -57,12 +57,30 @@ public class DrawSFCPanel extends JPanel {
         // einfache Transitionen:     
         TransPosition transPos = (TransPosition)Trans.pos;
         if (transPos != null && transPos.autoAlign && transPos.transAlignInfo != null) {      	
-          deltaY = transPos.transAlignInfo.bendPos;
+          float dy = (new Double(transPos.transAlignInfo.bendPos)).floatValue();
+          float sx = (new Double(SourceRect.getCenterX())).floatValue();
+          float sy = (new Double(SourceRect.getCenterY())).floatValue();
+          float tx = (new Double(DestRect.getCenterX())).floatValue();
+          float ty = (new Double(DestRect.getCenterY())).floatValue();
         
-          TransLine.moveTo((new Double(SourceRect.getCenterX())).floatValue(), (new Double(SourceRect.getCenterY())).floatValue());
-          TransLine.lineTo((new Double(SourceRect.getCenterX())).floatValue(), (new Double(deltaY)).floatValue());
-          TransLine.lineTo((new Double(DestRect.getCenterX())).floatValue(), (new Double(deltaY)).floatValue());
-          TransLine.lineTo((new Double(DestRect.getCenterX())).floatValue(),(new Double(DestRect.getCenterY())).floatValue());
+          TransLine.moveTo(sx, sy);
+          if (ty < sy ) {  // Transition von unten nach oben          
+            sy = (new Double(SourceRect.getMaxY())).floatValue() + (new Double(StepBorder)).floatValue();
+            TransLine.lineTo(sx, sy);
+            sx = (new Double(SourceRect.getMaxX())).floatValue() + (new Double(StepBorder)).floatValue();
+            TransLine.lineTo(sx, sy);
+            TransLine.lineTo(sx, dy);
+            float tx1 = (new Double(DestRect.getMaxX())).floatValue() + (new Double(StepBorder)).floatValue();
+            TransLine.lineTo(tx1, dy);
+            float ty1 = (new Double(DestRect.getMinY())).floatValue() - (new Double(StepBorder)).floatValue();
+            TransLine.lineTo(tx1, ty1);
+            TransLine.lineTo(tx, ty1);
+            TransLine.lineTo(tx, ty);                      
+          } else { // Transition von oben nach unten:
+            TransLine.lineTo(sx, dy);
+            TransLine.lineTo(tx, dy);
+            TransLine.lineTo(tx, ty);
+          }
           
           G2D.setColor(Color.black);	      
           G2D.draw(TransLine);
@@ -91,7 +109,7 @@ public class DrawSFCPanel extends JPanel {
  
     double StepBorder = 8.0f;
     
-    public void paintStep(Step step, Graphics2D G2D, boolean selected) {
+    public void paintStep(Step step, Graphics2D G2D, boolean selected, boolean isSrcStep, boolean isTrgtStep) {
       StepPosition StepPos = (StepPosition)(step.pos);
       Rectangle2D StrBounds = G2D.getFontMetrics().getStringBounds(step.name, G2D);
       LineMetrics LnMetrics = G2D.getFontMetrics().getLineMetrics(step.name, G2D);
@@ -103,6 +121,14 @@ public class DrawSFCPanel extends JPanel {
           G2D.setPaint(Color.lightGray);
           G2D.fill(StepPos.Bounds);
         }
+        if (isSrcStep) { 
+          G2D.setPaint(Color.green);
+          G2D.fill(StepPos.Bounds);
+        } else
+        if (isTrgtStep) { 
+          G2D.setPaint(Color.red);
+          G2D.fill(StepPos.Bounds);
+        }
         G2D.setPaint(Color.black);
         G2D.draw(StepPos.Bounds);        
         G2D.drawString(step.name, 
@@ -111,7 +137,8 @@ public class DrawSFCPanel extends JPanel {
     }
     
     public void paintStep(Step step, Graphics2D G2D) { 
-      paintStep(step, G2D, editor.SelectedLL.contains(step));
+      paintStep(step, G2D, 
+        editor.SelectedLL.contains(step), editor.sourceSteps.contains(step), editor.targetSteps.contains(step));
     }
       
     

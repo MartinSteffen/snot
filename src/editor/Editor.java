@@ -87,8 +87,8 @@ public class Editor extends JFrame implements ActionListener {
 
   final static public int SELECT = 0;
   final static public int INSERT_STEP = 1;
-  final static public int INSERT_TRANS = 2;
-  final static public int DELETE = 3;
+  final static public int INSERT_TRANS1 = 2;
+  final static public int INSERT_TRANS2 = 3;
    
   private MouseInputAdapter SFCPanelsMouseAdapter;
    
@@ -102,10 +102,10 @@ public class Editor extends JFrame implements ActionListener {
     DrawPanel.removeMouseListener(SFCPanelsMouseAdapter);
     DrawPanel.removeMouseMotionListener(SFCPanelsMouseAdapter);
     switch (editorAction) {
-      case SELECT       : SFCPanelsMouseAdapter = new MASelect();  break;
-      case INSERT_STEP  : SFCPanelsMouseAdapter = new MAInsertStep();  break;
-      case INSERT_TRANS : SFCPanelsMouseAdapter = new MAInsertTrans();  break;
-      case DELETE       : SFCPanelsMouseAdapter = new MADelete();  break;
+      case SELECT        : SFCPanelsMouseAdapter = new MASelect();  break;
+      case INSERT_STEP   : SFCPanelsMouseAdapter = new MAInsertStep();  break;
+      case INSERT_TRANS1 : SFCPanelsMouseAdapter = new MAInsSrcTrans();  break;
+      case INSERT_TRANS2 : SFCPanelsMouseAdapter = new MAInsTrgtTrans();  break;      
     }
     DrawPanel.addMouseListener(SFCPanelsMouseAdapter);
     DrawPanel.addMouseMotionListener(SFCPanelsMouseAdapter);
@@ -113,6 +113,9 @@ public class Editor extends JFrame implements ActionListener {
   
   // ----------------- Actions für Buttons in der ToolBar ----------------------
        
+  public StepLL sourceSteps = new StepLL();  // Steps aus denen eine Transition entstehen soll
+  public StepLL targetSteps = new StepLL();
+         
   private class ActSelect extends AbstractAction { 
     public ActSelect() { 
       super("Select");  
@@ -133,22 +136,52 @@ public class Editor extends JFrame implements ActionListener {
     } 
   } 
    
+  private class ActInsSrcTrans extends AbstractAction { 
+    public ActInsSrcTrans() { 
+      super("InsSrcTrans");  
+    } 
+ 
+    public void actionPerformed(ActionEvent e) { 
+      setEditorAction(INSERT_TRANS1);
+      sourceSteps = new StepLL();
+      repaint();     
+    } 
+  } 
+  
+  private class ActInsTrgtTrans extends AbstractAction { 
+    public ActInsTrgtTrans() { 
+      super("InsTrgtTrans");  
+    } 
+ 
+    public void actionPerformed(ActionEvent e) { 
+      setEditorAction(INSERT_TRANS2);
+      targetSteps = new StepLL();
+      repaint();
+    } 
+  } 
+  
   private class ActInsertTrans extends AbstractAction { 
     public ActInsertTrans() { 
       super("InsertTrans");  
     } 
  
-    public void actionPerformed(ActionEvent e) { 
-      setEditorAction(INSERT_TRANS);
+    public void actionPerformed(ActionEvent e) {       
+      setEditorAction(SELECT);
+      if (!sourceSteps.isEmpty() && !targetSteps.isEmpty()) {
+        Transition trans = new Transition(sourceSteps, targetSteps);
+        insertTrans(trans);  sourceSteps = new StepLL();  targetSteps = new StepLL();
+        repaint();
+      }      
     } 
-  } 
-   
-  private class ActDeleteAbsynt extends AbstractAction { 
-    public ActDeleteAbsynt() { 
-      super("Demo SFC");  
+  }   
+     
+  private class ActTestSFC extends AbstractAction { 
+    public ActTestSFC() { 
+      super("Test-SFC");  
     } 
  
     public void actionPerformed(ActionEvent e) {
+      setEditorAction(SELECT);
       aligningSFC = true; 
       System.out.println("Demo SFC");       
       Step s1 = new Step("S1");
@@ -314,49 +347,35 @@ public class Editor extends JFrame implements ActionListener {
       sfc.steps.add(step);  DrawPanel.repaint();
     }        
   }
+    
   
-  // MouseAdapter für den "editorAction"-Modus INSERT_TRANS
-  private class MAInsertTrans extends MouseInputAdapter {
-    Step SourceStep;
-    
+  // MouseAdapter für den "editorAction"-Modus INSERT_TRANS1 (Erstellen einer SrcStep-Liste für Trans):
+  private class MAInsSrcTrans extends MouseInputAdapter {        
     public void mousePressed(MouseEvent e) {
+      Step sourceStep = null;
       double mouseX = (new Integer(e.getX())).doubleValue();
       double mouseY = (new Integer(e.getY())).doubleValue();
-      SourceStep = checkStepHit(mouseX, mouseY);
-    }
-    
-    public void mouseReleased(MouseEvent e) {
-      double mouseX = (new Integer(e.getX())).doubleValue();
-      double mouseY = (new Integer(e.getY())).doubleValue();
-      if (SourceStep != null) {
-        Step step = checkStepHit(mouseX, mouseY);
-        if (step == null) {
-          SourceStep = null;
-          System.out.println("DestStep = null");
-        } else { 
-          LinkedList SourceSteps = new LinkedList();
-          SourceSteps.add(SourceStep);
-          LinkedList DestSteps = new LinkedList();
-          DestSteps.add(step);
-          Transition Trans = new Transition(SourceSteps, null, DestSteps);
-          insertTrans(Trans);          
-          DrawPanel.repaint();
-        }                    
-      } // if (SourceStep ... 
-    else 
-      System.out.println("SourceStep = null");       
-    }
+      sourceStep = checkStepHit(mouseX, mouseY);
+      if (sourceStep != null) {
+        sourceSteps.add(sourceStep);
+        DrawPanel.paintStep(sourceStep, (Graphics2D)DrawPanel.getGraphics());
+      }
+    }    
   }
   
-  // MouseAdapter für den "editorAction"-Modus DELETE
-  private class MADelete extends MouseInputAdapter {
+  // MouseAdapter für den "editorAction"-Modus INSERT_TRANS1 (Erstellen einer SrcStep-Liste für Trans):
+  private class MAInsTrgtTrans extends MouseInputAdapter {        
     public void mousePressed(MouseEvent e) {
+      Step targetStep = null;
       double mouseX = (new Integer(e.getX())).doubleValue();
       double mouseY = (new Integer(e.getY())).doubleValue();
-      Step step = checkStepHit(mouseX, mouseY);
-      // if (step != null) sfc.steps.delete(step);  // *** Transitions müssen auch noch raus
-    }
-  }
+      targetStep = checkStepHit(mouseX, mouseY);
+      if (targetStep != null) {
+        targetSteps.add(targetStep);
+        DrawPanel.paintStep(targetStep, (Graphics2D)DrawPanel.getGraphics());
+      }
+    }    
+  }    
   
   // Liste der momentan selektierten Elemente (für Verschieben, Löschen usw.):
   public LinkedList       SelectedLL;
@@ -627,44 +646,44 @@ public class Editor extends JFrame implements ActionListener {
   	}
   }
   
-  Expression_Parser ExprEditor = new Expression_Parser();  
+  Expression_Parser ExprEditor = new Expression_Parser(this, sfc);  
+  // DataActTable's Statement-Editor:
   class ActionEditor extends DefaultCellEditor {        
-
-        public ActionEditor(JButton b) {
-                super(new JCheckBox()); //Unfortunately, the constructor
-                                        //expects a check box, combo box,
-                                        //or text field.
-            editorComponent = b;
-            setClickCountToStart(1); //This is usually 1 or 2.
-
-            //Must do this so that editing stops when appropriate.
-            b.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    fireEditingStopped();
-                }
-            });
+    int column=0, row=0;
+    public ActionEditor(JButton b) {
+      //Unfortunately, the constructor expects a check box, combo box, or text field:
+      super(new JCheckBox()); 
+      editorComponent = b;
+      setClickCountToStart(1); //This is usually 1 or 2.
+      b.setText("<EDITING>");
+      
+      ExprEditor.addWindowListener(new WindowAdapter() {
+        public void windowClosed(WindowEvent e) {
+          editorComponent.hide();
+          if (ExprEditor.get_canceled()) fireEditingCanceled(); else fireEditingStopped();
         }
-
-        protected void fireEditingStopped() {
-            super.fireEditingStopped();
-        }
-
-        public Object getCellEditorValue() {
-	    LinkedList ll = new LinkedList();
-	    ll.add(new Assign(null, ExprEditor.get_expr()));
-            return (ll); //expr_lList;***
-        }
-
-        public Component getTableCellEditorComponent(JTable table, 
-                                                     Object value,
-                                                     boolean isSelected,
-                                                     int row,
-                                                     int column) {
-            ((JButton)editorComponent).setText(value.toString());
-            //ExprEditor.expr_lList=(LinkedList.value); //***
-            return editorComponent;
-        }
+      });
     }
+
+    protected void fireEditingStopped() {      
+      super.fireEditingStopped();
+      
+    }
+
+    public Object getCellEditorValue() {
+      // *** dazu muss Editor modal sein:
+      LinkedList ll = new LinkedList();
+      ll.add(new Assign(null, ExprEditor.get_expr()));
+      return (ll); 
+    }
+
+    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int arow, int acolumn) {
+      row=arow;  column=acolumn;
+      ((JButton)editorComponent).setText(value.toString());
+      //ExprEditor.expr_lList=(LinkedList.value); //***
+      return editorComponent;
+    }
+  }
     
   /** 
    * baut ein Editor-Fenster (momentan JFrame-Ableitung) auf. 
@@ -689,8 +708,10 @@ public class Editor extends JFrame implements ActionListener {
     ButtonGroup BtnGroup = new ButtonGroup();
     BtnGroup.add(SelectToggleBtn);
     BtnGroup.add(new JToggleButton(new ActInsertStep()));
+    BtnGroup.add(new JToggleButton(new ActInsSrcTrans()));
+    BtnGroup.add(new JToggleButton(new ActInsTrgtTrans()));
     BtnGroup.add(new JToggleButton(new ActInsertTrans()));
-    BtnGroup.add(new JToggleButton(new ActDeleteAbsynt()));    
+    BtnGroup.add(new JToggleButton(new ActTestSFC()));    
     // ... UND natürlich in die ToolBar:
     Enumeration Enum = BtnGroup.getElements();
     while (Enum.hasMoreElements()) 
@@ -709,15 +730,82 @@ public class Editor extends JFrame implements ActionListener {
     DataDeclPanel.setLayout(new BorderLayout());
     //   a) "Titelleiste":
     DataDeclPanel.add(new JLabel("Declaration-List:"), BorderLayout.NORTH); 
-    //   b) Tabelle mit Dekl.:
-    String[] Header = {"Name", "Type", "Value"};
-    String[][] Values = {{"x", "bool", "false"}};
-    DataDeclTable = new JTable(Values, Header);     
+    //   b) Tabelle mit Dekl.:    
+    DataDeclTable = new JTable(new AbstractTableModel() {
+      public int getRowCount() {
+        return(sfc.declist.size());
+      }
+      
+      public int getColumnCount() {
+        return(3);  // VarName + Type + Value
+      }
+      
+      public Object getValueAt(int row, int column) {
+        Declaration decl = (absynt.Declaration)sfc.declist.get(row);
+        if (column == 0) 
+          return(decl.var.name);
+        else if (column == 1) {
+          if (decl.type instanceof IntType) return("Integer"); else return("Boolean");
+        } else
+           return(decl.val.val.toString());        
+      }
+      
+      public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        Declaration decl = (absynt.Declaration)sfc.declist.get(rowIndex);
+        if (columnIndex == 0) 
+          decl.var.name=(String)aValue;
+        else if (columnIndex == 1) {
+          if (((String)aValue) == "Integer") {
+            decl.type=new IntType();
+            decl.val=new Constval(0);  
+          } else {            
+            decl.type=new BoolType();
+            decl.val=new Constval(false); 
+          }
+          fireTableCellUpdated(rowIndex, 2);
+        } else {
+          if (decl.type instanceof IntType) {
+            try {
+              decl.val.val=((Integer)decl.val.val).valueOf((String)aValue);
+            } catch(Exception e) {
+              decl.val.val=new Integer(0);
+            }
+          } else
+            decl.val.val=((Boolean)decl.val.val).valueOf((String)aValue);
+        }
+      }
+      
+      public boolean isCellEditable(int rowIndex, int columnIndex) {
+        return(true);
+      }
+      
+      public Class getColumnClass(int columnIndex) {
+        return(String.class);
+      }
+      
+      public String getColumnName(int column) {
+        if (column == 0) return("Name"); 
+        else if (column == 1) return("Type"); 
+        else return("Value");
+      }
+
+    });
+    JComboBox CmbBox = new JComboBox();
+    CmbBox.addItem("Integer");  CmbBox.addItem("Boolean");
+    
+    DataDeclTable.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(CmbBox));
+    DataDeclTable.setPreferredScrollableViewportSize(new Dimension(250, 70)); //***
     DataDeclPanel.add(new JScrollPane(DataDeclTable), BorderLayout.CENTER); 
     //   c) Buttons zum Löschen/Hinzufügen von Dekl.:
     JPanel BtnPanel = new JPanel(new FlowLayout());    
-    BtnPanel.add(new JButton("Add")); 
-    BtnPanel.add(new JButton("Delete"));
+    JButton Btn = new JButton("Add");
+    Btn.setActionCommand("AddSFCDeclaration");
+    Btn.addActionListener(this);    
+    BtnPanel.add(Btn); 
+    Btn = new JButton("Delete");
+    Btn.setActionCommand("DeleteSFCDeclaration");
+    Btn.addActionListener(this);    
+    BtnPanel.add(Btn);
     DataDeclPanel.add(BtnPanel, BorderLayout.SOUTH);
     //   d) nun zum DataPanel hinzufügen:
     DataPanel.add(DataDeclPanel);
@@ -726,8 +814,8 @@ public class Editor extends JFrame implements ActionListener {
     DataActPanel.setLayout(new BorderLayout()); 
     //   a) "Titelleiste":
     DataActPanel.add(new JLabel("Action-List:"), BorderLayout.NORTH); 
-    //   b) Tabelle mit Aktionen:
-    sfc.actions.add(new absynt.Action("<UNDEF>", new LinkedList())); // ***
+    //   b) Tabelle mit Aktionen:    
+    // DataActTable mit SFC-Datenmodell:
     DataActTable = new JTable(new AbstractTableModel() {
       public int getRowCount() {
         return(sfc.actions.size());
@@ -760,11 +848,11 @@ public class Editor extends JFrame implements ActionListener {
       }
       
       public String getColumnName(int column) {
-        if (column == 0) return("Name"); else return("Expression");
+        if (column == 0) return("Name"); else return("Statement");
       }
 
     });
-    
+    // DataActTable-Statement-Renderer:
     DataActTable.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
       Stmt stmt = null;
       public void setPaintData(Stmt _stmt) {
@@ -777,8 +865,7 @@ public class Editor extends JFrame implements ActionListener {
           setText("");      
       }
       public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-        boolean hasFocus, int row, int column) {          
-          //return(ExprEditor.getRenderer(table, value, isSelected, hasFocus, row, column));                      
+        boolean hasFocus, int row, int column) {                    
           Stmt stmt = null;
           if (value != null && !((LinkedList)value).isEmpty()) stmt = (Stmt)((LinkedList)value).getFirst();
           super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
@@ -789,28 +876,22 @@ public class Editor extends JFrame implements ActionListener {
         Graphics2D g2d = (Graphics2D)g;
         if (stmt == null || stmt instanceof Skip)
           super.paint(g2d);
-        else {
-          // ExprEditor.Expr = stmt.val;
-	    super.paint(g2d);
-	    ExprEditor.paint_Expression_Panel(((Assign)stmt).val, g2d);
-	      //ExprEditor.paint(stmt, g2d);
-	    //super.paint(g2d);
+        else {          
+          super.paint(g2d);
+          ExprEditor.paint_Expression_Panel(((Assign)stmt).val, g2d);	    
         }
       }    
 
     });
-    JButton Btn = new JButton("") {
-      public void setText(String s) {
-          //Button never shows text -- only color.
-      }
-    };
+    Btn = new JButton("<EDITING>");
     Btn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {                
-	  //ExprEditor.setModal(true);
-	  ExprEditor.show();
+	      //ExprEditor.setModal(true);
+	      ExprEditor.show();
       }
     });
     DataActTable.getColumnModel().getColumn(1).setCellEditor(new ActionEditor(Btn));
+    DataActTable.setPreferredScrollableViewportSize(new Dimension(250, 70));
     DataActPanel.add(new JScrollPane(DataActTable), BorderLayout.CENTER); 
     //   c) Buttons zum Löschen/Hinzufügen von Aktionen:
     BtnPanel = new JPanel(new FlowLayout());
@@ -902,20 +983,22 @@ public class Editor extends JFrame implements ActionListener {
   
   // Transition einfügen - BEDINGUNG: diese Transition hat genau einen source- und target-Step:
   private void insertTrans(Transition trans) {
-    Step sStep = (Step)(trans.source.getFirst()),  tStep = (Step)(trans.target.getFirst());        
-    StepLL succLL = new StepLL();    // alle Nachfolger vom sourceStep holen
-    TransLL transLL = new TransLL();
-    boolean TransLinked = false;     // wurde schon eine Stelle gefunden, wo die neue Trans sich einklinken kann?
-    
-    getSimpleSuccLL(sStep, succLL, transLL);  
-    succLL.add(tStep);  transLL.add(trans);
-    for (int i = 0; i < transAlignInfoLL.size(); i++) {    	
-      if (((TransAlignInfo)transAlignInfoLL.get(i)).insertSourceStep(sStep, succLL, transLL)) {
-      	System.out.println("TransPos gefunden");        
-        TransLinked = true;  break;        
-      }      
+    if (isSimpleTrans(trans)) {
+      Step sStep = (Step)(trans.source.getFirst()),  tStep = (Step)(trans.target.getFirst());        
+      StepLL succLL = new StepLL();    // alle Nachfolger vom sourceStep holen
+      TransLL transLL = new TransLL();
+      boolean TransLinked = false;     // wurde schon eine Stelle gefunden, wo die neue Trans sich einklinken kann?
+      
+      getSimpleSuccLL(sStep, succLL, transLL);  
+      succLL.add(tStep);  transLL.add(trans);
+      for (int i = 0; i < transAlignInfoLL.size(); i++) {    	
+        if (((TransAlignInfo)transAlignInfoLL.get(i)).insertSourceStep(sStep, succLL, transLL)) {
+        	System.out.println("TransPos gefunden");        
+          TransLinked = true;  break;        
+        }      
+      }
+      if (!TransLinked) transAlignInfoLL.add(new TransAlignInfo(trans));
     }
-    if (!TransLinked) transAlignInfoLL.add(new TransAlignInfo(trans));
     sfc.transs.add(trans);
   }
   
@@ -931,11 +1014,11 @@ public class Editor extends JFrame implements ActionListener {
     // *** momentan nur für Steps:
     // 1. alle vorher selektierten Elemente aus SelectedLL raus und neu (unselektiert) zeichnen:
     while (SelectedLL.size() > 0) 
-      DrawPanel.paintStep((Step)SelectedLL.removeFirst(), (Graphics2D)DrawPanel.getGraphics(), false);         
+      DrawPanel.paintStep((Step)SelectedLL.removeFirst(), (Graphics2D)DrawPanel.getGraphics());         
     // 2. Falls Element <> null, Element in SelectedLL rein und neu (selektiert) zeichnen:
     if (Element != null) {
       SelectedLL.add(Element);
-      DrawPanel.paintStep((Step)(Element), (Graphics2D)DrawPanel.getGraphics(), true); 
+      DrawPanel.paintStep((Step)(Element), (Graphics2D)DrawPanel.getGraphics()); 
     }
   } 
  
@@ -943,10 +1026,10 @@ public class Editor extends JFrame implements ActionListener {
     // *** momentan nur für Steps:
     if (SelectedLL.contains(Element)) {
       SelectedLL.remove(Element);
-      DrawPanel.paintStep((Step)(Element), (Graphics2D)DrawPanel.getGraphics(), false); 
+      DrawPanel.paintStep((Step)(Element), (Graphics2D)DrawPanel.getGraphics()); 
     } else {
       SelectedLL.add(Element);
-      DrawPanel.paintStep((Step)(Element), (Graphics2D)DrawPanel.getGraphics(), true); 
+      DrawPanel.paintStep((Step)(Element), (Graphics2D)DrawPanel.getGraphics()); 
     }
   }
   
@@ -1058,6 +1141,15 @@ public class Editor extends JFrame implements ActionListener {
       if (row >= 0 && row < sfc.actions.size()) {
         sfc.actions.remove(row);
         ((AbstractTableModel)DataActTable.getModel()).fireTableRowsInserted(0, sfc.actions.size()-1);
+      }
+    } else if (e.getActionCommand().equals("AddSFCDeclaration")) {
+      sfc.declist.add(new Declaration(new Variable("<UNDEF>", new BoolType()), new BoolType(), new Constval(false)));
+      ((AbstractTableModel)DataDeclTable.getModel()).fireTableRowsInserted(sfc.declist.size()-1, sfc.declist.size()-1);
+    } else if (e.getActionCommand().equals("DeleteSFCDeclaration")) {
+      int row = DataDeclTable.getSelectedRow();
+      if (row >= 0 && row < sfc.declist.size()) {
+        sfc.declist.remove(row);
+        ((AbstractTableModel)DataDeclTable.getModel()).fireTableRowsInserted(0, sfc.actions.size()-1);
       }
     }
   }

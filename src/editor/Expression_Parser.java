@@ -1,4 +1,5 @@
 package editor;
+
 import java.util.*; 
 import java.util.List.*;
 import java.awt.*; 
@@ -10,6 +11,13 @@ import javax.swing.event.*;
 
 import absynt.*;
 
+/** 
+ * Editor - Klasse 
+ * 
+ * @author Natalja Froidenberg, Andreas Lukosch 
+ * @version 1.0 
+ */ 
+ 
   class drawObject{
     private String content;
     private int    x;
@@ -29,130 +37,102 @@ import absynt.*;
      final static public int _INTTYPE  = 1;
      final static public int _BOOLTYPE = 2;
      
-     int selectedType = 0;
-     JTextField textField;
+     private int selectedNum = 0;
+     private SFC _sfc;
      
      Expression_Parser  ExpressionParser;
      
-     public void set_selected(int sel){ selectedType = sel;}
-     
-     public VariableDialog(JFrame parent, String title, Expression_Parser  ExpParser){
+     public VariableDialog(JDialog parent, String title, Expression_Parser  ExpParser,
+                           SFC sfc){
          
          super(parent, title, true);
          setLayout(new BorderLayout());
-         setSize(300,120);
+         _sfc = sfc;
 
          ExpressionParser = ExpParser;
          
-         textField = new JTextField();
-         add(textField,BorderLayout.NORTH);
-         
-         ButtonGroup g = new ButtonGroup();
-         JPanel panel_Center = new JPanel();
-         JRadioButton _null     = getButton(g, panel_Center,_NULL);
-         _null.setSelected(true);
-         JRadioButton _inttype  = getButton(g, panel_Center,_INTTYPE);
-         JRadioButton _booltype = getButton(g, panel_Center,_BOOLTYPE);         
-         add(panel_Center, BorderLayout.CENTER);
-         
          JPanel panel_South = new JPanel();
-         panel_South.add(getJButton("OK"));
          panel_South.add(getJButton("Cancel"));
-         add(panel_South, BorderLayout.SOUTH);
          
-         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-         setLocation((dim.width - getWidth()) / 2, (dim.height - getHeight()) / 2);
+         if (_sfc != null)
+         { ButtonGroup g          = new ButtonGroup();
+           JPanel panel_Center    = new JPanel();
+           
+           LinkedList    decl_lList = new LinkedList();                  
+           Iterator decl_List = (_sfc.declist).iterator();
+           Object   element;
+           int      numBut = 0; 
+       
+           while (decl_List.hasNext()){
+                  element = decl_List.next();
+                  JRadioButton but = getButton(g, panel_Center,((Variable)(((Declaration)element).var)).name);
+                  numBut += 1;
+                  if (numBut == 1){ but.setSelected(true); selectedNum = 1;}
+            };
+            add(panel_Center, BorderLayout.CENTER);     
+            panel_South.add(getJButton("OK"));
+        };
         
-         enableEvents(AWTEvent.MOUSE_EVENT_MASK);
-     }         
-     
-     private JRadioButton getButton(ButtonGroup g, JPanel p, int select){
-         JRadioButton button = null;
-         switch (select){
-             case 0: button = new JRadioButton(new _NULL_ActButtonSelect());     break;
-             case 1: button = new JRadioButton(new _INTTYPE_ActButtonSelect());  break;
-             case 2: button = new JRadioButton(new _BOOLTYPE_ActButtonSelect()); break;
-         };
+        add(panel_South, BorderLayout.SOUTH);
+        pack();
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation((dim.width - getWidth()) / 2, (dim.height - getHeight()) / 2);
+        enableEvents(AWTEvent.MOUSE_EVENT_MASK);            
+        }
+        
+         private JRadioButton getButton(ButtonGroup g, JPanel p, String str){
+         JRadioButton button = new JRadioButton(str);
          g.add(button);
          p.add(button);
+         button.addActionListener(this);
          return button;
        }
-                  
+            
        private JButton getJButton(String s){
-	  JButton button = new JButton(s);
+	    JButton button = new JButton(s);
           button.setFont(new Font("Monospaced", Font.PLAIN, 12));
           button.addActionListener(this);
           return button;
        }
        
        public void actionPerformed(ActionEvent e)
-       { String command = ((JButton)e.getSource()).getText();
+       { ExpressionParser.set_Variable(null);
          Variable var = null;
-         if (command.equals("OK")){
-             String str= textField.getText();
-             switch (selectedType){
-                 case 0 : var = new Variable(str);                break;
-                 case 1 : var = new Variable(str,new IntType());  break;
-                 case 2 : var = new Variable(str,new BoolType()); break;
-             };
-             ExpressionParser.set_Variable(var);
-            System.out.println("text = " + str); 
-             dispose();}
-         else if (command.equals("Cancel")){ ExpressionParser.set_Variable(null); dispose();}
-       }
+         if ((e.getActionCommand()).equals("OK")){
 
-       private MouseAdapter  ButtonSelect;
-       
-       private void setVariableDialogButton(int newSelectButton)
-       { removeMouseListener(ButtonSelect);
-         switch (newSelectButton){
-           case _NULL     : ButtonSelect = new Select_NULL(this);    break;
-           case _INTTYPE  : ButtonSelect = new Select_INTTYPE(this);  break;
-           case _BOOLTYPE : ButtonSelect = new Select_BOOLTYPE(this); break;
-       };
-       addMouseListener(ButtonSelect);
+         	LinkedList  decl_lList = new LinkedList();                  
+            Iterator decl_List = (_sfc.declist).iterator();
+            Object   element = null;                     
+            int numElement = 0;
+            
+            while (decl_List.hasNext() & (numElement != selectedNum)){                    	 
+                   element = decl_List.next();
+                   numElement += 1;
+                  };
+             selectedNum = 0;
+             var = ((Variable)((Declaration)element).var);
+             ExpressionParser.set_Variable(var); dispose();               	       	         	
+         	}   
+         else{ if ((e.getActionCommand()).equals("Cancel"))
+               { ExpressionParser.set_Variable(null); dispose();}
+               
+               else { // finde, welches Button gedrueckt war
+                      LinkedList    decl_lList = new LinkedList();                  
+                      Iterator decl_List = (_sfc.declist).iterator();
+                      Object   element;                     
+                      boolean  isFound = false;
+                      selectedNum = 1;
+                      
+                      while (decl_List.hasNext() & !isFound){                    	 
+                         element = decl_List.next();               
+                         if ( e.getActionCommand() == (((Variable)(((Declaration)element).var)).name))
+                             isFound = true;
+                         else selectedNum += 1;
+                       }
+                   }
+             }
        }
-       
-       private class Select_NULL extends MouseAdapter{
-           VariableDialog _VD;
-           public Select_NULL(VariableDialog vd){_VD = vd;_VD.set_selected(0);}           
-           public void mousePressed(MouseEvent e){ // _VD.set_selected(0);
-           }
-           public void mouseDragged(MouseEvent e){}
-           public void mouseReleased(MouseEvent e){}
-       }
-       private class Select_INTTYPE extends MouseAdapter{
-           VariableDialog _VD;
-           public Select_INTTYPE(VariableDialog vd){_VD = vd;_VD.set_selected(1);}           
-           public void mousePressed(MouseEvent e){ //_VD.set_selected(1);
-           }
-           public void mouseDragged(MouseEvent e){}
-           public void mouseReleased(MouseEvent e){}
-       }
-       private class Select_BOOLTYPE extends MouseAdapter{
-           VariableDialog _VD;
-           public Select_BOOLTYPE(VariableDialog vd){_VD = vd;_VD.set_selected(2);}           
-           public void mousePressed(MouseEvent e){ // _VD.set_selected(2);
-           }
-           public void mouseDragged(MouseEvent e){}
-           public void mouseReleased(MouseEvent e){}
-       }
-           
-       private class _NULL_ActButtonSelect extends AbstractAction{
-           public _NULL_ActButtonSelect(){super("null");}           
-           public void actionPerformed(ActionEvent e){setVariableDialogButton(_NULL);}
-       }
-       
-       private class _INTTYPE_ActButtonSelect extends AbstractAction{
-           public _INTTYPE_ActButtonSelect(){super("inttype");}           
-           public void actionPerformed(ActionEvent e){setVariableDialogButton(_INTTYPE);}
-       }
-       
-       private class _BOOLTYPE_ActButtonSelect extends AbstractAction{
-           public _BOOLTYPE_ActButtonSelect(){super("booltype");}           
-           public void actionPerformed(ActionEvent e){setVariableDialogButton(_BOOLTYPE);}
-       }
- }
+      }
  
   class ConstanteDialog extends Dialog implements ActionListener{
      
@@ -164,7 +144,7 @@ import absynt.*;
      Expression_Parser  ExpressionParser;
      
      
-     public ConstanteDialog(JFrame parent, String title, Expression_Parser  ExpParser){
+     public ConstanteDialog(JDialog parent, String title, Expression_Parser  ExpParser){
          
          super(parent, title, true);
          setLayout(new BorderLayout());
@@ -210,13 +190,21 @@ import absynt.*;
        
        public void actionPerformed(ActionEvent e)
       { Constval cons = null;
-        System.out.println(e.getActionCommand());
-	  if ((e.getActionCommand()).equals("OK")){
-             String str= textField.getText(); System.out.println(str);
+        
+        if ((e.getActionCommand()).equals("OK")){
+             String str= textField.getText();
              switch (selectedType){
-                 case 0 : cons = new Constval(Integer.parseInt(str));  break;
-                 case 1 : cons = new Constval((Boolean.valueOf(str)).booleanValue()); break;
-
+                 case 0 : try
+                          { cons = new Constval(Integer.parseInt(str));}
+                          catch (NumberFormatException _e){new ExpressionParserException(2);}
+                          break;
+                 case 1 : try
+                          { if (!( str.equals("true") | str.equals("false"))){
+                                     throw new ExpressionParserException(1);}
+                            else cons = new Constval((Boolean.valueOf(str)).booleanValue());
+                          }
+                          catch (ExpressionParserException _e){};
+                          break;
              };
              ExpressionParser.set_Constante(cons);
              dispose();}
@@ -227,12 +215,33 @@ import absynt.*;
       }
  }
  
+ class ExpressionParserException extends Exception{
+     public ExpressionParserException(int bed){
+         String msg = null;
+         switch (bed){
+             case 1: msg = "The Constante must be TRUE or FALSE !\n";
+                     break;
+             case 2: msg = "The Constante must be INTEGER ! \n";
+                     break;
+             case 3: msg = "The Statement is not full !\n";
+                     break;
+             case 4: msg = "The Variablelist is empty !\n";
+                     break;
+             case 5: msg = "The SFC is empty !\n";
+                     break;                                                                                  
+         };
+         (new JOptionPane()).showMessageDialog(null,msg,"Error",JOptionPane.ERROR_MESSAGE);
+     }
+ }
+     
  class Expression_Panel extends JPanel{
 
     private Expression_Parser ExprParser;
-
+    
     public Expression_Panel(Expression_Parser ExpressionParser){
-       setSize(100,100);
+       setBackground(Color.white);
+       setFont(new Font("Monospaced",Font.PLAIN,12));
+       setPreferredSize(new Dimension(400,20));
        ExprParser = ExpressionParser;
        enableEvents(AWTEvent.MOUSE_EVENT_MASK);
     }
@@ -240,32 +249,101 @@ import absynt.*;
     public void paint(Graphics g) { 
         Graphics2D G2D = (Graphics2D)g; 
         super.paint(G2D);
+        G2D.setColor(Color.white);
         
         if ( ExprParser.get_expr() == null) G2D.setBackground(Color.white);
         else ExprParser.paint_Expression_Panel(ExprParser.get_expr(),g); 
     }
   }
+  
+ class AssignVarPanel extends JPanel{
 
-public class Expression_Parser extends JFrame implements ActionListener{
+    private Expression_Parser ExprParser;
+    
+    public AssignVarPanel(Expression_Parser ExpressionParser){
+       setBackground(Color.white);
+       setFont(new Font("Monospaced",Font.PLAIN,12));
+       setPreferredSize(new Dimension(200,15));
+       ExprParser = ExpressionParser;
+    }
 
-    private Expression_Panel ExpressionPanel = new Expression_Panel(this);
+    public void paint(Graphics g) { 
+        Graphics2D G2D = (Graphics2D)g; 
+        super.paint(G2D);
+        G2D.setColor(Color.white);
+        
+        if (ExprParser.get_VarAssign() != null){ G2D.setColor(Color.black);
+            G2D.drawString(ExprParser.get_VarAssignName(),2,10);
+        }
+  }
+ }
+
+public class Expression_Parser extends JDialog implements ActionListener{
+
+    private Expression_Panel ExpressionPanel;
+    private AssignVarPanel   AssVarPanel;
     private int      mouseX, mouseY, index;
 
     private Expr    _expr;
+    private Assign  _assign;
     private Expr     predecessor;
 
     private boolean  root , var , cons;
     private int      x_fort , kk , pred_index;   
     private int      y_a ,letter_width ,letter_high;
+    
+    private  SFC sfc;
+    
+    private Variable vari, varAssign;
+    private Constval consi;
+    public boolean   canceled=false;
+    
+    public Expression_Parser(JFrame parentFrame, SFC _sfc){
+    	
+	    super(parentFrame,"Statement erstellen",true);
+	    setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+	    sfc = _sfc;
+	    
+	 //   sfc = new SFC();
+//-------------------------------------------------------------------------	  
+ /*     BoolType btype = new BoolType();
+      Variable v_x = new Variable ("x", btype);
+      Variable v_y = new Variable ("y", btype);
+      Variable v_z = new Variable ("z", btype);
+      
+     Variable v_z1 = new Variable ("z1", btype);
+     Variable v_z2 = new Variable ("z2", btype);
+     Variable v_z3 = new Variable ("z3", btype);
+     Variable v_z4 = new Variable ("z4", btype);
+     Variable v_z5 = new Variable ("z5", btype);
+                               
+      Constval c5  = new Constval (5);
+      Constval cfalse = new Constval (false);
+      Skip     stmt_skip = new Skip();
 
-    
-    Variable         vari;
-    Constval         consi;
-    public boolean canceled=false;
-    
-    public Expression_Parser(){
-	super("Expression erstellen/editieren");
-	setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+      //   ------- Variable-Declarations
+      Declaration dec_x = new Declaration(v_x, btype, cfalse);
+      Declaration dec_y = new Declaration(v_y, btype, cfalse);
+      Declaration dec_z = new Declaration(v_z, btype, cfalse);
+     Declaration dec_z1 = new Declaration(v_z1, btype, cfalse);
+     Declaration dec_z2 = new Declaration(v_z2, btype, cfalse);
+     Declaration dec_z3 = new Declaration(v_z3, btype, cfalse);
+     Declaration dec_z4 = new Declaration(v_z3, btype, cfalse);
+     Declaration dec_z5 = new Declaration(v_z5, btype, cfalse);                          
+      
+      LinkedList decl = new LinkedList();
+      decl.add(dec_x);
+      decl.add(dec_y);
+      decl.add(dec_z);
+     decl.add(dec_z1);
+     decl.add(dec_z2);           
+     decl.add(dec_z3);
+     decl.add(dec_z4);
+     decl.add(dec_z5);
+                     
+      sfc.declist = decl;           */ 
+	
+//-------------------------------------------------------------------------	  
         Container c = getContentPane();
         c.setLayout(new BorderLayout(2,5));
         
@@ -291,15 +369,29 @@ public class Expression_Parser extends JFrame implements ActionListener{
         p.add(getJButton("-U"));
         p.add(getJButton("CLEAR"));
         p.add(getJButton("OK"));
-        p.add(getJButton("Cancel"));        
-
+        p.add(getJButton("Cancel"));
+        p.setPreferredSize(new Dimension(400,150));
+        
         c.add(p, BorderLayout.CENTER);
         pack();
 
-        ExpressionPanel.setBackground(Color.white);
-        ExpressionPanel.setFont(new Font("Monospaced",Font.PLAIN,16));
-      //  ExpressionPanel.setpreferedSize(100,100);
-        c.add(ExpressionPanel, BorderLayout.NORTH);      
+        JPanel VarPanel = new JPanel();
+        VarPanel.setLayout(new GridLayout(1,2,5,5));        
+        
+        AssVarPanel = new AssignVarPanel(this);
+        VarPanel.add(AssVarPanel);
+        VarPanel.add(getJButton("Variable"));
+        _assign = null;
+        varAssign = null;
+
+        JPanel Panel_North = new JPanel();
+        Panel_North.setLayout(new BorderLayout(2,5));
+        
+        ExpressionPanel = new Expression_Panel(this);
+        Panel_North.add(ExpressionPanel, BorderLayout.CENTER);
+        Panel_North.add(VarPanel, BorderLayout.NORTH);
+        
+        c.add(Panel_North, BorderLayout.NORTH);
     
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation((dim.width - getWidth()) / 2, (dim.height - getHeight()) / 2);
@@ -334,23 +426,25 @@ public class Expression_Parser extends JFrame implements ActionListener{
        }
 
     
-    public int  get_Index()           { return index;}
-    public Expr get_expr()            { return _expr;}
-    public int  get_Font_width()      { return letter_width;}
-    public int  get_Font_high()       { return letter_high;}
+    public int      get_Index()        { return index;}
+    public Expr     get_expr()         { return _expr;}
+    public Assign   get_assign()       { return _assign;}
+    public Variable get_VarAssign()    { return varAssign;}
+    public String   get_VarAssignName(){ return varAssign.name;}    
+    public boolean  get_canceled()     { // true - OK, false - Cancel
+                                         return canceled;}
        
     private void setExprTreeRoot(String str)
     { if ((str == "+")|(str == "-")|(str == "*")|(str == "/")|(str == "&")|(str == "|")|(str == "=")
           |(str == "<") |(str == ">")|(str == "<=")|(str == "=>")|(str == "!="))
           _expr = new B_expr(null,op_string(str),null);
 
-       else{ if ((str == "~")|(str == "-U"))   { _expr = new U_expr(op_string(str),null);}
+       else{ if ((str == "~")|(str == "-U"))   { if (str == "-U") str = "-";_expr = new U_expr(op_string(str),null);}
             else{ if (var)                     {  _expr = vari;  var = false;}
                   else { if  (cons)            {  _expr = consi; cons = false;}
 		  }
             }
-      }        
-      
+      }             
       predecessor = _expr;
       root = false;    
     }
@@ -375,7 +469,7 @@ public class Expression_Parser extends JFrame implements ActionListener{
     
     private void set_Expression(String str)
     { if (root){ setExprTreeRoot(str);}
-      else{ if (isSelected()){ System.out.println("isSelected()");
+      else{ if (isSelected()){
                 predecessor = _expr;
                 definePredecessor(_expr);    
        
@@ -383,7 +477,7 @@ public class Expression_Parser extends JFrame implements ActionListener{
                     (str == "<")|(str == ">")|(str == "<=")|(str == ">=")|(str == "!="))
 		    { if (classType(className(predecessor)) == 4){
 		        ((U_expr)predecessor).sub_expr = new B_expr(null,op_string(str),null);}
-
+                    
                       else{ if (this.kk < this.pred_index)
                              ((B_expr)predecessor).left_expr = new B_expr(null,op_string(str),null);
                             else
@@ -391,20 +485,26 @@ public class Expression_Parser extends JFrame implements ActionListener{
 	             }
                    }
                 else if ((var == true) |(cons == true))
-                 { if (this.kk < this.pred_index)
-                    { if (var  == true) ((B_expr)predecessor).left_expr = vari;
-                      if (cons == true) ((B_expr)predecessor).left_expr = consi;
-                    }
-                   else
-                    { 
-                      if (var  == true)((B_expr)predecessor).right_expr = vari;
-                      if (cons == true)((B_expr)predecessor).right_expr = consi;
-                    }
+                 { if (classType(className(predecessor)) == 4){
+		               if (var  == true)((U_expr)predecessor).sub_expr = vari;
+		               if (cons == true)((U_expr)predecessor).sub_expr = consi;
+		           }
+		           else{
+                      if (this.kk < this.pred_index)
+                       { if (var  == true) ((B_expr)predecessor).left_expr = vari;
+                         if (cons == true) ((B_expr)predecessor).left_expr = consi;
+                       }
+                      else
+                       { if (var  == true)((B_expr)predecessor).right_expr = vari;
+                         if (cons == true)((B_expr)predecessor).right_expr = consi;
+                       }
+                      }
                     var  = false;
                     cons = false;
                     }
              else if ((str == "~") | (str == "-U"))
-                 { if (classType(className(predecessor)) == 4){
+                 { if (str == "-U") str = "-";
+                   if (classType(className(predecessor)) == 4){
 		     ((U_expr)predecessor).sub_expr = new U_expr(op_string(str),null);}
 
                    else{ if (this.kk < this.pred_index)
@@ -454,18 +554,17 @@ public class Expression_Parser extends JFrame implements ActionListener{
       return str;
     }
     
-    private void drawObject_List(LinkedList expr_lList, LinkedList expr_drawObject)
+    private void drawObject_List(LinkedList expr_lList, LinkedList expr_drawObject,int width)
     { Iterator exp_List = expr_lList.iterator();
       Object   element;
+      int      x_fort = 2;
       
       while (exp_List.hasNext()){
             element = exp_List.next();
-            //if ((element.toString() != "(") | (element.toString() != ")"))
              expr_drawObject.addLast(new drawObject(element.toString(),x_fort));
-             if ((element.toString()).length() == 0) x_fort += letter_width;
-             else  x_fort += ((element.toString()).length()) * letter_width;
-       };
-       x_fort = 2;
+             if ((element.toString()).length() == 0) x_fort += width;
+             else  x_fort += ((element.toString()).length()) * width;
+       }
     }
         
     private void expression_to_linkedList(Expr _expr, LinkedList expr_lList)
@@ -492,11 +591,10 @@ public class Expression_Parser extends JFrame implements ActionListener{
     }
     
     private void selectedElement_inLinkedList(){
-        
        LinkedList       expr_lList      = new LinkedList();
        LinkedList       expr_drawObject = new LinkedList();        
        expression_to_linkedList(_expr,expr_lList);              
-       drawObject_List(expr_lList,expr_drawObject);
+       drawObject_List(expr_lList,expr_drawObject,letter_width);
        
        Iterator   expr_List = expr_drawObject.iterator();
        Object     element;
@@ -563,20 +661,24 @@ public class Expression_Parser extends JFrame implements ActionListener{
        }
 
 
-    public void paint_Expression_Panel(Expr _expr,Graphics expPan){
-        Graphics2D G2D = (Graphics2D)expPan;
-        super.paint(G2D);
+    public void paint_Expression_Panel(Expr _expr, Graphics expPan){
+/**
+    Gebe Expression in GraphicsObject expPan aus.
+*/    	
+       Graphics2D G2D = (Graphics2D)expPan;
+       super.paint(G2D);
         
-       LinkedList       expr_lList      = new LinkedList();
-       LinkedList       expr_drawObject = new LinkedList();        
-       expression_to_linkedList(_expr,expr_lList);              
-       drawObject_List(expr_lList,expr_drawObject);
+       LinkedList    expr_lList      = new LinkedList();
+       LinkedList    expr_drawObject = new LinkedList();        
              
-       Iterator expr_List = expr_drawObject.iterator();
        Object   element;
        int      i  = 0;
-       int      y_a = 2 ,letter_bright = 8 ,letter_high = 8;          
+       int      y_a = 2 ,bright = 12 ,high = 8;          
 
+       expression_to_linkedList(_expr,expr_lList);              
+       drawObject_List(expr_lList,expr_drawObject,bright);
+       Iterator expr_List = expr_drawObject.iterator();       
+       
        while (expr_List.hasNext()){
           element = expr_List.next();
           if ((((((drawObject)element).get_Content()).equals(String.valueOf('('))) | 
@@ -584,7 +686,7 @@ public class Expression_Parser extends JFrame implements ActionListener{
           if (((drawObject)element).get_Content() == "" )
             { if ((index != 0) & (i == index)) {G2D.setColor(Color.gray);}
               else G2D.setColor(Color.cyan);
-              G2D.fill3DRect(((drawObject)element).get_x(), y_a,letter_bright-2,y_a+letter_high,true);
+              G2D.fill3DRect(((drawObject)element).get_x(), y_a,bright-2,y_a+high,true);
             }
             else
             { G2D.setColor(Color.black);
@@ -593,38 +695,72 @@ public class Expression_Parser extends JFrame implements ActionListener{
         }
     }   
 	
-    public static void main(String[] args){
-            new Expression_Parser().show();
-        }	
+//    public static void main(String[] args){
+//            new Expression_Parser(null,Ed.getSFC()).show();
+//        }	
+
+//      public void paint(){
+//      	_expr = null; root = true; varAssign = null;
+//      }
 
       public void actionPerformed(ActionEvent e){
          String command = ((JButton)e.getSource()).getText();
          setExpressionPanelAction();
            
-	 if ((command.equals("Var")) & (root | isSelected())){ 
-              new VariableDialog(this, "new Variable", this).show();
+	 if ((command.equals("Var")) & (root | isSelected())){
+	 	      try{ if(sfc != null){
+           	           if (sfc.declist != null)
+           	            { new VariableDialog(this, "Variable", this, sfc).show();
+                             if (vari != null){ varAssign = vari; AssVarPanel.repaint();}
+                         }
+                        else throw new ExpressionParserException(4);}
+                     else throw new ExpressionParserException(5);
+                  }
+                  catch (ExpressionParserException _e){};
+               };
               if (vari != null){var = true; set_Expression(""); ExpressionPanel.repaint();
-              }
            }
          else if ((command.equals("Const")) & (root | isSelected())){
               new ConstanteDialog(this, "new Constante", this).show();
               if (consi != null){cons = true; set_Expression("");  ExpressionPanel.repaint();}}
-	   else if (command.equals("+")) { set_Expression("+");  ExpressionPanel.repaint();}
+	       else if (command.equals("+")) { set_Expression("+");  ExpressionPanel.repaint();}
            else if (command.equals("-")) { set_Expression("-");  ExpressionPanel.repaint();}
            else if (command.equals("*")) { set_Expression("*");  ExpressionPanel.repaint();}
            else if (command.equals("/")) { set_Expression("/");  ExpressionPanel.repaint();}
-	   else if (command.equals("&")) { set_Expression("&");  ExpressionPanel.repaint();}
+	       else if (command.equals("&")) { set_Expression("&");  ExpressionPanel.repaint();}
            else if (command.equals("|")) { set_Expression("|");  ExpressionPanel.repaint();}
            else if (command.equals("~")) { set_Expression("~");  ExpressionPanel.repaint();}
            else if (command.equals("=")) { set_Expression("=");  ExpressionPanel.repaint();}
-	   else if (command.equals("<")) { set_Expression("<");  ExpressionPanel.repaint();}
+	       else if (command.equals("<")) { set_Expression("<");  ExpressionPanel.repaint();}
            else if (command.equals(">")) { set_Expression(">");  ExpressionPanel.repaint();}
            else if (command.equals("<=")){ set_Expression("<="); ExpressionPanel.repaint();}
            else if (command.equals(">=")){ set_Expression(">="); ExpressionPanel.repaint();}
            else if (command.equals("!=")){ set_Expression("!="); ExpressionPanel.repaint();}
            else if (command.equals("-U")){ set_Expression("-U"); ExpressionPanel.repaint();}
-           else if (command.equals("CLEAR")){ _expr = null; root = true; ExpressionPanel.repaint();}
-           else if (command.equals("OK")){canceled=false;hide();}
-           else if (command.equals("Cancel")){canceled=true;hide();}
+           else if (command.equals("CLEAR")){ _expr = null; root = true; varAssign = null;
+                                              ExpressionPanel.repaint(); AssVarPanel.repaint();}
+           else if (command.equals("Variable")){
+           	        try{ if(sfc != null){
+           	               if (sfc.declist != null)
+           	               { new VariableDialog(this, "Variable", this, sfc).show();
+                             if (vari != null){ varAssign = vari; AssVarPanel.repaint();}
+                           }
+                           else throw new ExpressionParserException(4);}
+                          else throw new ExpressionParserException(5);
+                      }
+                      catch (ExpressionParserException _e){};
+                    }
+           else if (command.equals("OK")){
+           	        try {
+           	              if ((varAssign == null) | (_expr == null)) throw new ExpressionParserException(3);
+           	              else { Assign _assign = new Assign(varAssign,_expr); 
+           	                     canceled = false; hide();                   
+                                 dispose();}
+                      }
+                     catch (ExpressionParserException _e){};
+                  }
+           else if (command.equals("Cancel")){
+           	  canceled = true; hide();
+           	 _expr = null; _assign = null; varAssign = null; dispose();}
       }
 }
