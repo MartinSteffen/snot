@@ -26,7 +26,7 @@ import checks.*;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -539,6 +539,9 @@ public class Gui extends javax.swing.JFrame {
   private void SFCBrowserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SFCBrowserActionPerformed
       SnotOptionPane.showMessageDialog(null, "SFC browser not yet implemented!\n",
                                        "Error", JOptionPane.ERROR_MESSAGE); 
+      if (SFCBrowser.isSelected())
+          SFCBrowser.setSelected(false);
+
   }//GEN-LAST:event_SFCBrowserActionPerformed
 
   private void SMVActionPerformed(java.awt.event.ActionEvent evt) {
@@ -626,6 +629,7 @@ project.setChecked(status);
    */
   
   private void ExportSFCActionPerformed(java.awt.event.ActionEvent evt) {
+      File file = null;
       Project project = activeProject;
 
       // check for empty projects vector
@@ -644,20 +648,33 @@ project.setChecked(status);
       
       // set prefered Directory and filename
       if (session.isSaved())
-          chooser.setCurrentDirectory(session.getFileName());
+          chooser.setCurrentDirectory(session.getFile());
       
       chooser.setSelectedFile(new File(project.getName()));
             
-      // finaly display FileChooser
+      // finally display FileChooser
       int result = chooser.showDialog(null, "Export");
       if (result == JFileChooser.APPROVE_OPTION) {
-         System.out.print("\nExport SFC: SFC would be exported as \""+chooser.getSelectedFile()+"\"");
-         try {
-            project.saveSFC(chooser.getSelectedFile());
-         }
-         catch (Exception ex) {
-             SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-         }
+          file = Utilities.createFileDialog(chooser.getSelectedFile(), ProjectFileExtension);
+          if (file == null)
+              return;
+          
+          // save the session
+          try {
+              project.saveSFC(file);
+          }
+          catch (IOException ex) {
+              SnotOptionPane.showMessageDialog(null, ex.getMessage(), "I/O error", JOptionPane.ERROR_MESSAGE);
+              return;
+          }
+          catch (Exception ex) {
+System.out.print(ex.getClass());
+              SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Save error", JOptionPane.ERROR_MESSAGE);
+              return;
+          }
+          // set name out ouf filename
+          project.setName(file.getName().replace('.','\0'));
+          return;
       }
   }
 
@@ -669,6 +686,8 @@ project.setChecked(status);
    */
 
   private void ImportSFCActionPerformed(java.awt.event.ActionEvent evt) {
+      File file = null;
+      
       // check for valid session
       if (session == null) {
            SnotOptionPane.showMessageDialog(null, "Importing a new SFC failed!\nCannot import a SFC without an active session.\nPlease open or create a new session first!", 
@@ -685,15 +704,27 @@ project.setChecked(status);
       
       // set prefered Directory
       if (session.isSaved())
-          chooser.setCurrentDirectory(session.getFileName());
+          chooser.setCurrentDirectory(session.getFile());
       
       // show FileChooser
       int result = chooser.showDialog(null, "Import");
       if (result == JFileChooser.APPROVE_OPTION) {
+          file = chooser.getSelectedFile();
+
+          // check choosen file
           try {
-              session.addProject(Project.openSFC(chooser.getSelectedFile()));
+              Utilities.validateFile(file,ProjectFileExtension);
           }
           catch (Exception ex) {
+              SnotOptionPane.showMessageDialog(null, ex.getMessage(), "File error", JOptionPane.ERROR_MESSAGE);
+          }
+
+          // read and add Project
+          try {
+              session.addProject(Project.readSFC(file));
+          }
+          catch (Exception ex) {
+System.out.print("\n"+ex.getClass());              
                SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
           }
       }
@@ -764,6 +795,7 @@ project.setChecked(status);
               session.save(null);
           }
           catch (Exception ex) {
+System.out.print("\n"+ex.getClass());
               SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
               return false;
           }
@@ -771,7 +803,7 @@ project.setChecked(status);
       }
       else
           return SaveAsSessionActionPerformed(null);
-  }
+  } 
 
   private void OpenSessionActionPerformed(java.awt.event.ActionEvent evt) {
       int response;
@@ -809,7 +841,7 @@ project.setChecked(status);
       chooser.setDialogTitle("Open session");
       
       if (session != null && session.isSaved())
-          chooser.setCurrentDirectory(session.getFileName());
+          chooser.setCurrentDirectory(session.getFile());
 
       int result = chooser.showOpenDialog(null);
       if (result == JFileChooser.APPROVE_OPTION) {
@@ -828,39 +860,24 @@ project.setChecked(status);
       chooser.setDialogTitle("Save session as");
       int result = chooser.showDialog(null, "Save as");
       if (result == JFileChooser.APPROVE_OPTION) {
-          file = chooser.getSelectedFile();
-          try {
-              status = Utilities.createFile(file, SessionFileExtension); 
-          }
-          catch (Exception ex) {
-System.out.print(ex.getClass());
-              SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Create file error", JOptionPane.ERROR_MESSAGE);
+          file = Utilities.createFileDialog(chooser.getSelectedFile(), SessionFileExtension);
+          if (file == null)
               return false;
-          }
-          // file already exists?
-          if (!status) {
-              response = SnotOptionPane.showConfirmDialog(null, "File \""+file.getName()+"\" already exists!\n Overwrite it?",
-                                                        "Warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-              switch (response) {
-                  case JOptionPane.NO_OPTION: 
-                  case JOptionPane.CANCEL_OPTION:
-                  case JOptionPane.CLOSED_OPTION: return false;
-                  case JOptionPane.YES_OPTION: break;
-              }
-          }
           
           // save the session
           try {
                session.save(file);
           }
           catch (IOException ex) {
-              SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Save error", JOptionPane.ERROR_MESSAGE);
+              SnotOptionPane.showMessageDialog(null, ex.getMessage(), "I/O error", JOptionPane.ERROR_MESSAGE);
               return false;
           }
           catch (Exception ex) {
+System.out.print(ex.getClass());
               SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Save error", JOptionPane.ERROR_MESSAGE);
               return false;
           }
+          setTitle(session.getName());
           return true;
       }
       else 
@@ -931,7 +948,7 @@ System.out.print("\nSession is closed!");
         }
         
         try {
-            newSession.read(file);
+            newSession = Session.read(file);
         }
         catch (IOException ex) {
             SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Read error", JOptionPane.WARNING_MESSAGE);
@@ -960,7 +977,7 @@ System.out.print("\n ... opening new session from file \""+file+"\": name: "+fil
 
         // check for active session: if no one found, just exit.
         if (session == null)
-            exitSnot();
+            return exitSnot(true);
         
         // session found: check its status
         if (session.isModified()) 
@@ -969,14 +986,15 @@ System.out.print("\n ... opening new session from file \""+file+"\": name: "+fil
         else if (!session.isSaved())  
             result = SnotOptionPane.showConfirmDialog(null, "The session is not saved!\nIf exiting its contents will be lost.\n\nDo you want to save it now?",
                                             "Alert: session will be lost!", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-        else if (exit) 
-                exitSnot();
-            else 
-                return true; // simulates a successful exit state
+        else if (exit) {
+            return exitSnot(true);
+        }
+        else 
+             return true; // simulates a successful exit state (needed for close Session)
 
         switch (result) {
             case JOptionPane.YES_OPTION: return(SaveSessionActionPerformed(null));
-            case JOptionPane.NO_OPTION: if (exit) exitSnot(); else return true;
+            case JOptionPane.NO_OPTION: if (exit) return exitSnot(false); else return true;
             case JOptionPane.CANCEL_OPTION:
             case JOptionPane.CLOSED_OPTION: return false; // do not exit!
         }
@@ -986,16 +1004,24 @@ System.out.print("\n ... opening new session from file \""+file+"\": name: "+fil
     }
         
 
-    private void exitSnot() {
+    private boolean exitSnot(boolean remind) {
+        int result;
         // function must terminate Snot!
         // collect all opened Frames/Windows and close em all!!!
 //#########################################
 //      Please complete me !!!
 //#########################################
+
+        if (remind) {
+            result = SnotOptionPane.showConfirmDialog(null, "You are about to leave Snot!\nDo you wish to exit?",
+                                            "Exit?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (result != JOptionPane.YES_OPTION)
+                return false;
+        }
         
-// perhaps if session still active call closeSession()???
         closeSession();
         System.exit(0);
+        return true; // weil sonst der Compiler jammert ...
     }
         
         
@@ -1063,13 +1089,39 @@ System.out.print("\n ... opening new session from file \""+file+"\": name: "+fil
  *******************************************************************************/
 
     class GuiUtilities {
+        
+        public File createFileDialog(File _file, String extension) {
+            int response;
+            boolean status = false;
+            
+            try {
+                status = Utilities.createFile(_file, extension); 
+            }
+            catch (Exception ex) {
+System.out.print(ex.getClass());
+                SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Create file error", JOptionPane.ERROR_MESSAGE);
+                return null;
+            }
+            // file already exists?
+            if (!status) {
+                response = SnotOptionPane.showConfirmDialog(null, "File \""+_file.getName()+"\" already exists!\n Overwrite it?",
+                                                            "Warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+                switch (response) {
+                    case JOptionPane.NO_OPTION: 
+                    case JOptionPane.CANCEL_OPTION:
+                    case JOptionPane.CLOSED_OPTION: return null;
+                    case JOptionPane.YES_OPTION: break;
+                }
+            }
+            return _file;
+        }
 
         public void validateFile(File file, String extension) throws Exception {
             boolean status = false;
             int index;
 
             if (file == null)
-                throw new Exception("NullPointer!");
+                throw new Exception("NullPointer in function validateFile()!");
             try {
                 status = file.exists();
             }

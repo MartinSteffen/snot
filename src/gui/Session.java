@@ -31,7 +31,7 @@ import javax.swing.event.*;
  *  create new, import or export Projects.
  *
  * @author  Hans Theman and Ingo Schiller
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 
 public class Session extends java.lang.Object implements Serializable {
@@ -94,7 +94,7 @@ public class Session extends java.lang.Object implements Serializable {
      *  Returns the session filename.
      *  @return fileName    The filename of the session.
      */
-    public File getFileName() {
+    public File getFile() {
         return file;
     }
     
@@ -106,7 +106,7 @@ public class Session extends java.lang.Object implements Serializable {
      */
     public void setFile(File _file) throws Exception {
         boolean status;
-         try {
+        try {
             status = _file.isFile();
         }
         catch (SecurityException ex) {
@@ -229,13 +229,12 @@ public class Session extends java.lang.Object implements Serializable {
      */
     public void save(File _file) throws Exception {
         if (_file != null) {
-            this.setFile(_file);
+            this.setFile(_file); // ... else use the old file
         }
-        // ... else use the old file
         
         ObjectOutputStream outStream = new ObjectOutputStream(new FileOutputStream(file));
         try {
-            outStream.writeObject((Object)new Project()); // throws IOException!!!!
+            outStream.writeObject(this); // throws IOException!!!!
         }
         finally {
             outStream.close(); // throws IOException!!!!
@@ -273,8 +272,9 @@ public class Session extends java.lang.Object implements Serializable {
                 p.getEditor().show();
             }
         }
-        
-        s.is_saved = true;
+         
+        s.setFile(_file);
+//        s.is_saved = true; // is set by setFile()
         s.is_modified = false;
 
         return s;

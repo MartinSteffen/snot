@@ -10,6 +10,11 @@ import java.util.*;
 import java.lang.*;
 import java.io.Serializable;
 import java.io.File;
+import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream;
+import java.io.FileOutputStream;
+import java.io.FileInputStream;
+
 import absynt.*;
 import editor.Editor;
 
@@ -18,7 +23,7 @@ import editor.Editor;
  *  It also keeps the name and status flags of the SFC.
  *
  * @author  Hans Theman and Ingo Schiller
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class Project extends java.lang.Object implements Serializable {
 
@@ -122,20 +127,38 @@ public class Project extends java.lang.Object implements Serializable {
         return sfc;
     }
     
-    public void saveSFC(File file) {
-    // throws exception!
-    // Exception.getMessage() is displayed in ErrorPopup
-        System.out.print(" saving SFC ...");
-    }
+    public void saveSFC(File _file) throws Exception {
+        if (_file == null)
+            return;
         
-    public static Project openSFC(File file) {
-    // throws exception!
-    // Exception.getMessage() is displayed in ErrorPopup
-       System.out.print(" opening SFC ...");
-       return new Project();
+        ObjectOutputStream outStream = new ObjectOutputStream(new FileOutputStream(_file));
+        try {
+            outStream.writeObject(this); // throws IOException!!!!
+        }
+        finally {
+            outStream.close(); // throws IOException!!!!
+        }
+        outStream.flush(); // throws IOException!!!!
+        outStream.close(); // throws IOException!!!!
     }
- 
-
+    
+    public static Project readSFC(File _file) throws Exception {
+        Project p = null;
+        
+        if (_file == null)
+            throw new Exception("NullPointer in function readSFC()!");
+        
+        ObjectInputStream inStream = new ObjectInputStream(new FileInputStream(_file));
+        try {
+           p = (Project)inStream.readObject(); 
+        }
+        finally {
+            inStream.close();
+        }
+        inStream.close();
+        
+        return p;
+    }
     
 //##############################################
 //
@@ -152,7 +175,6 @@ public class Project extends java.lang.Object implements Serializable {
     public void setName(String _name) {
         name = _name;
         if (editor != null)
-//            editor.setFilename(name);
             editor.setSFCName(name);
     }
 
@@ -162,8 +184,7 @@ public class Project extends java.lang.Object implements Serializable {
      */
     public void setEditor(Editor _editor) {
         editor = _editor;
-  //      editor.setFilename(name);
-//        editor.setName(name);
+        editor.setSFCName(name);
     }
     
     /** Returns the editor modified flag.
@@ -178,7 +199,7 @@ public class Project extends java.lang.Object implements Serializable {
      *  This function is part of the editor interface.
      */
     public void clearModified() {
-        editor.setModified(false);
+        editor.clearModified();
     }
     
 }
