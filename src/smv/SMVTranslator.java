@@ -15,7 +15,7 @@ import java.util.LinkedList;
 /**
  *
  * @author  Kevin Koeser / Tobias Kloss
- * @version $Id: SMVTranslator.java,v 1.6 2001-06-26 07:02:22 swprakt Exp $
+ * @version $Id: SMVTranslator.java,v 1.7 2001-07-03 09:57:01 swprakt Exp $
  */
 public class SMVTranslator extends java.lang.Object {
     private SFC sfc;
@@ -770,6 +770,12 @@ public class SMVTranslator extends java.lang.Object {
                     break;
                 case Expr.OR:
                     s += " | ";
+                    break;
+                case Expr.EQ:
+                    s += " = ";
+                    break;
+                case Expr.NEQ:
+                    s += " ~= ";
                     break;
                 default:
                     throw new SMVException("Nonboolean Expression found.");
