@@ -33,6 +33,7 @@ ident   = ({letter}({letter}|{digit})*)
 ":"                   { return new Symbol(sym.COLON);           }
 "("                   { return new Symbol(sym.LPAREN);          }
 ")"                   { return new Symbol(sym.RPAREN);          }
+"skip"                { return new Symbol(sym.SKIP);            }
 ":="                  { return new Symbol(sym.ASSIGN);          }
 ","                   { return new Symbol(sym.COMMA);           }
 "int"                 { return new Symbol(sym.INT);             }

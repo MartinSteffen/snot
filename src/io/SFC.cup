@@ -4,7 +4,7 @@
  * Offers the methods  parseFile and parseExpression 
  *
  * @author Karsten Stahl, Martin Steffen
- * @version $Id: SFC.cup,v 1.7 2001-07-01 06:51:24 swprakt Exp $
+ * @version $Id: SFC.cup,v 1.8 2001-07-01 07:25:28 swprakt Exp $
  *
  * The grammar definition contains 4 parts:
  *    -  initialization declarations and how to generate the parser
@@ -127,7 +127,7 @@ parser code {:
  */ 
 terminal         SFC, LBRACKET, RBRACKET, ASSIGN;
 terminal         LPAREN, RPAREN,  COMMA, SEM, COLON, FROMTO;  
-terminal         INIT, WHEN, ACTIONS, BEGIN, END, VARS, STEPS, TRANSITIONS;
+terminal         INIT, SKIP, WHEN, ACTIONS, BEGIN, END, VARS, STEPS, TRANSITIONS;
 terminal         INT, BOOL, GET, NEQ, OR, PLUS, TIMES;
 terminal         AND, DIV, EQ, GEQ, GREATER, LEQ, LESS, MINUS, NEG;
 terminal         TRUE, FALSE;
@@ -135,7 +135,6 @@ terminal         TRUE, FALSE;
 terminal String  IDENT;
 terminal Integer INTEGER;
 
-non terminal    stmt_list, stmt;
 non terminal    var_dec, assignment;
 
 non terminal    absynt.SFC        sfc;
@@ -144,7 +143,6 @@ non terminal	absynt.Step	  istep;
 non terminal	LinkedList	  steps, steplist;
 non terminal    absynt.Step       step;
 non terminal	LinkedList	  transitions;
-non terminal	LinkedList	  actions;
 non terminal	LinkedList	  declist;
 non terminal    absynt.Type       type;
 non terminal    absynt.Constval   c_val;
@@ -153,6 +151,11 @@ non terminal    Declaration       declaration;
 non terminal    LinkedList        stepactionlist;
 non terminal    absynt.StepAction stepaction;
 non terminal    absynt.ActionQualifier  qualifier;
+non terminal    LinkedList              actionlist,actions;
+non terminal    absynt.Action           sfcaction;   //action is reserved word
+non terminal    LinkedList              sap, stmtlist;
+non terminal    absynt.Stmt             stmt;
+non terminal    absynt.Assign           assign;
 
 non terminal    absynt.Expr       expr;
 non terminal    Integer           op;
@@ -185,7 +188,8 @@ sfc          ::= program:p {: RESULT=p; :}
 program      ::= BEGIN 
                  declist SEM
 	         istep SEM
-	         steps
+	         steps SEM
+                 actions 
                  END;
 
 /** program      ::= BEGIN
@@ -258,4 +262,32 @@ qualifier       ::= IDENT:q       // not as reserved word
   ;
 
 
+actions         ::= ACTIONS EQ
+                    LBRACKET
+                    actionlist
+                    RBRACKET
+  ;
 
+
+actionlist      ::= sfcaction
+                 |  sfcaction SEM actionlist
+  ;
+
+sfcaction       ::=  IDENT:a EQ
+                     sap
+  ;
+
+
+sap             ::=  LBRACKET stmtlist RBRACKET
+  ;
+
+stmtlist        ::=  stmt
+                 |   stmt SEM stmtlist
+  ;
+
+stmt            ::= SKIP
+                 |  assign
+  ;
+
+assign          ::= IDENT:x ASSIGN expr:e
+  ;
