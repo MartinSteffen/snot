@@ -21,14 +21,14 @@ import editor.Editor;
 public class Project extends java.lang.Object implements Serializable {
 
     /** variable declarations */
-    private static SFC sfc = null;
-    private static Editor editor = null;
-    public static String name;
-//    public static String fileName;  is not really needed!!!
-    public static boolean is_checked;   // indicates if it is checked
-    public static boolean is_well_defined;  
-    public static boolean is_active;    // indicates whether the Project is opened in the Editor
-    public static boolean has_changed;  // indicates whether the Project has been edited and needs to be saved
+    private SFC sfc = null;
+    private Editor editor = null;
+    public String name;
+
+    public boolean is_checked;   // indicates if it is checked
+    public boolean is_well_defined;  
+    public boolean is_active;    // indicates whether the Project is opened in the Editor
+    public boolean has_changed;  // indicates whether the Project has been edited and needs to be saved
     
     /** constructor */
     public Project () {
@@ -41,15 +41,28 @@ public class Project extends java.lang.Object implements Serializable {
         has_changed = false;
     }
     
+    public String getName() {
+        return name;
+    }
+    
+    public void setIndex(int i) {
+        if (editor != null)
+            editor.setName(""+i);
+    }
+    
+    public void setName(String _name) {
+        name = new String(_name);
+        if (editor != null)
+            editor.setTitle("Editor  "+name);
+    }
+    
     public void setEditor(Editor _editor) {
         editor = _editor;
+        editor.setTitle("Editor  "+name);
     }
     
     public Editor getEditor() {
-        if (editor != null)
-            return editor;
-        else 
-            return null;
+        return editor;
     }
 
     public SFC getSFC() {
@@ -67,6 +80,11 @@ public class Project extends java.lang.Object implements Serializable {
     // Exception.getMessage() is displayed in ErrorPopup
        System.out.print(" opening SFC ...");
        return new Project();
+    }
+    
+    public void printToStdout() {
+        String text = "PROJECT INFO\nName: "+name+"; Is checked: "+is_checked+"; Is well defined: "+is_well_defined+"; Is active: "+is_active+"; Has changed: "+has_changed+"\n";
+        System.out.print(text);
     }
     
 

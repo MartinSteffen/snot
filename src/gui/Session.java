@@ -18,11 +18,11 @@ import java.io.Serializable;
 public class Session extends java.lang.Object implements Serializable {
 
     /** variable declarations */
-    private static Vector projects = null;
-    public static String name;
-    public static String fileName;
-    public static boolean is_saved;
-    public static boolean has_changed;
+    private Vector projects = null;
+    public String name;
+    public String fileName;
+    public boolean is_saved;
+    public boolean has_changed;
     
     /** Creates new Session */
     public Session() {
@@ -50,10 +50,12 @@ public class Session extends java.lang.Object implements Serializable {
     }
     
     public Project getProject(int index) {
-        if (projects.isEmpty())
+        if (projects.isEmpty()) {
+System.out.print("\n fatal error!! session.projects is empty!!!");
             return null;
+        }
         
-        return (Project)projects.get(index);
+        return (Project)projects.elementAt(index);
     }
     
     /**
@@ -63,12 +65,15 @@ public class Session extends java.lang.Object implements Serializable {
      */
     
     public int addProject(Project project) {
-        projects.add((Object)project);
+        projects.add(project);
         return projects.size()-1; 
     }
     
     public void removeProjectAt(int index) {
         projects.removeElementAt(index);
+        for (int i=index; i<projects.size(); i++) {
+            ((Project)projects.elementAt(i)).setIndex(i);
+        }
     }
     
     public boolean noProjects() {
@@ -76,5 +81,20 @@ public class Session extends java.lang.Object implements Serializable {
     }
     
     public void save(){}
+    
+    /**
+     *Function toString
+     *Returns a stringrepresention of the session object readable for humans
+     *@ret String 
+     */
+    public void printToStdout() {
+        
+        String text = "\nSESSION INFO:\nName: "+name+"; Filename: "+fileName+"; No of projects: "+this.noOfProjects()+"; Is saved: "+is_saved+"; Has changed: "+has_changed+"\n";
+        System.out.print(text);
+        for (int i=0; i<this.noOfProjects(); i++) {
+            System.out.print(i+" - ");
+            this.getProject(i).printToStdout();
+        }
+    }
     
 }

@@ -31,7 +31,7 @@ public class Gui extends javax.swing.JFrame {
     /** private declarations */
     private JOptionPane SnotOptionPane = null; // hierin werden jegliche popups dargestellt
     private Session session = null;
-    private int activeProject = 0;  // index to an item in the session.project-Vector!
+    private int activeProject = -1;  // index to an item in the session.project-Vector!
     private boolean ready_to_exit = true;  // indicates whether exit Snot or not
 
     private final String TITLE = "Snot";    // the Gui title
@@ -43,7 +43,7 @@ public class Gui extends javax.swing.JFrame {
             SnotOptionPane = new JOptionPane();
             session = _session;
             if (session==null)
-                disableSession();
+                enableSession(false);
             
             // set GUI L&F
             try {
@@ -104,8 +104,8 @@ public class Gui extends javax.swing.JFrame {
             Status = new javax.swing.JLabel();
             jSeparator1 = new javax.swing.JSeparator();
             
-            FileMenu.setLabel("File");
-              FileMenu.setActionCommand(null);
+            FileMenu.setActionCommand(null);
+              FileMenu.setText("File");
               
               OpenSession.setLabel("Open Session");
                 OpenSession.setName("openSession");
@@ -119,6 +119,12 @@ public class Gui extends javax.swing.JFrame {
                 
               NewSession.setLabel("New");
                 NewSession.setName("newSession");
+                NewSession.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        NewSessionActionPerformed(evt);
+                    }
+                }
+                );
                 FileMenu.add(NewSession);
                 
               FileMenu.add(jSeparator2);
@@ -207,10 +213,22 @@ public class Gui extends javax.swing.JFrame {
                 
               RenameSFC.setLabel("Rename");
                 RenameSFC.setName("renameSFC");
+                RenameSFC.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        RenameSFCActionPerformed(evt);
+                    }
+                }
+                );
                 Edit.add(RenameSFC);
                 
               RemoveSFC.setLabel("Remove");
                 RemoveSFC.setName("removeSFC");
+                RemoveSFC.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        RemoveSFCActionPerformed(evt);
+                    }
+                }
+                );
                 Edit.add(RemoveSFC);
                 jMenuBar.add(Edit);
               
@@ -326,6 +344,7 @@ public class Gui extends javax.swing.JFrame {
               
               
             ButtonCheckSFC.setPreferredSize(new java.awt.Dimension(90, 35));
+              ButtonCheckSFC.setToolTipText("Check SFC");
               ButtonCheckSFC.setMaximumSize(new java.awt.Dimension(180, 35));
               ButtonCheckSFC.setName("buttonCheck");
               ButtonCheckSFC.setText("Check");
@@ -339,6 +358,7 @@ public class Gui extends javax.swing.JFrame {
               
               
             ButtonSimulator.setPreferredSize(new java.awt.Dimension(90, 35));
+              ButtonSimulator.setToolTipText("Simulate SFC");
               ButtonSimulator.setMaximumSize(new java.awt.Dimension(180, 35));
               ButtonSimulator.setName("buttonSimulator");
               ButtonSimulator.setText("Simulator");
@@ -352,6 +372,7 @@ public class Gui extends javax.swing.JFrame {
               
               
             ButtonSMV.setPreferredSize(new java.awt.Dimension(90, 35));
+              ButtonSMV.setToolTipText("Transform SFC to SMV");
               ButtonSMV.setMaximumSize(new java.awt.Dimension(180, 35));
               ButtonSMV.setName("buttonSMV");
               ButtonSMV.setText("SMV");
@@ -386,12 +407,128 @@ public class Gui extends javax.swing.JFrame {
             setJMenuBar(jMenuBar);
             
         }//GEN-END:initComponents
+
 /**********************************************************************************
  *
  *      Some ActionListeners
  *
  **********************************************************************************/
         
+  private void RemoveSFCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RemoveSFCActionPerformed
+    int index = activeProject; // for security reason
+    String msg = null;
+    int result = 0;
+    
+System.out.print("\nindex is :"+index);      
+//session.printToStdout();      
+// check for valid session. This should never be entered!!!
+     if (session == null) {
+          System.out.print("\n An error occured! RenameSFC was called without an active Session!!");
+          return;
+     }
+      
+     // check for active Projects
+     if (session.noOfProjects()<1 || index<0) {
+         if (!(session.noOfProjects()<1) && index<0)
+            msg = new String("Please select a SFC first!\n"); 
+         else
+            msg = new String("There is no SFC in the session!\n");
+         
+         SnotOptionPane.showMessageDialog(null, msg, "Error", JOptionPane.ERROR_MESSAGE);
+         return;
+     }
+
+     // show Remove Dialog
+     result = SnotOptionPane.showConfirmDialog(null, "You are about to remove SFC \""+session.getProject(index).name+"\" from the current session.\nIf it is not exportet or saved its content will be lost!\n\n Do you wish to proceed?", 
+                                        "Remove SFC from Session", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+     
+     if (result == JOptionPane.NO_OPTION) 
+         return;
+     
+     // removing SFC from session
+     session.getProject(index).getEditor().dispose();
+     session.removeProjectAt(index);
+     activeProject = -1;
+  }//GEN-LAST:event_RemoveSFCActionPerformed
+
+  private void RenameSFCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RenameSFCActionPerformed
+     String input = null;
+     String msg = null;
+     int index = activeProject; // for security reason
+
+// check for valid session. This should never be entered!!!
+     if (session == null) {
+          System.out.print("\n An error occured! RenameSFC was called without an active Session!!");
+          return;
+     }
+      
+     // check for active Projects
+     if (session.noOfProjects()<1 || index<0) {
+         if (!(session.noOfProjects()<1) && index<0)
+            msg = new String("Please select a SFC first!\n"); 
+         else
+            msg = new String("There is no SFC in the session!\n");
+         
+         SnotOptionPane.showMessageDialog(null, msg, "Error", JOptionPane.ERROR_MESSAGE);
+         return;
+     }
+
+     // show Rename Dialog
+     input = SnotOptionPane.showInputDialog(null, "The current SFC's name is \""+session.getProject(index).getName()+"\".\nPlease enter a new name and hit \"OK\"", 
+                                        "Rename SFC", JOptionPane.PLAIN_MESSAGE);
+     // set new name
+     if (input != null && input.length()>0) {
+          session.getProject(index).setName(input);
+//          session.getProject(index).getEditor().setTitle(input);
+     }
+  }//GEN-LAST:event_RenameSFCActionPerformed
+
+  private void NewSessionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NewSessionActionPerformed
+      int response;
+      ready_to_exit = true;  // just in case ...
+      
+      // check for active session
+      if (session != null) {
+          if (session.has_changed) {
+              response = SnotOptionPane.showConfirmDialog(null, "There already is an active unsaved session!\n Without saving the changes will be lost!\n\nDo you want to save the changes before opening a new session?\n",
+                                            "Alert", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+          }
+          else if (session.is_saved) {
+              response = SnotOptionPane.showConfirmDialog(null, "There already is an active session!\nOpening a new once will close the current session.\n\n Do you wish to proceed?\n",
+                                            "Alert", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+          }
+          else {
+              response = SnotOptionPane.showConfirmDialog(null, "The active session is not saved!\n Without saving its contents will be lost!\n\nDo you want to save it before opening a new session?\n",
+                                            "Alert", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+          }
+              
+          switch (response) {
+              case JOptionPane.YES_OPTION: SaveSessionActionPerformed(null); break;
+              case JOptionPane.NO_OPTION: break;
+              case JOptionPane.CANCEL_OPTION:
+              case JOptionPane.CLOSED_OPTION: return;
+          }
+
+          // check if SaveSessionActionPerformed was aborted
+          if (!ready_to_exit)
+              return;
+             
+          closeSession();  
+      }
+
+      try {
+          session = new Session();
+      }
+      catch (Exception ex) {
+          SnotOptionPane.showMessageDialog(null, ex.getMessage(),
+                                        "Error", JOptionPane.WARNING_MESSAGE);
+          session = null;
+          return;
+      }
+      
+      enableSession(true);
+  }//GEN-LAST:event_NewSessionActionPerformed
+
   private void ShowToolBarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ShowToolBarActionPerformed
       // switch the Tools ToolBar on and off in the Gui
       if (ShowToolBar.isSelected())
@@ -525,7 +662,9 @@ public class Gui extends javax.swing.JFrame {
    */
   
   private void NewSFCActionPerformed(java.awt.event.ActionEvent evt) {
+      Project newProject = null;
       Editor editor = null;
+      int index = -1;
       // check for valid session
       if (session == null) {
            SnotOptionPane.showMessageDialog(null, "Creating a new SFC failed!\nCannot load a SFC without an active session.\nPlease open or create a new session first!", 
@@ -533,35 +672,38 @@ public class Gui extends javax.swing.JFrame {
            return;
       }
            
-      // add new Project to session
-      try {
-          activeProject = session.addProject(new Project());
-      }
-      catch (Exception ex) {
-           SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-           return;
-      }
-      
       // launch Editor with new SFC
       try {
-          editor = new Editor(session.getProject(activeProject).getSFC());
+          newProject = new Project();
+          editor = new Editor(newProject.getSFC());//session.getProject(project).getSFC());
       }
       catch (Exception ex) {
            SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-           session.removeProjectAt(activeProject);
+           session.removeProjectAt(index);
            return;
       }
-      
-      // set environmental parameters
-      session.has_changed = true;
-      session.getProject(activeProject).setEditor(editor);
 
       // set editor parameters
       editor.setLocation(250, 250);
       editor.addWindowListener(new GuiWindowListener());
-      editor.setName(""+activeProject);
+
+      newProject.setEditor(editor);
+
+      // add new Project to session
+      try {
+          index = session.addProject(newProject);
+      }
+      catch (Exception ex) {
+           SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);           
+           return;
+      }
+      // set environmental parameters
+      session.has_changed = true;
+      editor.setName(""+index);
       editor.show();
-  }
+ }      
+
+
 
   private void CloseSessionActionPerformed(java.awt.event.ActionEvent evt) {
       prepareForExitSnot(false);
@@ -666,30 +808,21 @@ public class Gui extends javax.swing.JFrame {
  *
  *******************************************************************************/
 
-    private void disableSession() {
-        // disable all relevant menus, buttons, ...
-        SaveSession.setEnabled(false);
-        SaveAsSession.setEnabled(false);
-        CloseSession.setEnabled(false);
+    private void enableSession(boolean state) {
+        // en-disable menus
+        SaveSession.setEnabled(state);
+        SaveAsSession.setEnabled(state);
+        CloseSession.setEnabled(state);
         
-        Edit.setEnabled(false);
-        ToolsMenu.setEnabled(false);
-        View.setEnabled(false);
+        Edit.setEnabled(state);
+        ToolsMenu.setEnabled(state);
+        View.setEnabled(state);
         
-        ToolBarTools.setEnabled(false);
-    }
-        
-    private void enableSession() {
-        // enable all relevant menus, buttons, ...
-        SaveSession.setEnabled(true);
-        SaveAsSession.setEnabled(true);
-        CloseSession.setEnabled(true);
-        
-        Edit.setEnabled(true);
-        ToolsMenu.setEnabled(true);
-        View.setEnabled(true);
-
-        ToolBarTools.setEnabled(true);    
+        // en-disable buttons
+        ButtonEditor.setEnabled(state);
+        ButtonCheckSFC.setEnabled(state);
+        ButtonSimulator.setEnabled(state);
+        ButtonSMV.setEnabled(state);
     }
         
     private void closeSession() {
@@ -703,16 +836,17 @@ public class Gui extends javax.swing.JFrame {
         if (session == null)
             return; // just in case ...
         
-        Frame[] frames = null;
-        frames = getFrames();
+        Frame[] frames = getFrames();
         
         // closing open frames: frames[0] is GuiFrame!!!!
-        for (int i=1; i<(frames.length-1); i++) {
-            frames[i].dispose();
-//            System.out.print("\n"+frames[i].getName());
+        if (frames != null) {
+            for (int i=1; i<(frames.length-1); i++) {
+                frames[i].dispose();
+    //            System.out.print("\n"+frames[i].getName());
+            }
         }
         
-        disableSession();
+        enableSession(false);
         session = null;
         this.setTitle(TITLE);
         System.out.print("\nSession \""+session.name+"\" is closed!");
@@ -729,7 +863,7 @@ public class Gui extends javax.swing.JFrame {
         local_session.name = file.getName().replace('.', '\0');
         
         this.setTitle(TITLE+"  "+session.name);
-        enableSession();
+        enableSession(true);
         
         System.out.print("\n ... opening new session from file \""+file+"\": name: "+file.getName()+", "+file.toString());
         return local_session;
@@ -805,25 +939,25 @@ public class Gui extends javax.swing.JFrame {
         }        
 	
         public void windowClosed(java.awt.event.WindowEvent evt) {
-            System.out.print("\n Window Closed");            
+            System.out.print("\n Window "+activeProject+" Closed");            
         }
         
         public void windowDeiconified(java.awt.event.WindowEvent evt) {
-            System.out.print("\n Window Deiconified");
+            System.out.print("\n Window "+activeProject+" Deiconified");
         }
         
         public void windowOpened(java.awt.event.WindowEvent evt) {
-            session.getProject(activeProject).is_active = false;
-            System.out.print("\n Window Opened");
+            session.getProject(activeProject).is_active = true;
+            System.out.print("\n Window "+activeProject+" Opened");
         }
         
         public void windowIconified(java.awt.event.WindowEvent evt) {
-            System.out.print("\n Window Iconified");
+            System.out.print("\n Window "+activeProject+" Iconified");
         }
         
         public void windowClosing(java.awt.event.WindowEvent evt) {
             session.getProject(activeProject).is_active = false;
-            System.out.print("\n Window Closing");
+            System.out.print("\n Window "+activeProject+" Closing");
         }
     }
         
