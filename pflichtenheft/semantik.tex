@@ -17,18 +17,31 @@ Wir erläutern die Semantik der SFC's anhand des folgenden Beispiels:
 
 
 
-%\input{sfc-figure}
+
 
 
 \ifweb
-\begin{rawhtml}
-<BR>
-<DIV ALIGN=center>
-<IMG SRC="sfc-figure.gif">
-</DIV><BR>  
-\end{rawhtml}
+\begin{figure}[htbp]
+  \centering
+  \begin{rawhtml}
+    <BR>
+    <DIV ALIGN=center>
+    <IMG SRC="sfc-figure.gif">
+    </DIV><BR>  
+  \end{rawhtml}  
+  \caption{SFC}
+  \label{fig:SFC}
+\end{figure}
+
 \else
-\includegraphics[height=10cm,clip=]{sfc-figure1.ps}
+\begin{figure}[htbp]
+  \centering
+  \input{sfc-figure}
+  \caption{SFC}
+  \label{fig:SFC}
+\end{figure}
+
+%\includegraphics[height=10cm,clip=]{sfc-figure1.ps}
 \fi
 
 

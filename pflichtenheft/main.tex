@@ -22,10 +22,12 @@
 
 %\begin{htmlonly}
 \ifweb
-\htmlfoot{\copyright Public License}
+\htmlfoot{\scriptsize\it last generated \today\  (\copyright Public License)}
 \renewcommand{\@bodyargs}{bgcolor="white" alink="red" vlink="\#407999"  link="\#7070ff"}    
 \title{Pflichtenheft (1):  \Snot}
 %\end{htmlonly}
+
+
 \else
 \fi
 
@@ -62,12 +64,20 @@
 \appendix
 
 
-\input{syntax}
+%\input{syntax}
 \input{absynt}
 \input{semantik}
 
 
-\input{literatur}
+\bibliographystyle{alpha}
+
+\addcontentsline{toc}{section}{Bibliography}
+
+
+{%\small
+  \bibliography{string,etc,imperative,oop,types,tools,protocol,logic,crossref}
+}
+
 
 
 

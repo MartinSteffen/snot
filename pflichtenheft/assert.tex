@@ -1,4 +1,4 @@
-\section{Model-Checker}
+\section{Model Checker (optional)}
 \label{sec:assert}
 
 
@@ -19,7 +19,7 @@ impliziten) Graphen übersetzt, der danach mittels \emph{Tiefensuche} nach
 Verletzung der Zusicherungen abgesucht wird.
 
 
-Die Semantik der Prozesse ist in Anhang~\ref{sec:semantik} informell
+Die Semantik der Sprache ist in Anhang~\ref{sec:semantik} informell
 beschrieben.
 
 
@@ -27,17 +27,12 @@ beschrieben.
 
 Im wesentlichen mit der Gui (Abschnitt~\ref{sec:gui}): 
 
-Methode \texttt{start\_modcheck} mit Parameter eines SFC's in
-abstrakter Syntax. Rückgabe: \emph{noch zu klären}: entweder mittels
-Ausnahme oder boolescher Wert. Auf jeden Fall wird der Gui der Zustand
-zurückgegeben, in welchem die Verletzung auftritt. Wie die Gui darauf reagiert
-ist nicht Sache des Modelcheckerpaketes (z.B.\ könnte der Zustand
-gehighlighted werden).
-
-
-
-
-
+Methode \texttt{start\_modcheck} mit Parameter eines SFC's in abstrakter
+Syntax. Rückgabe: \emph{noch zu klären}: entweder mittels Ausnahme oder
+boolescher Wert. Auf jeden Fall wird der Gui der Zustand zurückgegeben, in
+welchem die Verletzung auftritt. Wie die Gui darauf reagiert, ist nicht
+Sache des Modelcheckerpaketes (z.B.\ könnte der Zustand gehighlighted
+werden).
 
 
 %%% Local Variables: 

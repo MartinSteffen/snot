@@ -1,5 +1,5 @@
 ########################################################
-## $Id: Makefile,v 1.5 2001-04-28 08:44:54 swprakt Exp $
+## $Id: Makefile,v 1.6 2001-04-28 10:36:59 swprakt Exp $
 ########################################################
 
 
@@ -12,7 +12,8 @@ CODEDIR     =
 ############# Achtung: die Versionen ändern sich!
 WWWDIR      = /home/info/www/inf/deRoever/SS01/Java/Snot/pflichtenheft1
 
-
+main.dvi: main.tex
+	latex main
 
 main.ps:  main.dvi
 	dvips -o main.ps main.dvi
@@ -30,7 +31,7 @@ html: macros.hva $(DOC).tex
 
 
 clean:
-	rm -f *.aux *.log *.dvi *.ps *.bbl *.blg *~ 
+	rm -f *.aux *.log *.dvi main.ps main.pfd *.bbl *.blg *~ 
 	rm *.html *motif.gif *.haux
 
 www:
