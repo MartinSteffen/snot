@@ -1,6 +1,6 @@
 #----------------------------------------------------------------------
 # developers' top-level Makefile for the Snot project
-# $Id: Makefile,v 1.40 2001-07-01 11:11:43 swprakt Exp $
+# $Id: Makefile,v 1.41 2001-07-01 11:11:50 swprakt Exp $
 #----------------------------------------------------------------------
 
 # The targets installing gobal web-infos can be executed only
@@ -56,7 +56,7 @@ jar:
             ./gui/*.class\
             ./smv/*.class\
 	    ./simulator/*.class\
-	    ./checks/*.class
+	    ./checks/*.class\
 	    ./io/*.class
 
 
