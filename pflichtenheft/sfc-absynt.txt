@@ -13,7 +13,7 @@ sequential_function_chart ::=  istep      : step
                    assign ::=               variable * expr
                  variable ::=  name       : string
                                type       : type
-         action_qualifier ::=  Nqual
+         action_qualifier ::=  Nqual                            (* may be extended *)
 
                transition ::=  source     : step list
                                guard      : expr
