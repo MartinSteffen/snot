@@ -24,14 +24,14 @@ name    = ({letter}({letter}|{digit})*)
 "steps"               { return new Symbol(sym.STEPS);           }
 "init"                { return new Symbol(sym.INIT);            }
 "transitions"         { return new Symbol(sym.TRANSITIONS);     }
-"when"                { return new Symbol(sym.TRANSITIONS);     }
+"when"                { return new Symbol(sym.WHEN);            }
 "->"                  { return new Symbol(sym.FROMTO);          }
 "["                   { return new Symbol(sym.LBRACKET);        }
 "]"                   { return new Symbol(sym.RBRACKET);        }
 ";"                   { return new Symbol(sym.SEM);             }
 "("                   { return new Symbol(sym.LPAREN);          }
 ")"                   { return new Symbol(sym.RPAREN);          }
-"="                   { return new Symbol(sym.ASSIGN);          }
+":="                  { return new Symbol(sym.ASSIGN);          }
 ","                   { return new Symbol(sym.COMMA);           }
 "int"                 { return new Symbol(sym.INT);             }
 "bool"                { return new Symbol(sym.BOOL);            }
@@ -54,6 +54,6 @@ name    = ({letter}({letter}|{digit})*)
 "!="                  { return new Symbol(sym.NEQ);             }
 
 
-{name}                { return new Symbol(sym.NAME, yytext()); }
-{number}              { return new Symbol(sym.NUMBER, new Integer(yytext())); }
+{name}                { return new Symbol(sym.IDENT, yytext()); }
+{number}              { return new Symbol(sym.INTEGER, new Integer(yytext())); }
 .                     { System.err.println("[Modul io] in line "+yyline+": unknow char: "+yytext()); }
