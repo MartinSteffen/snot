@@ -1,13 +1,8 @@
 
 
-\newcommand{\Mist}     {\textsc{Mist}}
+\newcommand{\Snot}     {\textsc{Snot}}
 \newcommand{\many}     {\ast}
 \newcommand{\to}       {\rightarrow}
-\newcommand{\ocaml}    {\textsc{Ocaml}}
-\newcommand{\Terms}[1] {T_{#1}}
-\newcommand{\T}        {\mathcal{T}}
-\newcommand{\Tmany}             {\mathcal{T}^\ast}
-\newcommand{\Tmanyprefix}[1]    {\mathcal{T}^{\leq n}}
 
 \usepackage{hevea}
 
@@ -29,5 +24,5 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% $Id: macros.hva,v 1.1 2001-04-20 17:36:51 swprakt Exp $
+%% $Id: macros.hva,v 1.2 2001-04-23 06:57:56 swprakt Exp $
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,5 +1,5 @@
 ########################################################
-## $Id: Makefile,v 1.2 2001-04-21 12:08:06 swprakt Exp $
+## $Id: Makefile,v 1.3 2001-04-23 06:57:55 swprakt Exp $
 ########################################################
 
 
@@ -7,10 +7,10 @@ HEVEA       = hevea
 HEVEAOPTS   = -fix -exec xxdate.exe
 HACHA       = hacha
 
-DOC         = handout1
+DOC         = main
 CODEDIR     = 
 ############# Achtung: die Versionen ändern sich!
-WWWDIR      = /home/info/www/inf/deRoever/SS01/Java/Siff/pflichtenheft1
+WWWDIR      = /home/info/www/inf/deRoever/SS01/Java/Snot/pflichtenheft0
 
 
 
@@ -25,7 +25,7 @@ index.html: $(DOC).html
 
 html: macros.hva $(DOC).tex
 	$(HEVEA) $(HEVEAOPTS) macros.hva -o $(DOC)-sec.html $(DOC).tex
-	$(HACHA) -o $(DOC).html $(DOC)-sec.html
+	$(HACHA) -o index.html $(DOC)-sec.html
 
 
 
