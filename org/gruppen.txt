@@ -1,80 +1,42 @@
 ######################################################
-# $Id: gruppen.txt,v 1.1 2001-04-20 05:36:13 swprakt Exp $
+# $Id: gruppen.txt,v 1.2 2001-04-25 06:02:29 swprakt Exp $
 ######################################################
 ## Gruppeneinteilung + Mailadressen der Teilnehmer: .mailrc-Syntax
 ##
-##
-## 
-##
-##  GUI:              Helge Kraas/ Schümann (unix22) 
-##  Editor:           Finn Jacobs/ Alexander Eckloff (unix18)   
-##  Simulator:        Michael Goemann/Michael Nimser (unix23)
-##  Model-checker:    Frank Neumann/Aneta Kümper/Eike Schulz (unix19, ssh)
-##  Parser:           Andreas Scott/Alexander Hegegner
-##  Graphplazierung1: Daniel Dietrich/Moritz Zahorsky/ Christian Buck
-##  Graphplazierung2: Ralf Thöhle/Paul Mallach (unix11)
-##  Checking:         Jonas Dageförde/Andreas Lukosch/ André Nitsche
-##  Prettyprinter (o.ä): Oliver Kraus, Holger Labenda
 
 
 
-################### Teilnehmer, alphabetisch
-
-alias Buck.Christian     cbuck@computerlabor.math.uni-kiel.de
-alias Dagefoerde.Jonas   jd@softwareprojekt.de
-alias Dietrich.Daniel    daniel.dietrich@gmx.net
-alias Eckloff.Alexander	ataler@gmx.de
-alias Goemann.Michael 	 Michael@Goemann.de
-alias Hegener.Alexander	 std10239@dial.techfak.uni-kiel.de
-alias Jacobs.Finn	 finnjacobs@gmx.net
-alias Kraas.Helge	 hkraas@web.de
-alias Kraus.Oliver	okraus@computerlabor.math.uni-kiel.de
-alias Kuemper.Aneta	 barecka@gmx.de
-alias Kyas.Marcel        mkyas@gmx.net
-alias Labenda.Holger	labenda@psychologie.uni-kiel.de
-alias Lukosch.Andreas	 stu38212@mail.uni-kiel.de
-alias Mallach.Paul	 pmallach@gmx.de
-alias Neumann.Frank	 frank.all@gmx.de
-alias Nimser.Michael	 stu32548@mail.uni-kiel.de
-alias Nitsche.Andree	 tex.murphy@t-online.de
-alias Schuemann.Broder   std10273@dial.techfak.uni-kiel.de
-alias Schulz.Eike	 std10421@dial.techfak.uni-kiel.de
-alias Scott.Andreas	 scott@ki.tng.de
-alias Stahl.Karsten      kst@informatik.uni-kiel.de
-alias Steffen.Martin     ms@informatik.uni-kiel.de
-alias Thoehle.Ralf	 std10277@dial.techfak.uni-kiel.de
-alias Zahorsky.moritz    zahorsky@computerlabor.math.uni-kiel.de
 
 
 
-alias gui           kraas.helge, schuemann.broder
-alias editor        jacobs.finn, eckloff.alexander
-alias simulator     goemann.michael, nimser.michael
-alias modcheck      neumann.frank, kuemper.aneta, schulz.eike
-alias parser        scott.andreas, hegener.alexander
-alias check1        nitsche.andree
-alias check2        dagefoerde.jonas, lukosch.andreas
-alias check         check1 check2
-alias position1     dietrich.daniel, zahorsky.moritz, buck.christian
-alias position2     thoehle.ralf, mallach.paul
-alias pp            kraus.oliver, labenda.holger
-alias integration   kyas.marcel, stahl.karsten, steffen.Martin
 
 
 
-alias javamist editor,\
-               gui, \
-	       simulator, \
-	       modcheck, \
-	       parser,\
-	       position1,\
-	       position2,\
-               check,\
-	       pp,\
-	       integration
+alias Kloss.Tobias tobias.kloss@gmx.de
+alias Koeser.Kevin kpt@gmx.net
+#alias Schultheis.Dimitri  
+alias Pugatschov.Tobias   std10402@dial.tf.uni-kiel.de
+alias Schiller.Ingo       schiller.ingo@web.de
+alias Theman.Hans         htheman@web.de
+alias Heine.Carsten       cheine@web.de
+alias Schroeder.Christian chs@informatik.uni-kiel.de
+alias Isemann.Marc        marc_isemann@yahoo.de
+alias Lukosch.Andreas    stu38212@mail.uni-kiel.de
+alias Fiebelkorn.Joern   Joern.Fiebelkorn@t-online.de
 
 
 
+
+alias javasnot Kloss.Tobias\
+               Koeser.Kevin\
+	       Pugatschov.Tobias\
+               Schiller.Ingo\  
+               Theman.Hans \
+               Heine.Carsten\
+               Schroeder.Christian\
+               Isemann.Marc\
+               Lukosch.Andreas\
+               Fiebelkorn.Joern
 
 
 
