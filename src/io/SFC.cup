@@ -4,7 +4,7 @@
  * Offers the methods  parseFile and parseExpression 
  *
  * @author Karsten Stahl, Martin Steffen
- * @version $Id: SFC.cup,v 1.12 2001-07-10 13:49:56 swprakt Exp $
+ * @version $Id: SFC.cup,v 1.13 2001-07-10 15:09:46 swprakt Exp $
  *
  * The grammar definition contains 4 parts:
  *    -  initialization declarations and how to generate the parser
@@ -33,8 +33,8 @@ import java.io.*;
 *   - init:   executed before start parsing
 *   - scan:   how the parser asks for the next token
 *   - action: code will be placed in the action class. Used as auxiliary
-*             routines usable int the actions of the grammar.
-*   - parser: code will be _directly_ placed int the parser class
+*             routines usable in the actions of the grammar.
+*   - parser: code will be _directly_ placed in the parser class
 **/
 
 
@@ -45,6 +45,19 @@ import java.io.*;
 action code {:
   String tab = "";
   /* --- removed  */    int state_counter = 0;
+
+  private LinkedList _steplist = new LinkedList();
+  
+  private Step get_step_by_name(String s) {
+      absynt.Step _s = null;
+      for (Iterator i = _steplist.iterator(); i.hasNext();) {
+	  Step _li = (Step) i.next();
+	  if (s==_li.name) _s=_li;
+      }
+      if (_s == null)
+	  System.err.println("not all steps occur in the step list");
+      return _s;
+  };
 
   private void more(){
     tab = tab + "  ";
@@ -67,7 +80,7 @@ action code {:
 
 parser code {:
   Yylex lexer;
-  
+
   public void report_fatal_error(String message, Object info) throws ParseException{
     System.err.println(message);
     throw new ParseException(message);
@@ -248,16 +261,16 @@ istep	     ::= INIT EQ IDENT:stepname // init = s1
 
 steps       ::=  STEPS EQ 
                  LBRACKET
-  steplist:sl
+                 steplist
                  RBRACKET
-                    {:  RESULT = sl;  :}
+                    {:  RESULT = _steplist;  :}
   ;
 
 steplist    ::=  step:s
-                    {:  RESULT = new LinkedList();
+                    {:  RESULT = _steplist;
                         RESULT.addFirst(s); :}
-             |   step:s SEM steplist:sl
-                    {:  RESULT = sl; RESULT.addFirst(s); :}
+             |   step:s SEM steplist
+                    {:  RESULT = _steplist; RESULT.addFirst(s); :}
   ;
 
 step        ::=  LPAREN 
@@ -383,10 +396,15 @@ transition      ::=  LBRACKET stepnames:s RBRACKET FROMTO LBRACKET stepnames:t R
   ;
                   
 
-
+// in the abstract syntax the full step (with full actions) is needed,
+// therefore we search in the global steplist for the step and add this
+// step to the source/targest steplist
 stepnames       ::= IDENT:s
                     {:  RESULT = new LinkedList();
-                        RESULT.addFirst(s); :}
+		        RESULT.addFirst(get_step_by_name(s));
+		     :}
                  |  IDENT:s SEM stepnames:sl
-                    {:  RESULT = sl; RESULT.addFirst(s); :}
+                    {:  RESULT = sl;
+		        RESULT.addFirst(get_step_by_name(s));
+		     :}
   ;
