@@ -1,5 +1,5 @@
 ###########################################################
-## $Id: Errors.txt,v 1.8 2001-06-05 14:14:16 swprakt Exp $
+## $Id: Errors.txt,v 1.9 2001-06-05 14:27:47 swprakt Exp $
 ###########################################################
 
 
@@ -34,7 +34,10 @@
 #status: 	reported  
 #description:   Klicken auf ?(Help) -> liefert ein
 	        Hilfsfenster aber es zeigt es nicht richtig
-		an, zur H"alfte wei"s (under fvwm)
+		an, zur H"alfte wei"s (under fvwm).
+		Ein "Ahnlicher Fehler ist auch bei den
+		Pull-Down-Menues zu beobachten. Unter
+		KDE tritt der Fehler nicht auf.
                  
 
 
