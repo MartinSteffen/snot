@@ -94,7 +94,9 @@ not be able to deal with these SFCs.
 
 
 4.)
-
+Once you have an SFC (which has been checked and is working correctly) you can press the SMV button, the SFC will then be translated into the input language used by the SMV model checker (see www.cadence.com for a free Windows version). 
+If everything works fine you can save the resulting code into a file which can be loaded (or entered manually) by the model checker tool.With this model checker (not supplied) it is possible (depending on the software you use) to check certain properties of the SMV code or even to prove correctness for the whole.We hope that all properties and invariants of the SFC still hold after translation to SMV but unfortunatetly we cannot guarantee this.So don't use this tool for nuclear power plants or any other sensible fields ;) as long as you haven't proven correctness of the translator.The SMV code variable names refer to the original SFC names and should be pretty self-explanatory, so check it out. Good luck.
+ 
 
 5.)
 
