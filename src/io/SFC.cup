@@ -4,14 +4,14 @@
  * Offers the methods  parseFile and parseExpression 
  *
  * @author Karsten Stahl, Martin Steffen
- * @version $Id: SFC.cup,v 1.1 2001-06-30 12:19:36 swprakt Exp $
+ * @version $Id: SFC.cup,v 1.2 2001-06-30 12:42:42 swprakt Exp $
  *
  * The grammar definition contains 4 parts:
  *    -  initialization declarations and how to generate the parser
  *    -  declaration of terminals and non-terminals
  *    -  precedence, associativity
  *    -  grammar proper
- * */
+ **/
 
 
 
@@ -26,6 +26,10 @@ import absynt.*;
 import utils.*;
 import java.io.*;
 
+
+/**
+* The following 4 entries are for user-code insertions to the 
+**/
 init with {: scanner.init() :};
 scan with {: return scanner.next_token(); :};
 
