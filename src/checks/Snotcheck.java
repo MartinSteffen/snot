@@ -9,7 +9,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.15 2001-06-05 14:33:52 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.16 2001-06-05 14:42:17 swprakt Exp $
  *
  */
 
@@ -48,7 +48,7 @@ public class Snotcheck{
     /**Diese Funktion prueft, ob alle Transitionen vollstaendig und korrekt sind
      *
      */
-    private static boolean isAllTransitionOk(SFC aSFCObject){
+    private static boolean isAllTransitionOk(SFC aSFCObject) throws TransitionFailure{
 	//Bevor diese Methode aufgerufen wird, ist zu pruefen, ob die Transitionsliste=null ist.
 	//Wenn die Liste nicht existiert, arbeitet diese Methode m"oglicherweise nicht korrekt.
 
@@ -58,7 +58,7 @@ public class Snotcheck{
 	
 	if (translist!=null){
 	    for (int i=0; i < translist.size(); i++){
-		trans = translist.get(i);
+		trans = (Transition)translist.get(i);
 		if (trans.source == null || trans.target == null || trans.guard == null){
 		    //Wenn einer der Werte fehlt, dann:
 		    // - setze das Flag (wenn es implementiert wurde) und merke dir, dass ein Fehler auftrat
@@ -99,6 +99,7 @@ public class Snotcheck{
 	boolean nurBool;
 	nurBool = isOnlyBool(aSFCObject);
 	if (!nurBool) throw new BoolException("Es kamen auch Integervariablen vor!");
+	return true;
     }
 
 
@@ -109,9 +110,12 @@ public class Snotcheck{
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.15 2001-06-05 14:33:52 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.16 2001-06-05 14:42:17 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.15  2001/06/05 14:33:52  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.14  2001/06/05 14:17:34  swprakt
 //	*** empty log message ***
 //	
