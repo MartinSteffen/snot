@@ -34,7 +34,7 @@ import simulator.Simulator;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.34 $
+ * @version $Revision: 1.35 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -49,9 +49,9 @@ public class Gui extends javax.swing.JFrame {
     private final String ProjectFileExtension = "sfc";  // the exported SFC file extension
     private final String SmvFileExtension = "smv";   // the SMV - translated file extension
     private final String ParserFileExtension = "tsfc";  // Parser file extension
-    private final Point GuiLocation = new Point(100,50);
+    private final Point GuiLocation = new Point(0,0);
     private final Point EditorLocation = new Point(350, 220);
-    private Point ProjectListLocation = new Point(100,220);
+    private Point ProjectListLocation = new Point(0,170);
 
 
     /** Creates new form Gui */
@@ -595,7 +595,7 @@ public class Gui extends javax.swing.JFrame {
         PanelStatus.setMinimumSize(new java.awt.Dimension(200, 20));
 
         Status.setName("statusLine");
-        Status.setText("  StatusLine");
+        Status.setText("  No active project");
         PanelStatus.add(Status);
 
 
@@ -671,6 +671,7 @@ public class Gui extends javax.swing.JFrame {
           project.setName("Example1");
           activeProject = project;
           updateProjectList();
+	  setStatusLine(true, "Example1 imported.");
   }
 
   private void RemoveSFCActionPerformed(java.awt.event.ActionEvent evt) {
@@ -706,6 +707,7 @@ public class Gui extends javax.swing.JFrame {
      session.removeProject(project);
      activeProject = null;
      updateProjectList();
+     setStatusLine(false, "SFC "+project.getName() +"removed.");
   }
 
   private void RenameSFCActionPerformed(java.awt.event.ActionEvent evt) {
@@ -739,6 +741,7 @@ public class Gui extends javax.swing.JFrame {
           session.setModified(true);
      }
      updateProjectList();
+     setStatusLine(true, "SFC renamed.");
      project.getEditor().toFront();
   }
 
@@ -785,6 +788,7 @@ public class Gui extends javax.swing.JFrame {
       enableSession(true);
       enableFilesToolBar(true);
       setTitle(TITLE+"  "+session.getName());
+      setStatusLine(false, "New session opened.");
 
   }
 
@@ -812,6 +816,7 @@ public class Gui extends javax.swing.JFrame {
            return;
       }
 
+      setStatusLine(true, "Starting Parser");
       // initializing FileChooser
       JFileChooser chooser = new JFileChooser();
       chooser.setFileFilter(new SnotFileFilter(ParserFileExtension,"ASCII-File"));
@@ -845,9 +850,10 @@ System.out.println("File Parsed");
               editor = new Editor(project.getSFC());
 	      editor.addWindowListener(new GuiWindowListener());
 	      editor.setLocation(EditorLocation);
-              project.setEditor(editor);
 	      project.setName(file.getName());
+	      project.setEditor(editor);
               session.addProject(project);
+	      
           }
 	  catch (ParseException pex) {
 	      SnotOptionPane.showMessageDialog(null, pex.getMessage(), "Parse-Error", JOptionPane.ERROR_MESSAGE);
@@ -861,6 +867,7 @@ ex.printStackTrace();
                SnotOptionPane.showMessageDialog(null, ex.getMessage()+"Anormal Error", "Error", JOptionPane.ERROR_MESSAGE);
           }
       }
+      activeProject = project;
       updateProjectList();
   }
 
@@ -894,6 +901,7 @@ ex.printStackTrace();
           SMVTranslator trans = new SMVTranslator(activeProject.getSFC());
 	  stream = new ByteArrayOutputStream();
 	  stream = trans.toStream();
+	  setStatusLine(true, "launching SMVTranslator.");
 System.out.print("\nlaunching SMVTranslator ...");
           JFileChooser chooser = new JFileChooser();
           chooser.setFileFilter(new SnotFileFilter("smv","SMV output"));
@@ -909,9 +917,11 @@ System.out.print("\nlaunching SMVTranslator ...");
             }
       }
       catch (SMVException smvex) {
+	 setStatusLine(true, "SMV translation failed.");
          SnotOptionPane.showMessageDialog(null, smvex.getMessage(), "SMV - Error", JOptionPane.ERROR_MESSAGE);
       }
       catch(FileNotFoundException fnfe){
+	 setStatusLine(true, "SMV translation failed.");
          SnotOptionPane.showMessageDialog(null, fnfe.getMessage(), "File - Error", JOptionPane.ERROR_MESSAGE);
       }
       catch(Exception e){ SnotOptionPane.showMessageDialog(null, e.getMessage(), "File - Error", JOptionPane.ERROR_MESSAGE);}
@@ -933,6 +943,7 @@ System.out.print("\nlaunching SMVTranslator ...");
       else if (activeProject.isChecked()==true)
       {
         try{
+	        setStatusLine(true, "launching simulator.");
 	        SFC _sfc = activeProject.getSFC();
 		Simulator sim = new Simulator(_sfc);	// Simulator erzeugen
 
@@ -949,8 +960,10 @@ System.out.print("\nlaunching SMVTranslator ...");
 
 			sim.PrintConfiguration(System.out);
 		}
-        }catch(Exception e){System.out.println("Error while simulating the SFC"+e.getMessage());
-                          SnotOptionPane.showMessageDialog(null, "Simulator execution aborted, an error occured.",
+        }catch(Exception e){
+	    setStatusLine(true, "Simulator failed.");
+	    System.out.println("Error while simulating the SFC"+e.getMessage());
+            SnotOptionPane.showMessageDialog(null, "Simulator execution aborted, an error occured.",
                           "Error", JOptionPane.ERROR_MESSAGE);}
       }
       else {
@@ -967,19 +980,18 @@ System.out.print("\nlaunching SMVTranslator ...");
    *The Checker Routine
    */
   private void CheckSFCActionPerformed(java.awt.event.ActionEvent evt) {
-      Project project = activeProject;
       boolean status = false;
 
-      if (project == null) {
+      if (activeProject == null) {
           SnotOptionPane.showMessageDialog(null, "Please select a SFC first!\n", "Error: no SFC", JOptionPane.ERROR_MESSAGE);
           return;
       }
 
       try {
-          status = Snotcheck.isOnlyBool(project.getSFC());
+          status = Snotcheck.isOnlyBool(activeProject.getSFC());
 	  //Den Only Bool Wert des Projects setzen
-	  project.setOnlyBool(status);
-          status = Snotcheck.isWellDefined(project.getSFC());
+	  activeProject.setOnlyBool(status);
+          status = Snotcheck.isWellDefined(activeProject.getSFC());
       }
       catch (CheckException checkEx) {
           if (checkEx instanceof IStepException){
@@ -989,25 +1001,25 @@ System.out.print("\nlaunching SMVTranslator ...");
 	  }
           else if(checkEx instanceof DecListFailure) {
 	        status = false;
-		project.getEditor().highlight_state(((DecListFailure)checkEx).get_Declaration(),true);
+		activeProject.getEditor().highlight_state(((DecListFailure)checkEx).get_Declaration(),true);
 		SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "Error in the declaration list", JOptionPane.ERROR_MESSAGE);
           }
           else if(checkEx instanceof ActionFailure) {
 	        status = false;
-		project.getEditor().highlight_state(((ActionFailure)checkEx).get_Action(),true);
+		activeProject.getEditor().highlight_state(((ActionFailure)checkEx).get_Action(),true);
                 SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "Action Failure", JOptionPane.ERROR_MESSAGE);
           }
           else if(checkEx instanceof StepFailure) {
 	        status = false;
-		project.getEditor().highlight_state(((StepFailure)checkEx).get_Step(),true);
+		activeProject.getEditor().highlight_state(((StepFailure)checkEx).get_Step(),true);
                 SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "Step Failure", JOptionPane.ERROR_MESSAGE);
           }
           else if(checkEx instanceof TransitionFailure) {
 	        status = false;
-		project.getEditor().highlight_state(((TransitionFailure)checkEx).get_Trans(),true);
+		activeProject.getEditor().highlight_state(((TransitionFailure)checkEx).get_Trans(),true);
                 SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "Transition Failure", JOptionPane.ERROR_MESSAGE);
           }
@@ -1024,11 +1036,13 @@ System.out.print("\nlaunching SMVTranslator ...");
       }
 
     // Checked setzen falls alle Tests bestanden wurden.
-     project.setChecked(status);
+     activeProject.setChecked(status);
 
-     if(status == true) SnotOptionPane.showMessageDialog(null, "All checks were succesfull",
+     if(status == true) {
+	 setStatusLine(true, "Checks passed");
+	 SnotOptionPane.showMessageDialog(null, "All checks passed succesfully",
                                         "Check Info", JOptionPane.INFORMATION_MESSAGE);
-
+     }
 
   }
 
@@ -1108,6 +1122,7 @@ System.out.print(ex.getClass());
               return;
           }
           updateProjectList();
+	  setStatusLine(true, "SFC exported");
           project.getEditor().show();
       }
   }
@@ -1175,11 +1190,13 @@ ex.printStackTrace();
 //          editor.setLocation(EditorLocation);
           project.restoreEnvironment();
           editor.addWindowListener(new GuiWindowListener());
-      }
+      
 
       updateProjectList();
+      setStatusLine(true, "SFC "+project.getName()+ " imported");
       if (editor!=null)
           editor.show();
+      }
   }
 
   /**
@@ -1232,6 +1249,8 @@ ex.printStackTrace();
       }
       // set environmental parameters
       updateProjectList();
+      activeProject = project;
+      setStatusLine(true);
       editor.show();
  }
 
@@ -1301,6 +1320,7 @@ System.out.print("\n"+ex.getClass());
       if (result == JFileChooser.APPROVE_OPTION) {
           closeSession();
           session = openSession(chooser.getSelectedFile());
+	  setStatusLine(false, "Session opened");
       }
   }
 
@@ -1333,6 +1353,7 @@ System.out.print(ex.getClass());
               return false;
           }
           setTitle(TITLE+"  "+ session.getName());
+	  setStatusLine(false, "Session saved.");
           return true;
       }
       else
@@ -1373,6 +1394,7 @@ System.out.print(ex.getClass());
 	       Vector p = session.getProjectList();
 	       try {
                     activeProject = (Project)p.elementAt(index);
+		    setStatusLine(true);
                     if(activeProject.getName().compareTo("Example1")!= 0 )
 		      activeProject.getEditor().show();
 		    else SnotOptionPane.showMessageDialog(null, "Example1 can not be displayed in the Editor by now. Rename it to try!",
@@ -1391,6 +1413,24 @@ System.out.print(ex.getClass());
 
     projectFrame.show();
     }
+
+    
+    private void setStatusLine(boolean status){
+	Project project = activeProject;
+	if(status == true && project != null)
+	    Status.setText("   "+project.getName() +" is active");
+	else
+	    Status.setText("   No active project");   
+    }
+
+    
+    private void setStatusLine(boolean state, String msg){
+	Project project = activeProject;
+	if(state == true && project != null)
+	    Status.setText("   "+project.getName() +" is active. "+ msg);
+	else Status.setText("   No active project. "+ msg);   
+    }
+
 
     private void updateProjectList(){
       if(SFCBrowser.isSelected()) {

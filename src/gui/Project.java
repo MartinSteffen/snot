@@ -25,7 +25,7 @@ import editor.Editor;
  *  It also keeps the name and status flags of the SFC.
  *
  * @author  Hans Theman and Ingo Schiller
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  */
 public class Project extends java.lang.Object implements Serializable {
 
@@ -146,7 +146,7 @@ public class Project extends java.lang.Object implements Serializable {
     }
 
     public void setSFC(SFC _sfc){
-        sfc = _sfc;
+       this.sfc = _sfc;
     }
 
 
