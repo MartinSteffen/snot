@@ -10,7 +10,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.36 2001-07-03 14:47:00 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.37 2001-07-03 14:57:34 swprakt Exp $
  *
  */
 
@@ -118,16 +118,21 @@ public class Snotcheck{
 	    //an dieser Stelle braucht man den Typ nicht mehr zu pruefen, da der Operator NEG nur auf einen boolschen Wert angewendet werden darf, und somit ist auch der gesamte Ausdruck vom Typ bool
 	}
 
+
+
+
 	if (nameOfRExprClass == "B_expr"){           //pruefen der rechten expression:
-	    //Check einer BExpr aufrufen
+	    //Check einer BExpr aufrufen:
 	    bExpr = (B_expr)rExpr;
 	    if (isBExprOk(bExpr) == false){
 		//ein Fehler trat auf
 		return false;
 	    }
+
 	    /////////////////////////////////////////////////////////////////
 	    //hier muss noch geprueft werden, ob die lExpr vom Typ bool ist//
 	    /////////////////////////////////////////////////////////////////
+
 	} else {
 	    //wenn die expr eine un"are expr ist, so darf der Operator nur NEG sein
 	    uExpr = (U_expr)rExpr;
@@ -139,6 +144,8 @@ public class Snotcheck{
 	    }
 	    //an dieser Stelle braucht man den Typ nicht mehr zu pruefen, da der Operator NEG nur auf einen boolschen Wert angewendet werden darf, und somit ist auch der gesamte Ausdruck vom Typ bool
 	}
+
+
 	////////////////////////////////////////////////////////////////
 	//hier muss noch geprueft werden, ob die expr vom Typ bool ist//
 	////////////////////////////////////////////////////////////////
@@ -417,6 +424,7 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 
 	LinkedList translist = aSFCObject.transs;
 	Transition trans;
+	Expr expr;
 
 	if (translist!=null){
 	    for (int i=0; i < translist.size(); i++){
@@ -425,6 +433,11 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 		    //Wenn einer der Werte fehlt, dann werfe eine Exception (TransitionFailure) mit der entsprechenden Transition als Argument
 		    throw new TransitionFailure(trans, "Missing argument(s) in transition.");
 		}
+		//Pruefen der Guard:
+		if (isGuardOk(trans.guard) == false){
+		    throw new TransitionFailure(trans, "Failure in Expression.");
+		}
+
 	    }
 	}
 
@@ -492,9 +505,12 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.36 2001-07-03 14:47:00 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.37 2001-07-03 14:57:34 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.36  2001/07/03 14:47:00  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.35  2001/07/03 14:40:04  swprakt
 //	*** empty log message ***
 //	
