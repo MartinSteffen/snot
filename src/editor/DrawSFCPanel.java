@@ -9,6 +9,7 @@ import javax.swing.*;
 import absynt.*;
 import editor.StepPosition;
 import editor.TransPosition;
+import editor.PosRect;
 
 public class DrawSFCPanel extends JPanel { 
 
@@ -18,37 +19,37 @@ public class DrawSFCPanel extends JPanel {
      private void paintTrans(Transition Trans, Graphics2D G2D) {       
       LinkedList stepLL = Trans.source; 
       Step SourceStep = (Step)Trans.source.get(0), DestStep = (Step)Trans.target.get(0);
-      Rectangle2D SourceRect = ((StepPosition)(SourceStep.pos)).Bounds, DestRect = ((StepPosition)(DestStep.pos)).Bounds;      
+      PosRect SourceRect = ((StepPosition)(SourceStep.pos)).Bounds, DestRect = ((StepPosition)(DestStep.pos)).Bounds;      
       double deltaX, deltaY;
       GeneralPath TransLine = new GeneralPath();
       int i, j; 
  
-      deltaX = SourceRect.getCenterX() - DestRect.getCenterX();
-      deltaY = SourceRect.getCenterY() - DestRect.getCenterY();
+      deltaX = SourceRect.getMidX() - DestRect.getMidX();
+      deltaY = SourceRect.getMidY() - DestRect.getMidY();
       
       G2D.setClip(null);
       Area ClipArea = new Area(getBounds(null));
-      Rectangle2D sourceUnion = null, targetUnion = null;
+      PosRect sourceUnion = null, targetUnion = null;
       
       // SourceSteps nicht übermalen:
       for (i = 0; i < Trans.source.size(); i++) {
         Step step = (Step)Trans.source.get(i);
-        Rectangle2D StepRect = ((StepPosition)(step.pos)).Bounds;
+        PosRect StepRect = ((StepPosition)(step.pos)).Bounds;
         if (sourceUnion == null) 
-          sourceUnion = new Rectangle2D.Double(StepRect.getX(), StepRect.getY(), StepRect.getWidth(), StepRect.getHeight()); 
+          sourceUnion = new PosRect(StepRect); 
         else 
-          sourceUnion=sourceUnion.createUnion(StepRect);
-        ClipArea.subtract(new Area(StepRect));        
+          sourceUnion.unionRect(StepRect);
+        ClipArea.subtract(new Area(StepRect.createRect2D()));        
       }
       // TargetSteps nicht übermalen:
       for (i = 0; i < Trans.target.size(); i++) {
         Step step = (Step)Trans.target.get(i);
-        Rectangle2D StepRect = ((StepPosition)(step.pos)).Bounds;
+        PosRect StepRect = ((StepPosition)(step.pos)).Bounds;
         if (targetUnion == null) 
-          targetUnion = new Rectangle2D.Double(StepRect.getX(), StepRect.getY(), StepRect.getWidth(), StepRect.getHeight()); 
+          targetUnion = new PosRect(StepRect); 
         else 
-          targetUnion=targetUnion.createUnion(StepRect);
-        ClipArea.subtract(new Area(StepRect));        
+          targetUnion.unionRect(StepRect);
+        ClipArea.subtract(new Area(StepRect.createRect2D()));        
       }
         
       G2D.clip(ClipArea);
@@ -58,21 +59,21 @@ public class DrawSFCPanel extends JPanel {
         TransPosition transPos = (TransPosition)Trans.pos;
         if (transPos != null && transPos.autoAlign && transPos.transAlignInfo != null) {      	
           float dy = (new Double(transPos.transAlignInfo.bendPos)).floatValue();
-          float sx = (new Double(SourceRect.getCenterX())).floatValue();
-          float sy = (new Double(SourceRect.getCenterY())).floatValue();
-          float tx = (new Double(DestRect.getCenterX())).floatValue();
-          float ty = (new Double(DestRect.getCenterY())).floatValue();
+          float sx = SourceRect.getMidXAsFloat();
+          float sy = SourceRect.getMidYAsFloat();
+          float tx = DestRect.getMidXAsFloat();
+          float ty = DestRect.getMidYAsFloat();
         
           TransLine.moveTo(sx, sy);
-          if (ty < sy ) {  // Transition von unten nach oben          
-            sy = (new Double(SourceRect.getMaxY())).floatValue() + (new Double(StepBorder)).floatValue();
+          if (ty <= sy ) {  // Transition von unten nach oben          
+            sy = SourceRect.getMaxYAsFloat() + (new Double(StepBorder)).floatValue();
             TransLine.lineTo(sx, sy);
-            sx = (new Double(SourceRect.getMaxX())).floatValue() + (new Double(StepBorder)).floatValue();
+            sx = SourceRect.getMaxXAsFloat() + (new Double(StepBorder)).floatValue();
             TransLine.lineTo(sx, sy);
             TransLine.lineTo(sx, dy);
-            float tx1 = (new Double(DestRect.getMaxX())).floatValue() + (new Double(StepBorder)).floatValue();
+            float tx1 = DestRect.getMaxXAsFloat() + (new Double(StepBorder)).floatValue();
             TransLine.lineTo(tx1, dy);
-            float ty1 = (new Double(DestRect.getMinY())).floatValue() - (new Double(StepBorder)).floatValue();
+            float ty1 = DestRect.getMinYAsFloat() - (new Double(StepBorder)).floatValue();
             TransLine.lineTo(tx1, ty1);
             TransLine.lineTo(tx, ty1);
             TransLine.lineTo(tx, ty);                      
@@ -90,19 +91,21 @@ public class DrawSFCPanel extends JPanel {
         // Paralle Transitionen:
         deltaY=sourceUnion.getMinY() + ((targetUnion.getMaxY() - sourceUnion.getMinY()) / 2.0);
         for (i=0; i < Trans.source.size(); i++) {
-          Rectangle2D sRect = ((StepPosition)((Step)Trans.source.get(i)).pos).Bounds;
+          PosRect sRect = ((StepPosition)((Step)Trans.source.get(i)).pos).Bounds;
           for (j=0; j < Trans.target.size(); j++) {
-            Rectangle2D tRect = ((StepPosition)((Step)Trans.target.get(j)).pos).Bounds;
+            PosRect tRect = ((StepPosition)((Step)Trans.target.get(j)).pos).Bounds;
 
-            TransLine.moveTo((new Double(sRect.getCenterX())).floatValue(), (new Double(sRect.getCenterY())).floatValue());
-            TransLine.lineTo((new Double(sRect.getCenterX())).floatValue(), (new Double(deltaY)).floatValue());
-            TransLine.lineTo((new Double(tRect.getCenterX())).floatValue(), (new Double(deltaY)).floatValue());
-            TransLine.lineTo((new Double(tRect.getCenterX())).floatValue(),(new Double(tRect.getCenterY())).floatValue());
+            TransLine.moveTo(sRect.getMidXAsFloat(), sRect.getMidYAsFloat());
+            TransLine.lineTo(sRect.getMidXAsFloat(), (new Double(deltaY)).floatValue());
+            TransLine.lineTo(tRect.getMidXAsFloat(), (new Double(deltaY)).floatValue());
+            TransLine.lineTo(tRect.getMidXAsFloat(), tRect.getMidYAsFloat());
             	                              
           }
         }
         G2D.setColor(Color.green);
+        G2D.setStroke(new BasicStroke(3));
         G2D.draw(TransLine);
+        G2D.setStroke(new BasicStroke());
       }
       G2D.setClip(null);      
     } 
@@ -113,27 +116,39 @@ public class DrawSFCPanel extends JPanel {
       StepPosition StepPos = (StepPosition)(step.pos);
       Rectangle2D StrBounds = G2D.getFontMetrics().getStringBounds(step.name, G2D);
       LineMetrics LnMetrics = G2D.getFontMetrics().getLineMetrics(step.name, G2D);
-      StepPos.Bounds.setFrame(StepPos.Bounds.getX(), StepPos.Bounds.getY(), StrBounds.getWidth() + 2*StepBorder, StrBounds.getHeight() + 2*StepBorder);
+      StepPos.Bounds.setRectWH(StepPos.Bounds.getMinX(), StepPos.Bounds.getMinY(), StrBounds.getWidth() + 2*StepBorder, StrBounds.getHeight() + 2*StepBorder);
       /* Rectangle ClipRect = G2D.getClipBounds();
       if (ClipRect != null && ClipRect.intersects(StepPos.Bounds)) { */
-        if (selected) G2D.setColor(Color.blue); else G2D.setColor(Color.black);        
+        
         if (step == sfc.istep) { 
           G2D.setPaint(Color.lightGray);
-          G2D.fill(StepPos.Bounds);
+          G2D.fill(StepPos.Bounds.createRect2D());
         }
         if (isSrcStep) { 
           G2D.setPaint(Color.green);
-          G2D.fill(StepPos.Bounds);
+          G2D.fill(StepPos.Bounds.createRect2D());
         } else
         if (isTrgtStep) { 
           G2D.setPaint(Color.red);
-          G2D.fill(StepPos.Bounds);
+          G2D.fill(StepPos.Bounds.createRect2D());
         }
         G2D.setPaint(Color.black);
-        G2D.draw(StepPos.Bounds);        
+        if (selected) G2D.setColor(Color.blue); else G2D.setColor(Color.black);                
+        G2D.draw(StepPos.Bounds.createRect2D());        
         G2D.drawString(step.name, 
-          (new Double(StepPos.Bounds.getX() + StepBorder)).floatValue(), (new Double(StepPos.Bounds.getMaxY() - LnMetrics.getDescent() - StepBorder)).floatValue()); 
+          (new Double(StepPos.Bounds.getMinX() + StepBorder)).floatValue(), (new Double(StepPos.Bounds.getMaxY() - LnMetrics.getDescent() - StepBorder)).floatValue()); 
       /* }  */
+      if (!step.actions.isEmpty()) {
+        String actname = ((absynt.StepAction)step.actions.getFirst()).a_name;
+        StrBounds = G2D.getFontMetrics().getStringBounds(actname, G2D);
+        LnMetrics = G2D.getFontMetrics().getLineMetrics(actname, G2D);
+        PosRect posRect = new PosRect(StepPos.Bounds);
+        posRect.setLocation(posRect.getMaxX() + StepBorder, posRect.getMinY());
+        posRect.setWidth(StrBounds.getWidth() + 2*StepBorder);
+        G2D.draw(posRect.createRect2D());
+        G2D.drawString(actname, 
+            (new Double(posRect.getMinX() + StepBorder)).floatValue(), (new Double(posRect.getMaxY() - LnMetrics.getDescent() - StepBorder)).floatValue());       
+      }
     }
     
     public void paintStep(Step step, Graphics2D G2D) { 
@@ -171,7 +186,12 @@ public class DrawSFCPanel extends JPanel {
       super.paint(g); 
       //G2D.scale(10.0f, 10.0f); 
       G2D.setColor(Color.black); 
-      if (sfc != null && !editor.aligningSFC) paintSFC(G2D); 
+      if (sfc != null && !editor.aligningSFC) 
+        paintSFC(G2D); 
+      else {
+        System.out.print("Can't paint SFC - ");
+        if (editor.aligningSFC) System.out.println("SFC in aligningMode"); else System.out.println("SFC = null");        
+      }
       //G2D.draw(Path); 
     } 
 

@@ -3,14 +3,15 @@ import absynt.*;
 import java.awt.geom.*;
 import java.util.LinkedList;
 import editor.TransPosition;
+import editor.PosRect;
 
 // TransAlignInfo fasst Steps zusammen, deren (nicht-parallele) Transitionen sich eine waagerechte
 // Linie teilen:
-public class TransAlignInfo {	
+public class TransAlignInfo implements java.io.Serializable {	
 	public LinkedList sSteps = new LinkedList();    // source-Steps
 	public LinkedList tSteps = new LinkedList(); 		// target-Steps	
-	public Rectangle2D sBounds = new Rectangle2D.Double(); // alle sSteps umfassendes Rechteck
-	public Rectangle2D tBounds = new Rectangle2D.Double(); // alle tSteps umfassendes Rechteck
+	public PosRect sBounds = new PosRect(); // alle sSteps umfassendes Rechteck
+	public PosRect tBounds = new PosRect(); // alle tSteps umfassendes Rechteck
 	public double bendPos;
 	
 	private boolean haveSameElements(LinkedList list1, LinkedList list2) {
@@ -42,13 +43,13 @@ public class TransAlignInfo {
 		for (int i=0; i < sSteps.size(); i++) {
 			Step step = (Step)sSteps.get(i);
 			System.out.print(" (" + step.name + ") ");
-			sBounds = sBounds.createUnion(((StepPosition)step.pos).Bounds);
+			sBounds.unionRect(((StepPosition)step.pos).Bounds);
 		}
 		System.out.println();
 		tBounds.setRect(((StepPosition)((Step)tSteps.getFirst()).pos).Bounds);
 		for (int i=0; i < tSteps.size(); i++) {
 			Step step = (Step)tSteps.get(i);
-			tBounds = tBounds.createUnion(((StepPosition)step.pos).Bounds);
+			tBounds.unionRect(((StepPosition)step.pos).Bounds);
 		}
 		updateBendPos();
 	}
@@ -59,7 +60,7 @@ public class TransAlignInfo {
 			// neuen SourceStep einfügen (seine TargetSteps sind ja schon in tSteps):
 			sSteps.add(step);  
 			// entspr. die "union-Box" erweitern:
-			sBounds = sBounds.createUnion(((StepPosition)step.pos).Bounds);			
+			sBounds.unionRect(((StepPosition)step.pos).Bounds);			
 			// allen Transitionen von SourceStep diese TransPosition zuordnen:
 			for (int i=0; i < transLL.size(); i++) {
 				Transition trans = (Transition)transLL.get(i);

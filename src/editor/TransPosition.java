@@ -3,7 +3,7 @@ import absynt.*;
 import java.awt.geom.*;
 import editor.TransAlignInfo;
 
-class TransPosition extends Position {
+class TransPosition extends Position implements java.io.Serializable {
 	public boolean autoAlign = true;
 	public TransAlignInfo transAlignInfo = null;	
 	

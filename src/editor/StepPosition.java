@@ -1,22 +1,22 @@
 package editor;
 
 import absynt.Position;
-import java.awt.geom.*;
+import editor.PosRect;
 
-public class StepPosition extends Position {
-  public Rectangle2D Bounds;
+public class StepPosition extends Position implements java.io.Serializable {
+  public PosRect Bounds;
 
   public StepPosition() {
     super();
-    Bounds = new Rectangle2D.Double();
+    Bounds = new PosRect();
   }
 
   public StepPosition(double x, double y, double w, double h) {
     super();
-    Bounds = new Rectangle2D.Double(x, y, w, h);
+    Bounds = new PosRect(x, y, x+w, y+h);
   }
 
-  public StepPosition(Rectangle2D _Bounds) {
+  public StepPosition(PosRect _Bounds) {
     super();
     Bounds = _Bounds;
   }

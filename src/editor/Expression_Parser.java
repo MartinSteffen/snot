@@ -143,7 +143,7 @@ import absynt.*;
 
   class ConstanteDialog extends Dialog implements ActionListener{
      
-     final static public int _INTTYPE  = 0;
+     final static public int _INTTYPE = 0;
      final static public int _BOOLTYPE = 1;
      int selectedType = 0;
      JTextField textField;
@@ -314,13 +314,52 @@ public class Expression_Parser extends JDialog implements ActionListener{
     
     private Variable vari, varAssign;
     private Constval consi;
-    private boolean  canceled;
+    private boolean  canceled=false;
     
     public Expression_Parser(JFrame parentFrame, SFC _sfc){
     	
-	super(parentFrame,"Statement erstellen",true);
-	setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        sfc = _sfc;	    	  
+	    super(parentFrame,"Statement erstellen",true);
+	    setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+	    sfc = _sfc;	    	  
+//-------------------------------------------------------------------------
+/*      sfc = new SFC();	  
+      BoolType btype = new BoolType();
+      Variable v_x = new Variable ("x", btype);
+      Variable v_y = new Variable ("y", btype);
+      Variable v_z = new Variable ("z", btype);
+      
+     Variable v_z1 = new Variable ("z1", btype);
+     Variable v_z2 = new Variable ("z2", btype);
+     Variable v_z3 = new Variable ("z3", btype);
+     Variable v_z4 = new Variable ("z4", btype);
+     Variable v_z5 = new Variable ("z5", btype);
+                               
+      Constval c5  = new Constval (5);
+      Constval cfalse = new Constval (false);
+      Skip     stmt_skip = new Skip();
+
+      //   ------- Variable-Declarations
+      Declaration dec_x = new Declaration(v_x, btype, cfalse);
+      Declaration dec_y = new Declaration(v_y, btype, cfalse);
+      Declaration dec_z = new Declaration(v_z, btype, cfalse);
+     Declaration dec_z1 = new Declaration(v_z1, btype, cfalse);
+     Declaration dec_z2 = new Declaration(v_z2, btype, cfalse);
+     Declaration dec_z3 = new Declaration(v_z3, btype, cfalse);
+     Declaration dec_z4 = new Declaration(v_z3, btype, cfalse);
+     Declaration dec_z5 = new Declaration(v_z5, btype, cfalse);                          
+      
+      LinkedList decl = new LinkedList();
+      decl.add(dec_x);
+      decl.add(dec_y);
+      decl.add(dec_z);
+     decl.add(dec_z1);
+     decl.add(dec_z2);           
+     decl.add(dec_z3);
+     decl.add(dec_z4);
+     decl.add(dec_z5);
+                     
+     sfc.declist = decl;        */   
+	
 //-------------------------------------------------------------------------	  
         Container c = getContentPane();
         c.setLayout(new BorderLayout(2,5));
@@ -388,8 +427,10 @@ public class Expression_Parser extends JDialog implements ActionListener{
 // ------------------------------------------ return - Methoden  ------------------------------------------------ 
   
     public Assign   get_assign()       { return _assign;}                // gebe zurueck Assign
-    public Variable get_VarAssign()    { return  varAssign;}             // gebe zurueck Variable in Assign
-    public Expr     get_expr()         { return _expr;}                  // gebe zurueck Expression in Assign
+    public Variable get_VarAssign()    { return varAssign;}              // gebe zurueck Variable in Assign
+    public Expr     get_expr()         { return _expr;}                 // gebe zurueck Expression in Assign
+    public Expr     get__expr()        { return _assign.val;}   
+                                        
     public boolean  get_canceled()     { // true - OK, false - Cancel    // bestimme, welches Button gedrueck war
                                          return canceled;}
 // --------------------------------------------------------------------------------------------------------------
@@ -409,17 +450,16 @@ public class Expression_Parser extends JDialog implements ActionListener{
 	   }
 
       private void set_Variable(){
-           root     = true;
-           var      = false;
-           cons     = false;
-           canceled = false;
-           index    = 0;
-	   x_fort   = 2;
-           kk       = 0;
+           root   = true;
+           var    = false;
+           cons   = false;
+           index  = 0;
+	   x_fort = 2;
+           kk     = 0;
            pred_index = 0;
        }
        
-      public void set_Variable (Variable v){vari  = v;}
+      public void set_Variable(Variable v){vari = v;}
       public void set_Constante(Constval c){consi = c;}
      
 // --------------------------------------------------------------------------------------------------------------    

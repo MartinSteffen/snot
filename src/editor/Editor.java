@@ -79,6 +79,42 @@ public class Editor extends JFrame implements ActionListener {
     public boolean withEachTAInfoDo(TransAlignInfo transAlignInfo) { return(true); }  // muss ueberschrieben werden
   }
   
+  class StepActDialog extends JDialog implements ActionListener{
+    JComboBox actionList = new JComboBox();
+    JButton okBtn = new JButton("OK"), cancelBtn = new JButton("Cancel");
+    LinkedList actions = null;
+    boolean canceled = true;
+    
+    public void show() {
+      actionList.removeAllItems();
+      for (int i=0; i < sfc.actions.size(); i++) 
+        actionList.addItem( ((absynt.Action)sfc.actions.get(i)).a_name );
+      super.show();
+    }
+    
+    public StepActDialog(Frame parent){
+      super(parent, "Step-Action", true);
+      getContentPane().setLayout(new BorderLayout());            
+      getContentPane().add(actionList,BorderLayout.CENTER);
+      JPanel panel = new JPanel(new FlowLayout());
+      okBtn.addActionListener(this);      
+      panel.add(okBtn);
+      cancelBtn.addActionListener(this);
+      panel.add(cancelBtn);
+      getContentPane().add(panel, BorderLayout.SOUTH);
+    }
+    public void actionPerformed(ActionEvent e) {         
+      if ((e.getActionCommand()).equals("OK")) {
+        actions = new LinkedList();
+        actions.add( new StepAction(null, (String)actionList.getSelectedItem()) );
+        canceled=false;
+      } else canceled=true;
+      dispose();
+    }
+    
+  }
+         
+  
   // --------------------------- Editor-Action ---------------------------------
   // gibt an, mit welcher Aktion der Editor bei folgenden MausEvents im SFCPabnel
   // reagiert (wird geändert durch die Buttons in der ToolBar):
@@ -246,6 +282,33 @@ public class Editor extends JFrame implements ActionListener {
       repaintSFC();
     } 
   } 
+  
+  private class ActSetIStep extends AbstractAction { 
+    public ActSetIStep() { 
+      super("set IStep");  
+    }  
+    public void actionPerformed(ActionEvent e) {
+      if (SelectedLL.size() == 1) {
+        sfc.istep=SelectedLL.getFirstStep();
+        repaint();
+      }
+    }
+  }
+  
+  public StepActDialog stepActDialog  = new StepActDialog(this);
+  
+  private class ActSetStepAction extends AbstractAction { 
+    public ActSetStepAction() { 
+      super("Action");  
+    }  
+    public void actionPerformed(ActionEvent e) {
+      if (SelectedLL.size() == 1) {
+        stepActDialog.show();
+        if (!stepActDialog.canceled) SelectedLL.getFirstStep().actions=stepActDialog.actions;
+        repaint();
+      }
+    }
+  }
  
   // ----------- MouseAdapter für SFCPanel abhängig von editAction -------------
   private Step checkStepHit(double PosX, double PosY) {
@@ -254,7 +317,7 @@ public class Editor extends JFrame implements ActionListener {
     if (!stepLL.isEmpty()) {
       for (int i=0; i < stepLL.size(); i++) {                 
         StepPosition stepPos = (StepPosition)stepLL.getStep(i).pos;
-        if (stepPos.Bounds.contains(new Point2D.Double(PosX, PosY))) return(stepLL.getStep(i));
+        if (stepPos.Bounds.contains(PosX, PosY)) return(stepLL.getStep(i));
       }   
     }
     return(null);                
@@ -269,7 +332,7 @@ public class Editor extends JFrame implements ActionListener {
 
   // MouseAdapter für den "editorAction-Modus" SELECT
   private class MASelect extends MouseInputAdapter {
-    Rectangle SelectedRect;
+    PosRect SelectedRect;
     int selectedOldX, selectedOldY;
     int selectedMouseX, selectedMouseY;
     boolean MouseDragging = false;
@@ -287,17 +350,17 @@ public class Editor extends JFrame implements ActionListener {
       } else 
         setSelected(null);  // kein Step selektiert
       // Selektionsrechteck fuer Verschiebung erstellen (als Union der StepPosition-Rechtecke):
-      SelectedRect = new Rectangle();
+      SelectedRect = new PosRect();
       if (!SelectedLL.isEmpty()) {
         StepPosition StepPos = (StepPosition)(((Step)(SelectedLL.getFirst())).pos);
-        SelectedRect.setBounds(StepPos.Bounds.getBounds());
+        SelectedRect.setRect(StepPos.Bounds);
       }
       for (int i=0; i < SelectedLL.size(); i++) {
         StepPosition StepPos = (StepPosition)(((Step)(SelectedLL.get(i))).pos);
-        SelectedRect = SelectedRect.union(StepPos.Bounds.getBounds());
+        SelectedRect.unionRect(StepPos.Bounds);
       }
-      selectedOldX = (new Double(SelectedRect.getX())).intValue();
-      selectedOldY = (new Double(SelectedRect.getY())).intValue();
+      selectedOldX = SelectedRect.getMinXAsInt();
+      selectedOldY = SelectedRect.getMinYAsInt();
       selectedMouseX = e.getX();  selectedMouseY = e.getY();
       
     }
@@ -308,14 +371,14 @@ public class Editor extends JFrame implements ActionListener {
         double mouseY = (new Integer(e.getY())).doubleValue();
         Graphics2D G2D = (Graphics2D)(((JComponent)(e.getSource())).getGraphics());
         G2D.setXORMode(Color.green);
-        if (MouseDragging) G2D.draw(SelectedRect); 
+        if (MouseDragging) G2D.draw(SelectedRect.createRect2D()); 
         if (SelectedLL.isEmpty()) {
           // Rechteck zum selektieren aufziehen:
           
         } else {
           // Selektion verschieben;
           SelectedRect.setLocation(e.getX() - selectedMouseX + selectedOldX, e.getY() - selectedMouseY + selectedOldY);
-          G2D.draw(SelectedRect);
+          G2D.draw(SelectedRect.createRect2D());
         }        
         MouseDragging = true;
       }
@@ -326,7 +389,7 @@ public class Editor extends JFrame implements ActionListener {
         // Graphic-Objekt vom DrawSFCPanel holen:
         Graphics2D G2D = (Graphics2D)(((JComponent)(e.getSource())).getGraphics());
         // letztes Rechteck löschen:
-        G2D.setXORMode(Color.green);  G2D.draw(SelectedRect);   G2D.setPaintMode();
+        G2D.setXORMode(Color.green);  G2D.draw(SelectedRect.createRect2D());   G2D.setPaintMode();
         // Selection verschieben:
         double deltaX = (new Integer(e.getX() - selectedMouseX)).doubleValue();
         double deltaY = (new Integer(e.getY() - selectedMouseY)).doubleValue();
@@ -378,7 +441,7 @@ public class Editor extends JFrame implements ActionListener {
   }    
   
   // Liste der momentan selektierten Elemente (für Verschieben, Löschen usw.):
-  public LinkedList       SelectedLL;
+  public StepLL       SelectedLL;
   // Liste der TransAlignInfos (TransPosition-Objekte referenzieren nur auf diese Elemente):
   public TransAlignInfoLL transAlignInfoLL = new TransAlignInfoLL();  
  
@@ -457,7 +520,7 @@ public class Editor extends JFrame implements ActionListener {
     Integer txtHeight = new Integer(getToolkit().getFontMetrics(getFont()).getHeight());
     Integer txtWidth  = new Integer(getToolkit().getFontMetrics(getFont()).stringWidth(step.name));
     if (step.pos == null) stepPos = new StepPosition(); else stepPos = (StepPosition)step.pos;
-    stepPos.Bounds.setFrame(stepPos.Bounds.getY(), stepPos.Bounds.getY(), 
+    stepPos.Bounds.setRectWH(stepPos.Bounds.getMinY(), stepPos.Bounds.getMinY(), 
       txtWidth.doubleValue() + 2*DrawPanel.StepBorder, txtHeight.doubleValue() + 2*DrawPanel.StepBorder);
     step.pos = stepPos;
   }  
@@ -470,8 +533,8 @@ public class Editor extends JFrame implements ActionListener {
       double width = getRowWidth((StepLL)stepRowsLL.get(row));
       if (width > 0) width+=2*DrawPanel.StepBorder;
       ((StepLL)stepRowsLL.get(row)).add(step);
-      Rectangle2D rect = ((StepPosition)step.pos).Bounds;      
-      rect.setRect(width, 2*row*rect.getHeight(), rect.getWidth(), rect.getHeight());
+      PosRect rect = ((StepPosition)step.pos).Bounds;      
+      rect.setRectWH(width, 2*row*rect.getHeight(), rect.getWidth(), rect.getHeight());
       alignedStepLL.add(step);
     
       StepLL stepsSuccLL = new StepLL();
@@ -486,7 +549,7 @@ public class Editor extends JFrame implements ActionListener {
     // Step-Breiten addieren:
     for (int i=0; i < stepLL.size(); i++) {
       StepPosition stepPos = (StepPosition)stepLL.getStep(i).pos;
-      Rectangle2D stepRect = stepPos.Bounds;
+      PosRect stepRect = stepPos.Bounds;
       width+=stepRect.getWidth();
     }
     // ggf. Abstände zwischen Steps:
@@ -499,7 +562,7 @@ public class Editor extends JFrame implements ActionListener {
     // Step-Breiten addieren:    
     for (int i=0; i < stepLL.size(); i++) {
       StepPosition stepPos = (StepPosition)stepLL.getStep(i).pos;      
-      Rectangle2D stepRect = stepPos.Bounds;
+      PosRect stepRect = stepPos.Bounds;
       if (stepRect.getMinX() < minX) minX=stepRect.getMinX();
       if (stepRect.getMaxX() > maxX) maxX=stepRect.getMaxX();      
     }        
@@ -523,8 +586,8 @@ public class Editor extends JFrame implements ActionListener {
         calcStepPos(row+1, stepsSuccLL.getStep(i));
       // anhand derer Positionen die eigene Pos berechnen:
       double mid = getRowMid(stepsSuccLL);
-      Rectangle2D rect = (Rectangle2D)((StepPosition)step.pos).Bounds;
-      rect.setRect(mid - (rect.getWidth() / 2.0), 2*row*rect.getHeight(), rect.getWidth(), rect.getHeight());       
+      PosRect rect = ((StepPosition)step.pos).Bounds;
+      rect.setRectWH(mid - (rect.getWidth() / 2.0), 2*row*rect.getHeight(), rect.getWidth(), rect.getHeight());       
     } else {            
       if (row > widestRow) {
         StepLL stepsPredLL = new StepLL();
@@ -537,8 +600,8 @@ public class Editor extends JFrame implements ActionListener {
           if (!prevRowLL.contains(stepsPredLL.getStep(i))) stepsPredLL.remove(i); else i++;      
         // anhand derer Positionen die eigene Pos berechnen:      
         double mid = getRowMid(stepsPredLL);
-        Rectangle2D rect = (Rectangle2D)((StepPosition)step.pos).Bounds;
-        rect.setRect(mid - (rect.getWidth() / 2.0), 2*row*rect.getHeight(), rect.getWidth(), rect.getHeight());      
+        PosRect rect = ((StepPosition)step.pos).Bounds;
+        rect.setRectWH(mid - (rect.getWidth() / 2.0), 2*row*rect.getHeight(), rect.getWidth(), rect.getHeight());      
       } 
       if (row < stepRowsLL.size()-1) {
        StepLL stepsSuccLL = new StepLL();
@@ -556,36 +619,10 @@ public class Editor extends JFrame implements ActionListener {
   }
    
 
-    /****************************************************************************
-
-
-	hi Editors!
-	ich musste auf Verlangen von Karsten etwas unternehmen.
-	ja, ich habe in eurem kot gefummelt, weil es schnell
-	gehen musste! hab nur die untenstehende realignSFC() editiert.
-	folegende Veraenderungen:
-	     die try funktion samt ihrem catch rumpf musste ich 
-	     rausnehmen. Die Exception fangen wir, die Gui!
-	     
-        das ist alles sehr dirty. Wir muessen uns auf eine 
-	elegantere art einigen. Mehr dazu per emil ...
-
-	cheers
-
-	hans
-
-
-
-
-************************************************************************************/
-
-
-
-
   public void realignSFC() { 
     Step step;
     aligningSFC=true;
-    //try {
+    try {
      if (sfc.steps.isEmpty()) return;
      // 1. Die Steps-Reihen erstellen (ggf. mit iStep anfangen):
      System.out.println("Reihen erstellen");
@@ -611,13 +648,13 @@ public class Editor extends JFrame implements ActionListener {
      sfc.transs.clear();
      for (int i=0; i < transLL.size(); i++) insertTrans(transLL.getTrans(i));
 
-     //} 
-    //catch(Exception e) {
-	//e.printStackTrace();
-	//System.out.println("\nATTENTION!\nThe editor failed to print the SFC!");     
-	//}
- 
-    aligningSFC=false;
+    } 
+    catch(Exception e) {
+      System.out.println("DEBUG-NACHRICHT - Exception in realingSFC():");     
+	    e.printStackTrace();	    
+	  } finally {
+      aligningSFC=false;
+    }
   } 
  
   public void repaintSFC() { 
@@ -673,7 +710,7 @@ public class Editor extends JFrame implements ActionListener {
     public Object getCellEditorValue() {
       // *** dazu muss Editor modal sein:
       LinkedList ll = new LinkedList();
-      ll.add(new Assign(null, (ExprEditor.get_assign()).val));
+      ll.add(new Assign(null, ExprEditor.get__expr()));
       return (ll); 
     }
 
@@ -697,7 +734,7 @@ public class Editor extends JFrame implements ActionListener {
     setVisible(true);
     setSFC(anSFC); 
     ExprEditor = new Expression_Parser(this, sfc);  
-    SelectedLL = new LinkedList();
+    SelectedLL = new StepLL();
  
     // -- TOOL-BAR: ------------------------------------------------------------
     // beinhaltet die Buttons, mit denen der User eine Aktion wählt
@@ -717,6 +754,9 @@ public class Editor extends JFrame implements ActionListener {
     Enumeration Enum = BtnGroup.getElements();
     while (Enum.hasMoreElements()) 
       ToolBar.add((JToggleButton)Enum.nextElement()); 
+    ToolBar.add(new JPanel());
+    ToolBar.add(new JButton(new ActSetIStep()));
+    ToolBar.add(new JButton(new ActSetStepAction()));
     // Jetzt ToolBar ins Fenster:      
     //ToolBar.setSize(400, 80); 
     getContentPane().add(ToolBar, BorderLayout.NORTH);     
@@ -1081,20 +1121,22 @@ public class Editor extends JFrame implements ActionListener {
   public void moveStep(Step step, double deltaX, double deltaY) {
   	// Step verschieben:
     StepPosition StepPos = (StepPosition)(step.pos);
-    StepPos.Bounds.setRect(StepPos.Bounds.getX() + deltaX, StepPos.Bounds.getY() + deltaY, StepPos.Bounds.getWidth(), StepPos.Bounds.getHeight());        
+    StepPos.Bounds.setRectWH(StepPos.Bounds.getMinX() + deltaX, StepPos.Bounds.getMinY() + deltaY, StepPos.Bounds.getWidth(), StepPos.Bounds.getHeight()); 
     // TransPosition updaten:
     for (int i=0; i < sfc.transs.size(); i++) {
     	Transition trans = (Transition)sfc.transs.get(i);
-    	if (trans.source.getFirst() == step) {
-    		TransAlignInfo transAlignInfo = ((TransPosition)trans.pos).transAlignInfo;
-    		System.out.println("Move-update");
-    		transAlignInfo.updateBounds();
-    		Graphics2D gr = (Graphics2D)DrawPanel.getGraphics();
-    		gr.setColor(Color.red);
-    		gr.draw(transAlignInfo.sBounds);
-    		gr.setColor(Color.green);
-    		gr.draw(transAlignInfo.tBounds);
-    		break;
+    	if (trans.source.contains(step) || trans.target.contains(step)) {    	  
+    	  if (trans.pos != null) {
+      		TransAlignInfo transAlignInfo = ((TransPosition)trans.pos).transAlignInfo;    		
+      		System.out.println("Move-update");
+      		transAlignInfo.updateBounds();
+      		Graphics2D gr = (Graphics2D)DrawPanel.getGraphics();
+      		gr.setColor(Color.red);
+      		gr.draw(transAlignInfo.sBounds.createRect2D());
+      		gr.setColor(Color.green);
+      		gr.draw(transAlignInfo.tBounds.createRect2D());
+      		//break;
+      	}
     	}
     }
     DrawPanel.repaint();  // *** intelligentes Zeichnen der geänderten Teile?
