@@ -1,17 +1,17 @@
 #----------------------------------------------------------------------
 # developers' top-level Makefile for the Siff project
-# $Id: Makefile,v 1.2 2001-04-19 11:39:44 swprakt Exp $
+# $Id: Makefile,v 1.3 2001-04-22 08:51:35 swprakt Exp $
 #----------------------------------------------------------------------
 
 ################################################
 
-TOOLNAME      = Siff
+TOOLNAME      = Snot
 
 WEBDIR        = /home/info/www/inf/deRoever/SS01/Java/$(TOOLNAME)
 WEBDOCDIR     = $(WEBDIR)/doc
 SNAPSHOTSDIR  = $(WEBDIR)/snapshots
 LOCALDOCDIR   = doc
-PACKAGEDIRS   = 
+PACKAGEDIRS   = absynt
 
 ################################################
 
@@ -82,7 +82,6 @@ clean:
 
 doc:	;
 	javadoc  -version -author -d $(WEBDOCDIR) $(PACKAGEDIRS)
-	cp ./simulator/specification.txt $(WEBDOCDIR)
 
 localdoc:	;
 	javadoc  -version -author -d $(LOCALDOCDIR) $(PACKAGEDIRS)
