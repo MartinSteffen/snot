@@ -3,13 +3,172 @@
 
 
 Dieser
-Abschnitt beschreibt informell die Bedeutung der \Snot-Programme. Die
+Abschnitt beschreibt informell die Bedeutung der Sequential Function Charts
+(SFC's), für die das Tool \Snot entwickelt werden soll. Die
 Semantik ist nur für \emph{gecheckte} SFC's definiert (s.\ 
-Abschnitt~\ref{sec:checks}); nicht-gecheckte Programme sind bedeutungslos.
+Abschnitt~\ref{sec:checks}); nicht-gecheckte SFC's sind bedeutungslos.
 Insbesondere können der Simulator und der Model-Checker
 (Abschnitt~\ref{sec:simulator} und \ref{sec:assert}), die die Semantik
 realisieren, von gecheckter Syntax ausgehen.
 
+
+
+\subsection{Sequential Function Charts}
+
+Wir erläutern die Semantik der SFC's anhand des folgenden Beispiels:
+
+
+% Macros for SFC pictures
+
+\newcommand{\GUARD}[1][]{%
+ \put(-1.5,0){\linethickness{0.2\unitlength}\line(1,0){3}}%
+              \put(2.5,0){\makebox(0,0)[l]{#1}}}
+\newcommand{\STEP}[1][]{{%
+% \put(-2.5,-2.5){\rule{5\unitlength}{5\unitlength}}%
+ \put(-2.5,-2.5){\linethickness{0.2\unitlength}%
+                 \framebox(5,5){#1}}}}
+\newcommand{\STEPinitial}[1][]{{%
+% \put(-2.5,-2.5){\rule{5\unitlength}{5\unitlength}}%
+ \put(-2.5,-2.5){\linethickness{0.2\unitlength}%
+                 \framebox(5,5){#1}}}
+ \put(-2.2,-2.2){\linethickness{0.2\unitlength}%
+                 \framebox(4.4,4.4){}}}
+\newcommand{\LINE}{\linethickness{0.15\unitlength}\line}
+\newcommand{\VECTOR}{\thicklines\linethickness{0.15\unitlength}\vector}
+
+% Mark a step as active
+\newcommand{\Mark}{\put(-3,-3){\linethickness{0.5\unitlength}%
+                   \framebox(6,6){}}}
+
+% Action block
+\newcommand{\AB}[3][\put(2.5,1){\line(1,0){2}}]{\linethickness{0.15\unitlength}
+  #1
+  \put(4.5,-0.5){\rule{12\unitlength}{3\unitlength}}
+  \put(4.5,2.5){\line(1,0){12}}\put(4.5,-0.5){\line(1,0){12}}
+  \put(4.5,-0.5){\line(0,1){3}}\put(7.0,-0.5){\line(0,1){3}}
+  \put(16.5,-0.5){\line(0,1){3}}
+  \put(5.75,1){\makebox(0,0){\small\texttt{#2}}}
+  \put(11.75,1){\makebox(0,0){\small\textit{#3}}}
+}
+
+% Mark an action as active
+\newcommand{\MarkA}{\put(7,-0.5){\linethickness{0.4\unitlength}%
+                    \framebox(9.5,3){}}}
+
+% Action block with timing constraint
+\newcommand{\ABt}[3][]{\linethickness{0.15\unitlength}
+  \put(2.5,1){\line(1,0){2}}
+  \put(4.5,-1){\rule{14.5\unitlength}{4\unitlength}}
+  \put(4.5,3){\line(1,0){14.5}}\put(4.5,-1){\line(1,0){14.5}}
+  \put(4.5,-1){\line(0,1){4}}\put(9.5,-1){\line(0,1){4}}
+  \put(19,-1){\line(0,1){4}}
+  \put(7,2.7){\makebox(0,0)[t]{\small\texttt{#2}}}
+  \put(7,-0.8){\makebox(0,0)[b]{\tiny\textrm{#1}}}
+  \put(14.25,1){\makebox(0,0){\small\textit{#3}}}
+}
+
+% Mark a timed action as active
+\newcommand{\MarkAt}{\put(9.5,-1){\linethickness{0.4\unitlength}%
+                     \framebox(9.5,4){}}}
+
+
+
+\newcommand{\INSTEP}[1]{\parbox{3cm}{\texttt{~~~~%
+        \begin{tabular}{|c|l|} \hline
+          N & #1 \\ \hline
+        \end{tabular}
+}}}
+\newcommand{\INGUARD}[1]{{\texttt{~~#1}}}
+
+
+\unitlength1.8mm%
+\begin{picture}(44.5,75)(-27,-15)
+  \put(  0, 55){\put(  0,-2.5){\LINE(0,-1){6}}
+    \put(  0,-5.5){\GUARD{\INGUARD{true}}}
+    \put(-12,-8.5){\LINE(1,0){24}}
+    \put(-12,-9.5){\LINE(1,0){24}}
+    \put(-12,-8.5){\LINE(0,-1){4}}
+    \put( 12,-8.5){\LINE(0,-1){4}}
+    \put( 2,0){\LINE(1,0){2}}
+    \STEPinitial[$s_1$]{\INSTEP{x\,:=\,false}}
+    }
+  \put(-12, 40){\put(  0,-2.5){\LINE(0,-1){25}}
+    \put(  0,-14.5){\GUARD{\INGUARD{x and y}}}
+    \put( 2,0){\LINE(1,0){2}}
+    \STEP[$s_2$]{\INSTEP{y\,:=\,x}}
+    }
+  % oberster im rechten zweig
+  \put( 12, 40){\put(  0,-2.5){\LINE(0,-1){4}}
+    \put( -5,-6.5){\LINE(1,0){10}}
+    \put( -5,-6.5){\LINE(0,-1){6}}
+    \put( -5,-9.5){\GUARD{\INGUARD{y}}}
+    \put(  5,-6.5){\LINE(0,-1){6}}
+    \put(  5,-9.5){\GUARD{\INGUARD{not y}}}
+    \put( 2,0){\LINE(1,0){2}}
+    \STEP[$s_3$]{\INSTEP{x\,:=\,not x}}
+    }
+  % splitten im rechten zweig
+  \put( 7, 25){\put(  0,-2.5){\LINE(0,-1){6}}
+    \put(  0,-5.5){\GUARD{\INGUARD{true}}}
+    \STEP[$s_5$]{}
+    }
+  \put( 17, 25){\put(  0,-2.5){\LINE(0,-1){6}}
+    \put(  0,-5.5){\GUARD{\INGUARD{true}}}
+    \STEP[$s_6$]{}
+    }
+  % zusammenfuehrung rechts nach splitten
+  \put( 7, 19){\put(  0,-2.5){\LINE(1,0){10}}
+    \put(  5,-2.5){\LINE(0,-1){4}}
+    }
+  \put(  12, 10){
+    \STEP[$s_7$]{}
+    \put(  0,-2.5){\LINE(0,-1){4}}
+    }
+
+  % unterer step im linken zweig + parallel-konstrukt schliessen
+  \put(-12, 10){\put(  0,-2.5){\LINE(0,-1){4}}
+    \put(  0,-5.5){\LINE(1,0){24}}
+    \put(  0,-6.5){\LINE(1,0){24}}
+    \put( 12,-6.5){\LINE(0,-1){6}}
+    \put( 12,-9.5){\GUARD{\INGUARD{true}}}
+    \STEP[$s_4$]{}
+    }
+  % unterster step + nach oben
+  \put(  0, -5){\put(  0,-2.5){\LINE(0,-1){6}}
+    \put(  0,-5.5){\GUARD{\INGUARD{true}}}
+    \put(  0,-8.5){\LINE(-1,0){20}}
+    \put(-20,-8.5){\LINE(0,1){68.5}}
+    \put(-20,60  ){\VECTOR(1,0){17.5}}
+    \STEP[$s_8$]{}
+    }
+\end{picture}
+
+
+Die SFC's bestehen aus Knoten, genannt \emph{Steps}, zu denen \emph{Aktionen}
+assoziiert sind, sowie aus \emph{Transitionen} zwischen Steps, die mit
+booleschen \emph{Guards} versehen sind.  Es sind immer einer oder mehrere der
+Steps aktiv; die mit diesen aktiven Steps assoziierten Aktionen werden in
+einem Arbeitszyklus ausgeführt.  Die Transition von $s_1$ zu $s_2$ und $s_3$
+(mit doppelter horizontaler Linie) ist eine \emph{parallele} Verzweigung, wird
+diese Transition genommen, so wird $s_1$ deaktiviert und $s_2$ sowie $s_3$
+aktiviert.
+
+Der oberste speziell markierte Step ist initial.  Das "`N"' vor den Aktionen
+ist ein \emph{Qualifier}, er besagt dass die Aktion in jedem Arbeitszyklus
+ausgeführt werden soll, in dem der Step aktiv ist.  Es gibt noch weitere
+Qualifier, die wir aber erst einmal vernachlässigen.
+
+Der Ablauf eines SFC's (ein \emph{Zyklus}) ist wie folgt:
+\begin{itemize}
+\item Inputs lesen von der Umgebung
+\item Aktionen der aktiven Steps ausführen
+\item Guards auswerten und Transitionen nehmen (wenn möglich)
+\item Outputs schreiben
+\end{itemize}
+Dieser Zyklus wird immer wieder abgearbeitet.  Die Schritte \emph{Inputs
+  lesen} und \emph{Outputs schreiben} sind für uns erst einmal irrelevant, da
+wir nur abgeschlossene Systeme betrachten, d.h.  Systeme, deren Variablen nur
+durch das System selbst verändert werden.
 
 
 \subsection{Zustände}
@@ -17,8 +176,6 @@ realisieren, von gecheckter Syntax ausgehen.
 
 Der globale Zustand eines Programmes ist gegeben durch die Variablenbelegungen
 und die Menge der aktiven Steps.  
-
-
 
 
 
