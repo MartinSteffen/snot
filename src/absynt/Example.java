@@ -5,7 +5,7 @@ package absynt;
  * 
  * The class offers an example for a program int abstract syntax.
  * @author Initially provided by Martin Steffen.
- * @version $Id: Example.java,v 1.5 2001-05-02 07:37:02 swprakt Exp $	
+ * @version $Id: Example.java,v 1.6 2001-05-02 07:37:15 swprakt Exp $	
  */
 
 
@@ -17,7 +17,7 @@ public class Example{
    */
     public static SFC getExample1(){
   /*
-   * For enhanced readability, the example is built stp-byte-step.
+   * For enhanced readability, the example is built step-by-step.
    */
       Variable v_x = new Variable ("x");   
       Constval c5  = new Constval (5);
@@ -36,9 +36,12 @@ public class Example{
 //	Abstract syntax for Snot programs
 //	------------------------------------
 //
-//	$Id: Example.java,v 1.5 2001-05-02 07:37:02 swprakt Exp $
+//	$Id: Example.java,v 1.6 2001-05-02 07:37:15 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.5  2001/05/02 07:37:02  swprakt
+//	Example still empty
+//	
 //	Revision 1.4  2001/05/02 07:24:51  swprakt
 //	Example compiles (but so far is empty)
 //	
