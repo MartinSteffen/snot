@@ -536,10 +536,37 @@ public class Editor extends JFrame implements ActionListener {
     }
   }
    
+
+    /****************************************************************************
+
+
+	hi Editors!
+	ich musste auf Verlangen von Karsten etwas unternehmen.
+	ja, ich habe in eurem kot gefummelt, weil es schnell
+	gehen musste! hab nur die untenstehende realignSFC() editiert.
+	folegende Veraenderungen:
+	     die try funktion samt ihrem catch rumpf musste ich 
+	     rausnehmen. Die Exception fangen wir, die Gui!
+	     
+        das ist alles sehr dirty. Wir muessen uns auf eine 
+	elegantere art einigen. Mehr dazu per emil ...
+
+	cheers
+
+	hans
+
+
+
+
+************************************************************************************/
+
+
+
+
   public void realignSFC() { 
     Step step;
     aligningSFC=true;
-    try {
+    //try {
      if (sfc.steps.isEmpty()) return;
      // 1. Die Steps-Reihen erstellen (ggf. mit iStep anfangen):
      System.out.println("Reihen erstellen");
@@ -564,9 +591,16 @@ public class Editor extends JFrame implements ActionListener {
      TransLL transLL = new TransLL(sfc.transs);
      sfc.transs.clear();
      for (int i=0; i < transLL.size(); i++) insertTrans(transLL.getTrans(i));
-    } catch(Exception e) {
-      e.printStackTrace();
-    }
+     //} 
+    //catch(Exception e) {
+	//e.printStackTrace();
+	//System.out.println("\nATTENTION!\nThe editor failed to print the SFC!");     
+	//}
+     
+
+
+
+
     aligningSFC=false;
   } 
  

@@ -35,7 +35,7 @@ import simulator.Simulator;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.42 $
+ * @version $Revision: 1.43 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -921,7 +921,17 @@ public class Gui extends javax.swing.JFrame {
 	      project = new Project();
 	      project.setSFC(parser.parseFile(file));
 System.out.println("File Parsed");
-              editor = new Editor(project.getSFC());
+	      try {
+		  editor = new Editor(project.getSFC());
+	      }
+	      catch (Exception e) {
+		  if (!(e instanceof EditorException)) {
+		      SnotOptionPane.showMessageDialog(null, "ATTENTION!\n\nThe editor failed to paint the current SFC! \nIt will be initialized with an empty SFC. The parsed SFC \nis kept in this project and will be used for other operations. \nPlease keep in mind, that this mode is just for testing! \nFuther errors might occure. \nMay the force be with you! \nGood luck!", "Editor-Error", JOptionPane.ERROR_MESSAGE);
+		      if (editor!=null && editor.isVisible())
+			  editor.dispose();
+		      editor = new Editor(new SFC());
+		  }
+	      }
 	      editor.addWindowListener(new GuiWindowListener());
 	      editor.setLocation(EditorLocation);
 	      project.setName(file.getName());
@@ -946,14 +956,11 @@ ex.printStackTrace();
 	       setStatusLine(true, "Parser failed");
                SnotOptionPane.showMessageDialog(null, "Abnormal Error!\nError code 0-8-15\nPlease consult your local cofe machine ...\n\n"+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
           }
-	  finally {
-	      System.out.print("Ein Fehler ist aufgetreten!!!!!!!!!!");
-	  }
-
-
       updateProjectList();
   }
-  else{setStatusLine(true, "Parser aborted.");}
+  else {
+      setStatusLine(true, "Parser aborted.");
+  }
 }
 
   /**
