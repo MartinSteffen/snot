@@ -1,0 +1,42 @@
+type function_block_body = string
+
+sequential_function_chart ::=  sfc_component list
+sfc_components            ::=  sfc_component list
+sfc_component             ::=  Step of step        
+                           |   Transition of transition  
+                           |   Action of action    
+                     step ::=  SimpleStep of string
+                           |   ActionStep of string * action_association
+             initial_step ::=  step
+                    steps ::=  string list 
+               more_steps ::=  string list
+                step_name ::=  string
+              action_name ::=  string
+       action_association ::=  SimpleAction of string * action_qualifier
+                           |   IndicatorAction of string * action_qualifier * string
+                   action ::=  string * function_block_body
+                   act_as ::=  action_association
+           indicator_name ::=  string
+            variable_name ::=  string
+                 duration ::=  int
+         action_qualifier ::=  Nqual
+                           |   Rqual
+                           |   Squal
+                           |   P1qual
+                           |   P0qual 
+                           |   Tqual of timed_qualifier * action_time
+          timed_qualifier ::=  Lqual 
+                           |   Dqual 
+                           |   SDqual
+                           |   DSqual
+                           |   SLqual
+              action_time ::=  Duration of int
+                           |   VarName of string
+               transition ::=  TransEntry of steps * steps * transition_condition
+                           |   TransEntryName of string * steps * steps * transition_condition
+                           |   TransEntryPrio of int * steps * steps * transition_condition
+                           |   TransEntryNamePrio of string * int * steps * steps * transition_condition
+                 priority ::=  int
+          transition_name ::=  string
+     transition_condition ::=  string
+
