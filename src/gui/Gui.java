@@ -25,7 +25,7 @@ import editor.*;
 import smv.*;
 import io.*;
 
-import checks.CheckException;
+//import checks.CheckException;
 import checks.*;
 import simulator.Simulator;
 
@@ -34,7 +34,7 @@ import simulator.Simulator;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.32 $
+ * @version $Revision: 1.33 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -48,7 +48,7 @@ public class Gui extends javax.swing.JFrame {
     private final String SessionFileExtension = ".snot"; // the session file extension
     private final String ProjectFileExtension = ".sfc";  // the exported SFC file extension
     private final String SmvFileExtension = ".smv";   // the SMV - translated file extension
-    private final String ParserFileExtension = ".txt";  // Parser file extension
+    private final String ParserFileExtension = ".tsfc";  // Parser file extension
     private final Point GuiLocation = new Point(100,50);
     private final Point EditorLocation = new Point(350, 220);
     private Point ProjectListLocation = new Point(100,220);
@@ -810,7 +810,7 @@ public class Gui extends javax.swing.JFrame {
           chooser.setCurrentDirectory(session.getFile());
 
       // show FileChooser
-      int result = chooser.showDialog(null, "Parse");
+      result = chooser.showDialog(null, "Parse");
       if (result == JFileChooser.APPROVE_OPTION) {
           file = chooser.getSelectedFile();
 
@@ -980,22 +980,22 @@ System.out.print("\nlaunching SMVTranslator ...");
                 SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "No Istep Exception", JOptionPane.ERROR_MESSAGE);
           else if(checkEx instanceof DecListFailure) {
-	        project.getEditor().highlight_state(checkEx.get_Declaration(),true);
+	        project.getEditor().highlight_state(((DecListFailure)checkEx).get_Declaration(),true);
 		SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "Error in the declaration list", JOptionPane.ERROR_MESSAGE);
           }
           else if(checkEx instanceof ActionFailure) {
-	        project.getEditor().highlight_state(checkEx.get_Action(),true);
+	        project.getEditor().highlight_state(((ActionFailure)checkEx).get_Action(),true);
                 SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "Action Failure", JOptionPane.ERROR_MESSAGE);
           }
           else if(checkEx instanceof StepFailure) {
-	        project.getEditor().highlight_state(checkEx.get_Step(),true);
+	        project.getEditor().highlight_state(((StepFailure)checkEx).get_Step(),true);
                 SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "Step Failure", JOptionPane.ERROR_MESSAGE);
           }
           else if(checkEx instanceof TransitionFailure) {
-	        project.getEditor().highlight_state(checkEx.get_Trans(),true);
+	        project.getEditor().highlight_state(((TransitionFailure)checkEx).get_Trans(),true);
                 SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "Transition Failure", JOptionPane.ERROR_MESSAGE);
           }
