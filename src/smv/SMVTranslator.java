@@ -15,7 +15,7 @@ import java.util.LinkedList;
 /**
  *
  * @author  Kevin Koeser / Tobias Kloss
- * @version $ID: $
+ * @version $Id: SMVTranslator.java,v 1.6 2001-06-26 07:02:22 swprakt Exp $
  */
 public class SMVTranslator extends java.lang.Object {
     private SFC sfc;
