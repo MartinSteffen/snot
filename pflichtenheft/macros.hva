@@ -3,6 +3,8 @@
 \newcommand{\Snot}     {\textsc{Snot}}
 \newcommand{\many}     {\ast}
 \newcommand{\to}       {\rightarrow}
+\newcommand{\lor}      {\vee}
+\newcommand{\land}     {\wedge}
 
 \usepackage{hevea}
 
@@ -38,5 +40,5 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% $Id: macros.hva,v 1.4 2001-04-28 08:46:57 swprakt Exp $
+%% $Id: macros.hva,v 1.5 2001-05-08 14:42:35 swprakt Exp $
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
