@@ -1,0 +1,34 @@
+####################################################
+# $Id: Readme,v 1.1 2001-05-02 05:21:30 swprakt Exp $
+####################################################
+
+
+
+Files:
+
+   template.txt
+        Als kleine Hilfestellung: eine minimale Schablone, wie man seine
+        Klassen dokumentieren soll (mit hilfe von Javadoc).
+
+	Mindestens enthalten:
+
+	   - Autor
+           - Kurzbeschreibung.
+	   - Version
+
+
+	Es bietet sich an, komplexere Konstruktoren und wichtige
+	"offentliche Methoden etc. ebenfalls mittels Javadoc
+	zu kommentieren.
+
+        Zus"atzlich sind in dem Template auch noch
+        CVS-Schl"usselworte verwenden, die f"ur eine automatische
+        Versionsdokumentation sorgen. Diese sind immer in ``$''
+        eingeschlossen. Damit es funktioniert, mu"s man folglich das zweite
+        <dollar> durch ein ``$'' ersetzen (in dem Template geht das nat"urlich
+        nicht. 
+
+
+
+
+

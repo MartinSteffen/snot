@@ -1,0 +1,28 @@
+package <mypackage>;
+import java.io.Serializable;  // for instance 
+
+
+/**
+ * some description of the class
+ * Bla bla
+ * @author Initially provided by Kapt'n Blaubaer
+ * @version $Id: <dollar>	
+ */
+
+
+public class <xxxx> extends <yyyy> implements Serializable { 
+}
+
+
+
+
+//----------------------------------------------------------------------
+//	<paket>  for Snot programs
+//	------------------------------------
+//
+//	$Id: <dollar>
+//
+//	$Log: <dollar>
+//	
+//---------------------------------------------------------------------
+
