@@ -24,7 +24,7 @@ public class SimExample {
 		System.out.print("Anfangszustand: ");
 		sim.PrintConfiguration(System.out);				// Zustand ausgeben
 		
-		for (int i=1; i<=9; i++) {
+		for (int i=1; i<=15; i++) {
 			
 			sim.SingleStep();
 			

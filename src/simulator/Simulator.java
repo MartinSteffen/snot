@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import absynt.*;
 import editor.Editor;
+import utils.*;
 
 
 
@@ -56,6 +57,12 @@ public class Simulator{
     
     public void SingleStep() {
     	
+		PrettyPrint pp = new PrettyPrint();
+		
+		if (DEBUG)
+			System.out.println("enter SingleStep()");
+			
+
 		// Wir arbeiten mit einer Kopie des aktuellen Zustands
 
     	Configuration c = new Configuration(config);
@@ -69,6 +76,15 @@ public class Simulator{
     		if (c.active_steps.remove(s)) 
     			c.active_steps.addLast(s);
     	}
+    	
+    	if (DEBUG) {
+    		System.out.println("active Steps:");
+    		for (Iterator i = c.active_steps.iterator(); i.hasNext(); ) {
+    			Step s = (Step) i.next();
+    			pp.print(s);
+    		}
+    		System.out.println("");
+    	}
 
     	// Aktionen der aktiven Steps ausführen                               (Auswertung der Aktionslisten ist atomar)
     	
@@ -76,40 +92,61 @@ public class Simulator{
 
     			Step s = (Step) i.next();
 
+				if (DEBUG) 
+					System.out.println("ExecNQualifiedStepActions("+s.name+")");
+
     			ExecNQualifiedStepActions(s,c.state);
     	}
         	
     	// Guards auswerten und ggfs. Transitionen nehmen                     (Die Liste der Transitionen gibt die Reihenfolge vor.)
     	
+    	StepList activated_steps = new StepList();
     	
 		for (Iterator i = sfc.transs.iterator(); i.hasNext(); ) {
+			
+    		Transition t = (Transition) i.next();
 
-    			Transition t = (Transition) i.next();
+			if (DEBUG) {
+				System.out.println("ExecTransition:");
+//				pp.print(t);
+			}
     			
-    			// ExecTransition(t,c);
+    		StepList l = ExecTransition(t,c);
+    		
+    		for (Iterator j = l.iterator(); j.hasNext(); ) {
+    			Step s = (Step) j.next();
+    			if ( !(activated_steps.contains(s)) )
+    				activated_steps.add(s);
+    		}
     	}
     	
+    	for (Iterator i = activated_steps.iterator(); i.hasNext(); ) {
+    		Step s = (Step) i.next();
+    		if ( !c.active_steps.contains(s) )
+    			c.active_steps.add(s);
+    	}
     	
     	// Outputs schreiben
     	
     	// aktuellen Zustand durch den soeben bestimmten ersetzen
     	
     	config = c;
-    	
+
     }
     
     
-    public Expr EvaluateExpression(Expr e, State state) {
+    private Expr EvaluateExpression(Expr e, State state) {
     	
     	if (e instanceof Constval) {
     		
     		Constval c = (Constval) e;
     	
-			if (c.type instanceof IntType) 
+			if (c.val instanceof Integer) 
 				return new Constval( ((Integer)c.val).intValue() );
 					
-			if (c.type instanceof BoolType)  
+			if (c.val instanceof Boolean) {
 				return new Constval( ((Boolean)c.val).booleanValue() );
+			}
 			
 			// throw Execption
     	}
@@ -215,7 +252,7 @@ public class Simulator{
 
     
     
-    public void ExecAction(Action action, State state) {
+    private void ExecAction(Action action, State state) {
     
 		for (Iterator i = action.sap.iterator(); i.hasNext();) {
 	  	
@@ -225,7 +262,8 @@ public class Simulator{
 	    
 	    		Assign a = (Assign) s;
 	    		
-				if (DEBUG) System.out.println("Assign("+a.var.name+")");
+				if (DEBUG)
+					System.out.println("Assign("+a.var.name+")");
 
 	    		// Audruck in "val" auswerten 
 	    	
@@ -247,7 +285,7 @@ public class Simulator{
     }
     
     
-    public void ExecNQualifiedStepActions(Step step, State state) {
+    private void ExecNQualifiedStepActions(Step step, State state) {
     	
     	for (Iterator i = step.actions.iterator(); i.hasNext(); ) {
     		
@@ -264,6 +302,67 @@ public class Simulator{
     			}
     		}
     	}
+    }
+    
+    private StepList ExecTransition(Transition t, Configuration cfg) {
+    	
+		StepList l = new StepList();
+
+    	// Sind sämtliche Quell-Steps aktiviert?
+    	
+    	boolean activated = true;
+    	
+    	for (Iterator i = t.source.iterator(); i.hasNext(); ) {
+    		Step s = (Step) i.next();
+    		if ( !cfg.active_steps.contains(s) ) {
+    			activated = false;
+    			break;
+    		}
+    	}
+    	
+    	if (activated) {
+    		
+    		if (DEBUG)
+    			System.out.println("activated");
+    		
+    		// Guard auswerten
+    		
+    		Expr e = EvaluateExpression(t.guard,cfg.state);
+	    	
+    		if (e instanceof Constval ) {
+		
+				if (DEBUG)
+	 				System.out.println("Constval");
+
+				Constval c = (Constval) e;
+				
+				if (c.val instanceof Boolean)
+				
+					// erfuellt?
+				
+					if ( ((Boolean) c.val).booleanValue() ) {
+						
+						if (DEBUG)
+							System.out.println("enabled");
+						
+						// Quell-Steps deaktivieren
+
+				    	for (Iterator i = t.source.iterator(); i.hasNext(); ) {
+    						Step s = (Step) i.next();
+   							cfg.active_steps.remove(s);
+    					}
+						
+						// Liste der Ziel-Steps erzeugen und zurückgeben
+						
+				    	for (Iterator i = t.target.iterator(); i.hasNext(); ) {
+    						Step s = (Step) i.next();
+    						l.add(s);
+    					}
+					}
+			}
+    	}
+    	
+    	return l;
     }
     
 
@@ -358,7 +457,6 @@ public class Simulator{
 				if ( (m.var.type instanceof IntType)  ) 
 					addLast( new Map(m.var,((Integer)m.val).intValue()) );
 			}
-    		
     	}
     	
     	public void SetVar(Variable var, Constval c) {
