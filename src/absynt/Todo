@@ -1,5 +1,5 @@
 #####################################################
-# $Id: Todo,v 1.5 2001-05-02 05:12:13 swprakt Exp $
+# $Id: Todo,v 1.6 2001-05-02 05:48:07 swprakt Exp $
 #####################################################
 
 
@@ -18,7 +18,9 @@ o general stuff:
 	remove it also from the req. spec.
 
 
-
+     - Program: remove the class
+  
+     - requirement spec: change the clause for assign.
 
    
 
