@@ -4,7 +4,7 @@
  * Offers the methods  parseFile and parseExpression 
  *
  * @author Karsten Stahl, Martin Steffen
- * @version $Id: SFC.cup,v 1.15 2001-07-11 14:52:20 swprakt Exp $
+ * @version $Id: SFC.cup,v 1.16 2001-07-11 15:01:30 swprakt Exp $
  *
  * The grammar definition contains 4 parts:
  *    -  initialization declarations and how to generate the parser
@@ -281,6 +281,12 @@ step        ::=  LPAREN
                  RBRACKET
                  RPAREN
                     {:  RESULT = new absynt.Step(s,sal);  :}
+             |   LPAREN
+                 IDENT:s COMMA 
+                 LBRACKET
+                 RBRACKET
+                 RPAREN
+                    {:  RESULT = new absynt.Step(s);  :}
   ;
 
 
