@@ -7,7 +7,7 @@
 package smv;
 
 import absynt.*;
-import java.io.PrintStream;
+import java.io.ByteArrayOutputStream;
 
 
 /**
@@ -34,8 +34,8 @@ public class SMVTranslator extends java.lang.Object {
      * @return Bytestream with SMV commands
      *
      */
-    public PrintStream toStream() {
-        return new PrintStream();
+    public ByteArrayOutputStream toStream() {
+        return new ByteArrayOutputStream();
     }
     
 }
