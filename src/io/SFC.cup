@@ -4,7 +4,7 @@
  * Offers the methods  parseFile and parseExpression 
  *
  * @author Karsten Stahl, Martin Steffen
- * @version $Id: SFC.cup,v 1.16 2001-07-11 15:01:30 swprakt Exp $
+ * @version $Id: SFC.cup,v 1.17 2001-07-13 07:18:10 swprakt Exp $
  *
  * The grammar definition contains 4 parts:
  *    -  initialization declarations and how to generate the parser
@@ -47,6 +47,7 @@ action code {:
   /* --- removed  */    int state_counter = 0;
 
   private LinkedList _steplist = new LinkedList();
+  private LinkedList _declist = new LinkedList();
   
   private Step get_step_by_name(String s) {
       absynt.Step _s = null;
@@ -57,6 +58,17 @@ action code {:
       if (_s == null)
 	  System.err.println("not all steps occur in the step list");
       return _s;
+  };
+
+  private Variable get_variable_by_name(String vn) {
+      absynt.Variable _v = null;
+      for (Iterator i = _declist.iterator(); i.hasNext();) {
+	  Declaration _li = (Declaration) i.next();
+	  if (vn.equals(_li.var.name)) _v=_li.var;
+      }
+      if (_v == null)
+	  System.err.println("not all variables declared");
+      return _v;
   };
 
   private void more(){
@@ -220,19 +232,21 @@ program      ::= BEGIN
 
 
 declist      ::= VARS EQ LBRACKET  RBRACKET
-                    {:  RESULT = new LinkedList();  :}
-              |  VARS EQ LBRACKET  declarations:dl  RBRACKET
-                    {:  RESULT = dl;  :}
+                    {:  RESULT = _declist;  :}
+              |  VARS EQ LBRACKET  declarations  RBRACKET
+                    {:  RESULT = _declist;  :}
 		 ;
 declarations ::= declaration:d
-                    {:  RESULT = new LinkedList();
+                    {:  RESULT = _declist;
                         RESULT.addFirst(d); :}
-              |  declaration:d SEM declarations:dl
-                    {:  RESULT = dl; RESULT.addFirst(d); :}
+              |  declaration:d SEM declarations
+                    {:  RESULT = _declist; RESULT.addFirst(d); :}
 		 ;
 
-declaration  ::= var:v COLON type:t EQ constval:e
-                    {:  RESULT = new absynt.Declaration(v, t, e);  :}
+declaration  ::= IDENT:v COLON type:t EQ constval:e
+                    {:  absynt.Variable _v = new absynt.Variable(v, t);
+		        RESULT = new absynt.Declaration(_v, t, e);
+		     :}
 ;
   
 
@@ -377,7 +391,7 @@ op              ::= PLUS     {: RESULT= new Integer(absynt.Expr.PLUS); :}
   ;
 
 var             ::= IDENT:v
-                     {: RESULT = new absynt.Variable(v); :}
+                     {: RESULT = get_variable_by_name(v); :}
   ;
 
 
