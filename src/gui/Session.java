@@ -33,7 +33,7 @@ import javax.swing.event.*;
  *  create new, import or export Projects.
  *
  * @author  Hans Theman and Ingo Schiller
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.18 $
  */
 
 public class Session extends java.lang.Object implements Serializable {
@@ -201,14 +201,16 @@ public class Session extends java.lang.Object implements Serializable {
     public void removeProject(Project _project) {
         SFC sfc = _project.getSFC();
 
-        // remove Project from hashtable
+	// remove editor from screen
+        if (_project.getEditor() != null)
+            (_project.getEditor()).dispose();        
+
+	// remove Project from hashtable
         if (table.remove((Object)sfc) == null) {
             System.out.print("\nAttention: The removed Project was not found in the hashtable!");
             return;
         }
-        // remove editor from screen
-        if (_project.getEditor() != null)
-            (_project.getEditor()).dispose();
+      
     }
 
     public boolean isEmpty() {
@@ -259,7 +261,10 @@ public class Session extends java.lang.Object implements Serializable {
 		p.setEditor(editor);
             }
         }
-//        catch (Exception ex){ex.printStackTrace();}
+        catch (Exception ex){
+	    p.setEditor(editor);
+	    throw ex;
+	}
 	finally {
 	    this.table = h;
 	    outStream.flush(); // throws IOException!!!!

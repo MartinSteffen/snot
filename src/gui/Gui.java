@@ -35,7 +35,7 @@ import checks.*;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.47 $
+ * @version $Revision: 1.48 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -1216,7 +1216,8 @@ System.out.println("Error while simulating the SFC"+e.getMessage());
           else if(checkEx instanceof DecListFailure) {
 	        status = false;
 		activeProject.setChecked(status);
-		activeProject.getEditor().highlight_state(((DecListFailure)checkEx).get_Declaration(),true);
+		if(activeProject.getEditor()!= null)		
+		    activeProject.getEditor().highlight_state(((DecListFailure)checkEx).get_Declaration(),true);
 		SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "Error in the declaration list", JOptionPane.ERROR_MESSAGE);
 		return;
@@ -1224,7 +1225,8 @@ System.out.println("Error while simulating the SFC"+e.getMessage());
           else if(checkEx instanceof ActionFailure) {
 	        status = false;
 		activeProject.setChecked(status);
-		activeProject.getEditor().highlight_state(((ActionFailure)checkEx).get_Action(),true);
+		if(activeProject.getEditor()!= null)
+		    activeProject.getEditor().highlight_state(((ActionFailure)checkEx).get_Action(),true);
                 SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "Action Failure", JOptionPane.ERROR_MESSAGE);
 		return;
@@ -1232,7 +1234,8 @@ System.out.println("Error while simulating the SFC"+e.getMessage());
           else if(checkEx instanceof StepFailure) {
 	        status = false;
 		activeProject.setChecked(status);
-		activeProject.getEditor().highlight_state(((StepFailure)checkEx).get_Step(),true);
+		if(activeProject.getEditor()!= null)
+		    activeProject.getEditor().highlight_state(((StepFailure)checkEx).get_Step(),true);
                 SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "Step Failure", JOptionPane.ERROR_MESSAGE);
 		return;
@@ -1240,7 +1243,8 @@ System.out.println("Error while simulating the SFC"+e.getMessage());
           else if(checkEx instanceof TransitionFailure) {
 	        status = false;
 		activeProject.setChecked(status);
-		activeProject.getEditor().highlight_state(((TransitionFailure)checkEx).get_Trans(),true);
+		if(activeProject.getEditor()!= null)		
+		    activeProject.getEditor().highlight_state(((TransitionFailure)checkEx).get_Trans(),true);
                 SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "Transition Failure", JOptionPane.ERROR_MESSAGE);
 		return;
@@ -1484,7 +1488,7 @@ ex.printStackTrace();
       if (session.isSaved()) {
           try {
               session.save(null);
-	      setStatusLine(false, "Session saved.");
+	      setStatusLine(true, "Session saved.");
           }
           catch (Exception ex) {
 System.out.print("\n"+ex.getClass());
@@ -1758,10 +1762,12 @@ System.out.print(ex.getClass());
         try {
             newSession = Session.read(file);
             v = newSession.getProjectList();
-            for (int i=0; i<v.size(); i++) {
+            
+//////////////////////////
+/*for (int i=0; i<v.size(); i++) {
                 if(((Project)v.elementAt(i)).hasEditor())
-		    (createEditor((Project)v.elementAt(i)));
-            }
+		(createEditor((Project)v.elementAt(i)));}*/
+	
         }
         catch (IOException ex) {
             SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Read error", JOptionPane.WARNING_MESSAGE);
