@@ -31,7 +31,7 @@ public class Gui extends javax.swing.JFrame {
     /** private declarations */
     private JOptionPane SnotOptionPane = null; // hierin werden jegliche popups dargestellt
     private Session session = null;
-    private int activeProject = -1;  // index to an item in the session.project-Vector!
+    private Project activeProject = null;  // referes to the focosed Project
     private boolean ready_to_exit = true;  // indicates whether exit Snot or not
 
     private final String TITLE = "Snot";    // the Gui title
@@ -415,12 +415,10 @@ public class Gui extends javax.swing.JFrame {
  **********************************************************************************/
         
   private void RemoveSFCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RemoveSFCActionPerformed
-    int index = activeProject; // for security reason
+    Project project = activeProject; // for security reason
     String msg = null;
     int result = 0;
     
-System.out.print("\nindex is :"+index);      
-//session.printToStdout();      
 // check for valid session. This should never be entered!!!
      if (session == null) {
           System.out.print("\n An error occured! RenameSFC was called without an active Session!!");
@@ -428,33 +426,32 @@ System.out.print("\nindex is :"+index);
      }
       
      // check for active Projects
-     if (session.noOfProjects()<1 || index<0) {
-         if (!(session.noOfProjects()<1) && index<0)
-            msg = new String("Please select a SFC first!\n"); 
+     if (session.isEmpty() || project == null) {
+         if (session.isEmpty())
+             msg = new String("There is no SFC in this session!\n");
          else
-            msg = new String("There is no SFC in the session!\n");
-         
+             msg = new String("Please select a SFC first!\n"); 
+
          SnotOptionPane.showMessageDialog(null, msg, "Error", JOptionPane.ERROR_MESSAGE);
          return;
      }
 
      // show Remove Dialog
-     result = SnotOptionPane.showConfirmDialog(null, "You are about to remove SFC \""+session.getProject(index).name+"\" from the current session.\nIf it is not exportet or saved its content will be lost!\n\n Do you wish to proceed?", 
+     result = SnotOptionPane.showConfirmDialog(null, "You are about to remove SFC \""+project.getName()+"\" from the current session.\nIf it is not exportet or saved its content will be lost!\n\n Do you wish to proceed?", 
                                         "Remove SFC from Session", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
      
      if (result == JOptionPane.NO_OPTION) 
          return;
      
      // removing SFC from session
-     session.getProject(index).getEditor().dispose();
-     session.removeProjectAt(index);
-     activeProject = -1;
+     session.removeProject(project);
+     activeProject = null;
   }//GEN-LAST:event_RemoveSFCActionPerformed
 
   private void RenameSFCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RenameSFCActionPerformed
      String input = null;
      String msg = null;
-     int index = activeProject; // for security reason
+     Project project = activeProject; // for security reason
 
 // check for valid session. This should never be entered!!!
      if (session == null) {
@@ -463,24 +460,22 @@ System.out.print("\nindex is :"+index);
      }
       
      // check for active Projects
-     if (session.noOfProjects()<1 || index<0) {
-         if (!(session.noOfProjects()<1) && index<0)
-            msg = new String("Please select a SFC first!\n"); 
-         else
+     if (session.isEmpty() || project == null) {
+         if (session.isEmpty())
             msg = new String("There is no SFC in the session!\n");
+         else
+            msg = new String("Please select a SFC first!\n"); 
          
          SnotOptionPane.showMessageDialog(null, msg, "Error", JOptionPane.ERROR_MESSAGE);
          return;
      }
 
      // show Rename Dialog
-     input = SnotOptionPane.showInputDialog(null, "The current SFC's name is \""+session.getProject(index).getName()+"\".\nPlease enter a new name and hit \"OK\"", 
+     input = SnotOptionPane.showInputDialog(null, "The current SFC's name is \""+project.getName()+"\".\nPlease enter a new name and hit \"OK\"", 
                                         "Rename SFC", JOptionPane.PLAIN_MESSAGE);
      // set new name
-     if (input != null && input.length()>0) {
-          session.getProject(index).setName(input);
-//          session.getProject(index).getEditor().setTitle(input);
-     }
+     if (input != null && input.length()>0) 
+          project.setName(input);
   }//GEN-LAST:event_RenameSFCActionPerformed
 
   private void NewSessionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NewSessionActionPerformed
@@ -489,7 +484,7 @@ System.out.print("\nindex is :"+index);
       
       // check for active session
       if (session != null) {
-          if (session.has_changed) {
+          if (session.is_modified) {
               response = SnotOptionPane.showConfirmDialog(null, "There already is an active unsaved session!\n Without saving the changes will be lost!\n\nDo you want to save the changes before opening a new session?\n",
                                             "Alert", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
           }
@@ -539,13 +534,16 @@ System.out.print("\nindex is :"+index);
   }//GEN-LAST:event_ShowToolBarActionPerformed
 
   private void SFCBrowserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SFCBrowserActionPerformed
-// Add your handling code here:
+      SnotOptionPane.showMessageDialog(null, "SFC browser not yet implemented!\n",
+                                       "Error", JOptionPane.ERROR_MESSAGE); 
   }//GEN-LAST:event_SFCBrowserActionPerformed
 
   private void SMVActionPerformed(java.awt.event.ActionEvent evt) {
+      Project project = activeProject;
       System.out.print("\nlaunching SMVTranslator ...");
+      
       try {
-          new SMVTranslator(session.getProject(activeProject).getSFC());
+          new SMVTranslator(project.getSFC());
       }
       catch (Exception ex) {
           SnotOptionPane.showMessageDialog(null, ex.getMessage(), //"SMV is not yet implemented!", 
@@ -565,9 +563,6 @@ System.out.print("\nindex is :"+index);
 
   private void EditorActionPerformed(java.awt.event.ActionEvent evt) {
       NewSFCActionPerformed(null);
-      
-//      SnotOptionPane.showMessageDialog(null, "Editor call is not yet implemented!", 
-//                                        "Error", JOptionPane.ERROR_MESSAGE); 
   }
 
   private void ExitSnotActionPerformed(java.awt.event.ActionEvent evt) {
@@ -582,8 +577,10 @@ System.out.print("\nindex is :"+index);
    */
   
   private void ExportSFCActionPerformed(java.awt.event.ActionEvent evt) {
+      Project project = activeProject;
+
       // check for empty projects vector
-      if (session.noProjects()) {
+      if (session.isEmpty()) {
           SnotOptionPane.showMessageDialog(null, "Export SFC error:\nThere are no SFCs in the current session!",
                                            "Error", JOptionPane.ERROR_MESSAGE);
           return;
@@ -600,14 +597,14 @@ System.out.print("\nindex is :"+index);
       if (session.fileName != "")
           chooser.setCurrentDirectory(new File(session.fileName));
       
-      chooser.setSelectedFile(new File(session.getProject(activeProject).name));
+      chooser.setSelectedFile(new File(project.getName()));
             
       // finaly display FileChooser
       int result = chooser.showDialog(null, "Export");
       if (result == JFileChooser.APPROVE_OPTION) {
          System.out.print("\nExport SFC: SFC would be exported as \""+chooser.getSelectedFile()+"\"");
          try {
-            session.getProject(activeProject).saveSFC(chooser.getSelectedFile());
+            project.saveSFC(chooser.getSelectedFile());
          }
          catch (Exception ex) {
              SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -662,9 +659,9 @@ System.out.print("\nindex is :"+index);
    */
   
   private void NewSFCActionPerformed(java.awt.event.ActionEvent evt) {
-      Project newProject = null;
+      Project project = null;
       Editor editor = null;
-      int index = -1;
+
       // check for valid session
       if (session == null) {
            SnotOptionPane.showMessageDialog(null, "Creating a new SFC failed!\nCannot load a SFC without an active session.\nPlease open or create a new session first!", 
@@ -674,32 +671,29 @@ System.out.print("\nindex is :"+index);
            
       // launch Editor with new SFC
       try {
-          newProject = new Project();
-          editor = new Editor(newProject.getSFC());//session.getProject(project).getSFC());
+          project = new Project();
+          editor = new Editor(project.getSFC());
       }
       catch (Exception ex) {
            SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-           session.removeProjectAt(index);
            return;
       }
 
       // set editor parameters
       editor.setLocation(250, 250);
       editor.addWindowListener(new GuiWindowListener());
-
-      newProject.setEditor(editor);
+      project.setEditor(editor);
 
       // add new Project to session
       try {
-          index = session.addProject(newProject);
+          session.addProject(project);
       }
       catch (Exception ex) {
            SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);           
            return;
       }
       // set environmental parameters
-      session.has_changed = true;
-      editor.setName(""+index);
+      session.is_modified = true;
       editor.show();
  }      
 
@@ -727,7 +721,7 @@ System.out.print("\nindex is :"+index);
       
       // check for active session
       if (session != null) {
-          if (session.has_changed) {
+          if (session.is_modified) {
               response = SnotOptionPane.showConfirmDialog(null, "There already is an active unsaved session!\n Without saving the changes will be lost!\n\nDo you want to save the changes before opening a new session?\n",
                                             "Alert", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
           }
@@ -841,7 +835,7 @@ System.out.print("\nindex is :"+index);
         // closing open frames: frames[0] is GuiFrame!!!!
         if (frames != null) {
             for (int i=1; i<(frames.length-1); i++) {
-                frames[i].dispose();
+                    frames[i].dispose();
     //            System.out.print("\n"+frames[i].getName());
             }
         }
@@ -849,7 +843,7 @@ System.out.print("\nindex is :"+index);
         enableSession(false);
         session = null;
         this.setTitle(TITLE);
-        System.out.print("\nSession \""+session.name+"\" is closed!");
+        System.out.print("\nSession is closed!");
     }
     
     private Session openSession(File file) {
@@ -862,7 +856,7 @@ System.out.print("\nindex is :"+index);
         local_session.fileName = file.toString();
         local_session.name = file.getName().replace('.', '\0');
         
-        this.setTitle(TITLE+"  "+session.name);
+        setTitle(TITLE+"  "+local_session.name);
         enableSession(true);
         
         System.out.print("\n ... opening new session from file \""+file+"\": name: "+file.getName()+", "+file.toString());
@@ -877,7 +871,7 @@ System.out.print("\nindex is :"+index);
         if (session == null)
             exitSnot();
         
-        if (session.has_changed) 
+        if (session.is_modified) 
             result = SnotOptionPane.showConfirmDialog(null, "The session has changed!\n\nDo you want to save it?",
                                             "Alert!", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
         else if (!session.is_saved)  
@@ -930,7 +924,7 @@ System.out.print("\nindex is :"+index);
     
         public void windowActivated(java.awt.event.WindowEvent evt) {
             // set the active Project
-            activeProject = Integer.valueOf(evt.getComponent().getName()).intValue();
+            activeProject = session.getProject(evt.getSource());
             System.out.print("\n Window "+activeProject+" Activated");
         }
         
@@ -947,7 +941,8 @@ System.out.print("\nindex is :"+index);
         }
         
         public void windowOpened(java.awt.event.WindowEvent evt) {
-            session.getProject(activeProject).is_active = true;
+            if (activeProject!=null)
+                activeProject.is_active = true;
             System.out.print("\n Window "+activeProject+" Opened");
         }
         
@@ -956,8 +951,10 @@ System.out.print("\nindex is :"+index);
         }
         
         public void windowClosing(java.awt.event.WindowEvent evt) {
-            session.getProject(activeProject).is_active = false;
+            if (activeProject!=null)
+                activeProject.is_active = false;
             System.out.print("\n Window "+activeProject+" Closing");
+            activeProject = null;
         }
     }
         

@@ -6,10 +6,11 @@
 
 package gui;
 
-import java.util.*;
+import java.util.Hashtable;
 import java.lang.*;
 import java.io.Serializable;
 
+import editor.Editor;
 /**
  *
  * @author  Hans Theman and Ingo Schiller
@@ -18,66 +19,66 @@ import java.io.Serializable;
 public class Session extends java.lang.Object implements Serializable {
 
     /** variable declarations */
-    private Vector projects = null;
+    private Hashtable table = null;
     public String name;
     public String fileName;
     public boolean is_saved;
-    public boolean has_changed;
+    public boolean is_modified;
     
     /** Creates new Session */
     public Session() {
-        projects = new Vector();
+        table = new Hashtable();
         name = "unknown";
         fileName = "";
         is_saved = false;
-        has_changed = false;
+        is_modified = false;
     }
     
-    public Session(String _name, String _fileName, boolean _is_saved, boolean _has_changed) {
-        projects = new Vector();
+    public Session(String _name, String _fileName, boolean _is_saved, boolean _is_modified) {
+        table = new Hashtable();
         name = _name;
         fileName = _fileName;
         is_saved = _is_saved;
-        has_changed = _has_changed;
+        is_modified = _is_modified;
     }
 
-    public int getIndexOfLastProject() {
-       return projects.size()-1; 
-    }
-    
     public int noOfProjects() {
-        return projects.size();
+        return table.size();
     }
     
-    public Project getProject(int index) {
-        if (projects.isEmpty()) {
-System.out.print("\n fatal error!! session.projects is empty!!!");
-            return null;
-        }
-        
-        return (Project)projects.elementAt(index);
+    public Project getProject(Object key) {
+        return (Project)table.get(key); // returns null, if key not found 
     }
     
     /**
      *  Function addProject
-     *  @param project Specifies the Object to be added to the project-vector
-     *  @return index The index of the added object in the project-vector
+     *  @param _project Specifies the Object to be added to the hashtable 
      */
     
-    public int addProject(Project project) {
-        projects.add(project);
-        return projects.size()-1; 
+    public void addProject(Project _project) {
+//        if (_project == null)
+//            return;
+        
+        Object object = table.put((Object)_project.getEditor(), (Object)_project); // throws NullPointerExeption !!!!
+        if (object != null)
+            System.out.print("\nAttention: The added Project was allready mapped in the hashtable!");
     }
     
-    public void removeProjectAt(int index) {
-        projects.removeElementAt(index);
-        for (int i=index; i<projects.size(); i++) {
-            ((Project)projects.elementAt(i)).setIndex(i);
+    public void removeProject(Project _project) {
+        Editor editor = _project.getEditor();
+
+        // remove Project from hashtable
+        if (table.remove((Object)editor) == null) {
+            System.out.print("\nAttention: The removed Project was not found in the hashtable!");
+            return;
         }
+        // remove editor from screen
+        if (editor != null)
+            editor.dispose();
     }
     
-    public boolean noProjects() {
-        return projects.isEmpty();
+    public boolean isEmpty() {
+        return table.isEmpty();
     }
     
     public void save(){}
@@ -87,14 +88,14 @@ System.out.print("\n fatal error!! session.projects is empty!!!");
      *Returns a stringrepresention of the session object readable for humans
      *@ret String 
      */
-    public void printToStdout() {
+/*    public void printToStdout() {
         
-        String text = "\nSESSION INFO:\nName: "+name+"; Filename: "+fileName+"; No of projects: "+this.noOfProjects()+"; Is saved: "+is_saved+"; Has changed: "+has_changed+"\n";
+        String text = "\nSESSION INFO:\nName: "+name+"; Filename: "+fileName+"; No of projects: "+this.noOfProjects()+"; Is saved: "+is_saved+"; Has changed: "+is_modified+"\n";
         System.out.print(text);
         for (int i=0; i<this.noOfProjects(); i++) {
             System.out.print(i+" - ");
             this.getProject(i).printToStdout();
         }
     }
-    
+*/    
 }
