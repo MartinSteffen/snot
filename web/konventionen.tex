@@ -1,0 +1,38 @@
+
+
+
+\section*{Konventionen und Spielregeln}
+\label{sec:konventionen}
+
+Neben den gesondert ausgeteilten und diskutierten \emph{CVS-Spielregeln}
+sollen folgenden Dinge beachtet werden.
+
+\begin{itemize}
+\item \textbf{Makefile}: jedes Paket, d.h.\ die Wurzel des entsprechenden
+  Unterverzeichnisses soll ein \texttt{Makefile} enhalten. Als erstes Target
+  muß \texttt{make all} unterst"utzt werden, welche f"ur das Paket den Java
+  Bytecode erzeugt. Daneben soll ein \texttt{make clean} unterst"uzt werden,
+  welches den byte-code und tempor"are Dateien wieder entfernt. Ein einfaches
+  Beispiel f"ur ein passendes Makefile findet sich im Unterverzeichnis 
+  \texttt{src/templates/}.
+\item \textbf{Dokumentation:} Der \Java-Code soll sinnvoll kommentiert und
+  dokumentiert werden.  Für Information über die Implementierung, die für
+  die Mit-Entwickler von Interesse ist, soll dies mittels \javadoc{}
+  geschehen.  Dies betrifft insbesondere die Methoden, die zur Schnittstelle
+  mit anderen Paketen gehören. Zur öffentlichen (aber projekt-interne)
+  Dokumentation gehört auch der Name der Entwickler und die Version.
+  Weitere sinnvolle Information kann den \emph{Status} der Methode, Klasse,
+  oder sonstigen Programmteils betreffen. Beispielsweise, ob die
+  Implementiereung noch virtuell ist (als stub), ob nur Teile der
+  vereinbarten Funktionalit"at bereitstehen, ob die Funktionalit"at noch
+  ungetested ist, ob Fehler bekannt sind eind.
+  
+  Die \javadoc-Kommentare dienen dazu, die 
+\item 
+\end{itemize}
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End: 
