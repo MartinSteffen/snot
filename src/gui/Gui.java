@@ -35,7 +35,7 @@ import checks.*;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.50 $
+ * @version $Revision: 1.51 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -792,8 +792,7 @@ public class Gui extends javax.swing.JFrame {
      }
 
      // show Remove Dialog
-     result = SnotOptionPane.showConfirmDialog(null, "You are about to remove SFC \""+project.getName()+"\" from the current session.\nIf it is not exportet or saved its content will be lost!\n\n Do you wish to proceed?",
-                                        "Remove SFC from Session", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+     result = SnotOptionPane.showConfirmDialog(null, "You are about to remove SFC \""+project.getName()+"\" from the current session.\nIf it is not exportet or saved its content will be lost!\n\n Do you wish to proceed?", "Remove SFC from Session", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
      if (result == JOptionPane.NO_OPTION)
          return;
@@ -812,7 +811,7 @@ public class Gui extends javax.swing.JFrame {
 
 // check for valid session. This should never be entered!!!
      if (session == null) {
-          System.out.print("\n An error occured! RenameSFC was called without an active Session!!");
+//          System.out.print("\n An error occured! RenameSFC was called without an active Session!!");
           return;
      }
 
@@ -871,8 +870,7 @@ public class Gui extends javax.swing.JFrame {
           session = new Session();
       }
       catch (Exception ex) {
-          SnotOptionPane.showMessageDialog(null, ex.getMessage(),
-                                        "Error", JOptionPane.WARNING_MESSAGE);
+          SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
           session = null;
           return;
       }
@@ -958,8 +956,8 @@ System.out.println("File Parsed");
 	      SnotOptionPane.showMessageDialog(null, pex.getMessage(), "Parse-Error", JOptionPane.ERROR_MESSAGE);
 	  }
 	  catch (Exception ex) {
-System.out.println("\n"+ex.getClass());
-ex.printStackTrace();
+//System.out.println("\n"+ex.getClass());
+//ex.printStackTrace();
 	       setStatusLine(true, "Parser failed");
                SnotOptionPane.showMessageDialog(null, "Abnormal Error!\nError code 0-8-15\nPlease consult your local cofe machine ...\n\n"+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
           }
@@ -1108,7 +1106,7 @@ ex.printStackTrace();
       catch(Exception e){
 	 setStatusLine(true, "SMV translation failed.");
 	 SnotOptionPane.showMessageDialog(null, ("An unexpected condition occured!\n"+e.getMessage()), "Abnormal Error", JOptionPane.ERROR_MESSAGE);
-e.printStackTrace();
+//e.printStackTrace();
       }
 
   }
@@ -1155,14 +1153,13 @@ e.printStackTrace();
 	     sim.SingleStep();
 
 	     System.out.print("nach "+i+". Schritt: ");
-
-			sim.PrintConfiguration(System.out);
+	     
+	     sim.PrintConfiguration(System.out);
 	 }
      } catch (Exception e) {
 	 setStatusLine(true, "Simulator failed.");
-System.out.println("Error while simulating the SFC"+e.getMessage());
-	 SnotOptionPane.showMessageDialog(null, ("Simulator execution aborted due to an unexpected error./n"+e.getMessage())
-					  , "Error", JOptionPane.ERROR_MESSAGE);
+//System.out.println("Error while simulating the SFC"+e.getMessage());
+	 SnotOptionPane.showMessageDialog(null, ("Simulator execution aborted due to an unexpected error./n"+e.getMessage()) , "Error", JOptionPane.ERROR_MESSAGE);
      }
   }
 
@@ -1485,7 +1482,7 @@ System.out.println("Error while simulating the SFC"+e.getMessage());
 	      setStatusLine(true, "Session saved.");
           }
           catch (Exception ex) {
-System.out.print("\n"+ex.getClass());
+//System.out.print("\n"+ex.getClass());
               SnotOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
               return false;
           }
@@ -1822,8 +1819,7 @@ System.out.print(ex.getClass());
         // collect all opened Frames/Windows and close em all!!!
 
         if (remind) {
-            result = SnotOptionPane.showConfirmDialog(null, "You are about to leave Snot!\nDo you wish to exit?",
-                                            "Exit?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            result = SnotOptionPane.showConfirmDialog(null, "You are about to leave Snot!\nDo you wish to exit?", "Exit?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (result != JOptionPane.YES_OPTION)
                 return false;
         }
