@@ -1,5 +1,5 @@
 ########################################################
-## $Id: Makefile,v 1.3 2001-04-23 06:57:55 swprakt Exp $
+## $Id: Makefile,v 1.4 2001-04-26 16:47:47 swprakt Exp $
 ########################################################
 
 
@@ -34,4 +34,4 @@ clean:
 	rm *.html *.gif *.haux
 
 www:
-	cp *.html *.ps *.gif  $(WWWDIR)
+	cp *.html *.ps *.gif *.pdf $(WWWDIR)
