@@ -1,7 +1,10 @@
 #----------------------------------------------------------------------
 # developers' top-level Makefile for the Siff project
-# $Id: Makefile,v 1.3 2001-04-22 08:51:35 swprakt Exp $
+# $Id: Makefile,v 1.4 2001-04-24 10:08:50 swprakt Exp $
 #----------------------------------------------------------------------
+
+# The targets installing gobal web-infos can be executed only
+# by the maintainers
 
 ################################################
 

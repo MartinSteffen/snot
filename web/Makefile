@@ -1,5 +1,5 @@
 ########################################################
-## $Id: Makefile,v 1.2 2001-04-21 12:08:08 swprakt Exp $
+## $Id: Makefile,v 1.3 2001-04-24 10:08:52 swprakt Exp $
 ########################################################
 
 
@@ -39,7 +39,7 @@ smallps:
 	psnup -2  main.ps > main-small.ps
 
 
-www:
+www:    index.html
 	cp *.html  $(WEBDIR)
 
 
