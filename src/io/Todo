@@ -1,5 +1,5 @@
 #######################################################
-# $Id: Todo,v 1.6 2001-06-30 15:03:22 swprakt Exp $
+# $Id: Todo,v 1.7 2001-07-01 06:36:19 swprakt Exp $
 #######################################################
 
       
@@ -17,3 +17,7 @@ The file lists things to be done.
 	- the scanner.init() is not found, neither is the next-token??
 
         - the rule for dec is not nice!
+
+
+  o Grammar:
+	- make  the empty step-list possible
