@@ -3,14 +3,23 @@ import java.io.Serializable;
 
 
 /**
- * <Klasse> 
- * Bla
+ * SFC.java
+ * Class for sfc-programs, the entry point.
  * @author Initially provided by Martin Steffen.
- * @version $Id: SFC.java,v 1.1 2001-04-20 17:29:13 swprakt Exp $
+ * @version $Id: SFC.java,v 1.2 2001-05-02 04:40:19 swprakt Exp $
  */
 
 
-public class SFC extends Absynt{ 
+public class SFC extends Absynt { 
+  public Step istep;
+  public step StepList;
+  public trans TransitionList;
+  public actions ActionList;
+
+
+
+    
+    
 }
 
 
@@ -20,9 +29,9 @@ public class SFC extends Absynt{
 //	Abstract Syntax for Mist Programs
 //	------------------------------------
 //
-//	$Id: <dollar>
+//	$Id: SFC.java,v 1.2 2001-05-02 04:40:19 swprakt Exp $
 //
-//	$Log: <dollar>
+//	$Log: not supported by cvs2svn $
 //	
 //---------------------------------------------------------------------
 
