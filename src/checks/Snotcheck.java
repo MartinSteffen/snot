@@ -10,7 +10,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.48 2001-07-12 15:22:00 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.49 2001-07-18 12:37:30 swprakt Exp $
  *
  */
 
@@ -32,17 +32,17 @@ public class Snotcheck{
 
 	//pruefen der linken expression:
 	String className = (lExpr.getClass()).getName();
-	if (className == "B_expr"){
+	if (className == "absynt.B_expr"){
 	    B_expr lBExpr = (B_expr) lExpr;
 	    allesOk = isBExprOk(lBExpr);
 	    if (allesOk == false){return false;}
 	}
-	if (className == "U_expr"){
+	if (className == "absynt.U_expr"){
 	    U_expr lUExpr = (U_expr) lExpr;
 	    allesOk = isUExprOk(lUExpr);
 	    if (allesOk == false){return false;}
 	}
-	if (className == "Constval"){
+	if (className == "absynt.Constval"){
 	    String nameOfConstvalClass = (((Constval) lExpr).val.getClass()).getName();
 	    if (nameOfConstvalClass == "Boolean"){
 		lExpr.type = new BoolType();
@@ -51,7 +51,7 @@ public class Snotcheck{
 	    }
 	}
 
-	if (className == "Variable"){
+	if (className == "absynt.Variable"){
 	    String nameOfVariableType = (((Variable) lExpr).type.getClass()).getName();
 	    if (nameOfVariableType == "Boolean"){
 		lExpr.type = new BoolType();
@@ -63,17 +63,17 @@ public class Snotcheck{
 
 	//pruefen der rechten expression:
 	className = (rExpr.getClass()).getName();
-	if (className == "B_expr"){
+	if (className == "absynt.B_expr"){
 	    B_expr rBExpr = (B_expr) rExpr;
 	    allesOk = isBExprOk(rBExpr);
 	    if (allesOk == false){return false;}
 	}
-	if (className == "U_expr"){
+	if (className == "absynt.U_expr"){
 	    U_expr rUExpr = (U_expr) rExpr;
 	    allesOk = isUExprOk(rUExpr);
 	    if (allesOk == false){return false;}
 	}
-	if (className == "Constval"){
+	if (className == "absynt.Constval"){
 	    String nameOfConstvalClass = (((Constval) rExpr).val.getClass()).getName();
 	    if (nameOfConstvalClass == "Boolean"){
 		rExpr.type = new BoolType();
@@ -82,7 +82,7 @@ public class Snotcheck{
 	    }
 	}
 
-	if (className == "Variable"){
+	if (className == "absynt.Variable"){
 	    String nameOfVariableType = (((Variable) rExpr).type.getClass()).getName();
 	    if (nameOfVariableType == "Boolean"){
 		rExpr.type = new BoolType();
@@ -146,6 +146,7 @@ public class Snotcheck{
 		return true;
 	    }
 	}
+	System.out.println("Die Typen wurden durchgejagt!");
 
 	//wenn keiner der ganzen Faelle eintrat, dann ist die Expression ungueltig:
 	return false;
@@ -169,17 +170,17 @@ public class Snotcheck{
 
 	//pruefen der Sub-Expression:
 	String className = (sExpr.getClass()).getName();
-	if (className == "B_expr"){
+	if (className == "absynt.B_expr"){
 	    B_expr sBExpr = (B_expr) sExpr;
 	    allesOk = isBExprOk(sBExpr);
 	    if (allesOk == false){return false;}
 	}
-	if (className == "U_expr"){
+	if (className == "absynt.U_expr"){
 	    U_expr sUExpr = (U_expr) sExpr;
 	    allesOk = isUExprOk(sUExpr);
 	    if (allesOk == false){return false;}
 	}
-	if (className == "Constval"){
+	if (className == "absynt.Constval"){
 	    String nameOfConstvalClass = (((Constval) sExpr).val.getClass()).getName();
 	    if (nameOfConstvalClass == "Boolean"){
 		sExpr.type = new BoolType();
@@ -187,7 +188,7 @@ public class Snotcheck{
 		sExpr.type = new IntType();
 	    }
 	}
-	if (className == "Variable"){
+	if (className == "absynt.Variable"){
 	    String nameOfVariableType = (((Variable) sExpr).type.getClass()).getName();
 	    if (nameOfVariableType == "Boolean"){
 		sExpr.type = new BoolType();
@@ -238,23 +239,27 @@ public class Snotcheck{
 	//wurde keine Expression uebergeben, dann gebe ein false zurueck:
 	if (anExpr == null){return false;}
 
+	System.out.println("Erste nicht NULL");
+
 	exprClass = anExpr.getClass();
 	nameOfExprClass = exprClass.getName();
 
-	if (nameOfExprClass == "B_expr"){
+	System.out.println(nameOfExprClass);
+
+	if (nameOfExprClass == "absynt.B_expr"){
 	    //Aufruf der Methode zum Pruefen einer binaeren Expression:
 	    B_expr bExpr = (B_expr) anExpr;
 	    allesOk = isBExprOk(bExpr);
 	    if (allesOk == false){return false;}
 	}
-	if (nameOfExprClass == "U_expr"){
+	if (nameOfExprClass == "absynt.U_expr"){
 	    //Aufruf der Methode zum Pruefen einer unaeren Expression:
 	    U_expr uExpr = (U_expr) anExpr;
 	    allesOk = isUExprOk(uExpr);
 	    if (allesOk == false){return false;}
 	}
 
-	if (nameOfExprClass == "Constval"){
+	if (nameOfExprClass == "absynt.Constval"){
 	    //wenn die Expression ein konstanter Wert ist, so sind nur boolsche Werte erlaubt
 	    Constval constant = (Constval) anExpr;
 	    constvalClass = constant.val.getClass();
@@ -262,14 +267,16 @@ public class Snotcheck{
 	    if (nameOfConstvalClass != "Boolean"){
 		anExpr.type = new IntType();
 		//wenn der konstante Wert nicht zu den Booleans gehoert, dann gebe ein false zurueck:
+		System.out.println("nicht Boolean"+nameOfConstvalClass);
 		return false;
 	    } else {
 		anExpr.type = new BoolType();
+		System.out.println("Boolean"+nameOfConstvalClass);
 		return true;
 	    }
 	}
 
-	if (nameOfExprClass == "Variable"){
+	if (nameOfExprClass == "absynt.Variable"){
 	    //wenn die Expression eine Variable ist, so muss diese vom Type BoolType sein:
 	    if (((anExpr.type.getClass()).getName()) == "BoolType"){
 		anExpr.type = new BoolType();
@@ -279,9 +286,11 @@ public class Snotcheck{
 		return false;
 	    }
 	}
-
-
+	System.out.println(nameOfExprClass);
+	
 	//wenn die Expression OK ist, dann pruefe noch, ob der Type der Expression BoolType ist, sonst gebe ein false zurueck:
+	System.out.println(((anExpr.type.getClass()).getName()));
+
 	if (((anExpr.type.getClass()).getName()) == "BoolType"){
 	    //alles ist OK
 	    return true;
@@ -591,6 +600,7 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 		//Wenn einer der Werte fehlt, dann werfe eine Exception (TransitionFailure) mit der entsprechenden Transition als Argument
 		throw new TransitionFailure(trans, "Missing argument(s) in transition.");
 	    }
+	    System.out.println("Fehler in Trantition"+i);
 	    //Pruefen der Guards:
 	    if (isGuardOk(trans.guard) == false){
 		throw new TransitionFailure(trans, "Failure in Expression.");
@@ -666,9 +676,12 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.48 2001-07-12 15:22:00 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.49 2001-07-18 12:37:30 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.48  2001/07/12 15:22:00  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.47  2001/07/11 13:21:56  swprakt
 //	*** empty log message ***
 //	
