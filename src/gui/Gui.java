@@ -28,7 +28,7 @@ import simulator.Simulator;
  *  The GUI!
  *
  * @authors Ingo Schiller and Hans Theman
- * @version $Revision: 1.23 $
+ * @version $Revision: 1.24 $
  */
 public class Gui extends javax.swing.JFrame {
 
@@ -112,7 +112,7 @@ public class Gui extends javax.swing.JFrame {
         PanelStatus = new javax.swing.JPanel();
         Status = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
-
+        
         FileMenu.setName("Session");
           FileMenu.setActionCommand(null);
           FileMenu.setText("Session");
@@ -122,7 +122,7 @@ public class Gui extends javax.swing.JFrame {
               }
           }
           );
-
+          
           OpenSession.setLabel("Open Session");
             OpenSession.setName("openSession");
             OpenSession.addActionListener(new java.awt.event.ActionListener() {
@@ -132,7 +132,7 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             FileMenu.add(OpenSession);
-
+            
           NewSession.setLabel("New Session");
             NewSession.setName("newSession");
             NewSession.addActionListener(new java.awt.event.ActionListener() {
@@ -142,9 +142,9 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             FileMenu.add(NewSession);
-
+            
           FileMenu.add(jSeparator2);
-
+            
           SaveSession.setLabel("Save Session");
             SaveSession.setName("saveSession");
             SaveSession.addActionListener(new java.awt.event.ActionListener() {
@@ -154,7 +154,7 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             FileMenu.add(SaveSession);
-
+            
           SaveAsSession.setLabel("Save Session as");
             SaveAsSession.setName("saveAsSession");
             SaveAsSession.addActionListener(new java.awt.event.ActionListener() {
@@ -164,7 +164,7 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             FileMenu.add(SaveAsSession);
-
+            
           CloseSession.setLabel("Close Session");
             CloseSession.setName("closeSession");
             CloseSession.addActionListener(new java.awt.event.ActionListener() {
@@ -174,9 +174,9 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             FileMenu.add(CloseSession);
-
+            
           FileMenu.add(jSeparator3);
-
+            
           ExitSnot.setLabel("Exit");
             ExitSnot.setName("exitSnot");
             ExitSnot.setText("Exit Snot");
@@ -188,7 +188,7 @@ public class Gui extends javax.swing.JFrame {
             );
             FileMenu.add(ExitSnot);
             jMenuBar.add(FileMenu);
-
+          
         Edit.setLabel("Edit");
           Edit.setName("SFC");
           Edit.setText("SFC");
@@ -198,7 +198,7 @@ public class Gui extends javax.swing.JFrame {
               }
           }
           );
-
+          
           NewSFC.setLabel("New SFC");
             NewSFC.setName("newSFC");
             NewSFC.addActionListener(new java.awt.event.ActionListener() {
@@ -208,9 +208,9 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             Edit.add(NewSFC);
-
+            
           Edit.add(jSeparator4);
-
+            
           ImportSFC.setLabel("Import SFC");
             ImportSFC.setName("importSFC");
             ImportSFC.addActionListener(new java.awt.event.ActionListener() {
@@ -220,7 +220,7 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             Edit.add(ImportSFC);
-
+            
           ExportSFC.setLabel("Export SFC");
             ExportSFC.setName("exportSFC");
             ExportSFC.addActionListener(new java.awt.event.ActionListener() {
@@ -230,9 +230,9 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             Edit.add(ExportSFC);
-
+            
           Edit.add(jSeparator5);
-
+            
           RenameSFC.setLabel("Rename SFC");
             RenameSFC.setName("renameSFC");
             RenameSFC.addActionListener(new java.awt.event.ActionListener() {
@@ -242,7 +242,7 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             Edit.add(RenameSFC);
-
+            
           RemoveSFC.setLabel("Remove SFC");
             RemoveSFC.setName("removeSFC");
             RemoveSFC.addActionListener(new java.awt.event.ActionListener() {
@@ -253,9 +253,9 @@ public class Gui extends javax.swing.JFrame {
             );
             Edit.add(RemoveSFC);
             jMenuBar.add(Edit);
-
+          
         ToolsMenu.setText("Tools");
-
+          
           Editor.setLabel("Editor");
             Editor.setName("editor");
             Editor.addActionListener(new java.awt.event.ActionListener() {
@@ -265,7 +265,7 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             ToolsMenu.add(Editor);
-
+            
           CheckSFC.setLabel("Check SFC");
             CheckSFC.setName("check");
             CheckSFC.addActionListener(new java.awt.event.ActionListener() {
@@ -275,7 +275,7 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             ToolsMenu.add(CheckSFC);
-
+            
           Simulator.setLabel("Simulator");
             Simulator.setName("simulator");
             Simulator.addActionListener(new java.awt.event.ActionListener() {
@@ -285,8 +285,8 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             ToolsMenu.add(Simulator);
-
-            SMV.setLabel("SMV translation");
+            
+          SMV.setLabel("SMV translation");
             SMV.setName("smv");
             SMV.setText("SMV");
             SMV.addActionListener(new java.awt.event.ActionListener() {
@@ -297,10 +297,10 @@ public class Gui extends javax.swing.JFrame {
             );
             ToolsMenu.add(SMV);
             jMenuBar.add(ToolsMenu);
-
+          
         View.setLabel("View");
           View.setName("View");
-
+          
           SFCBrowser.setLabel("SFC Browser");
             SFCBrowser.setName("SFCBrowser");
             SFCBrowser.addActionListener(new java.awt.event.ActionListener() {
@@ -310,7 +310,7 @@ public class Gui extends javax.swing.JFrame {
             }
             );
             View.add(SFCBrowser);
-
+            
           ShowToolBar.setLabel("Tool Bar");
             ShowToolBar.setSelected(true);
             ShowToolBar.setName("showToolBar");
@@ -322,9 +322,9 @@ public class Gui extends javax.swing.JFrame {
             );
             View.add(ShowToolBar);
             jMenuBar.add(View);
-
+          
         HelpMenu.setText("? (Help) ");
-
+          
           About.setLabel("About");
             About.setName("about");
             About.addActionListener(new java.awt.event.ActionListener() {
@@ -347,10 +347,10 @@ public class Gui extends javax.swing.JFrame {
             }
         }
         );
-
+        
         ToolBarTools.setName("ToolBarTools");
         ToolBarTools.setMinimumSize(new java.awt.Dimension(378, 39));
-
+        
         ButtonEditor.setPreferredSize(new java.awt.Dimension(90, 35));
           ButtonEditor.setToolTipText("Launch editor");
           ButtonEditor.setMaximumSize(new java.awt.Dimension(180, 35));
@@ -363,8 +363,8 @@ public class Gui extends javax.swing.JFrame {
           }
           );
           ToolBarTools.add(ButtonEditor);
-
-
+          
+          
         ButtonCheckSFC.setPreferredSize(new java.awt.Dimension(90, 35));
           ButtonCheckSFC.setToolTipText("Check SFC");
           ButtonCheckSFC.setMaximumSize(new java.awt.Dimension(180, 35));
@@ -377,8 +377,8 @@ public class Gui extends javax.swing.JFrame {
           }
           );
           ToolBarTools.add(ButtonCheckSFC);
-
-
+          
+          
         ButtonSimulator.setPreferredSize(new java.awt.Dimension(90, 35));
           ButtonSimulator.setToolTipText("Simulate SFC");
           ButtonSimulator.setMaximumSize(new java.awt.Dimension(180, 35));
@@ -391,8 +391,8 @@ public class Gui extends javax.swing.JFrame {
           }
           );
           ToolBarTools.add(ButtonSimulator);
-
-
+          
+          
         ButtonSMV.setPreferredSize(new java.awt.Dimension(90, 35));
           ButtonSMV.setToolTipText("Transform SFC to SMV");
           ButtonSMV.setMaximumSize(new java.awt.Dimension(180, 35));
@@ -405,29 +405,29 @@ public class Gui extends javax.swing.JFrame {
           }
           );
           ToolBarTools.add(ButtonSMV);
-
-
+          
+          
         getContentPane().add(ToolBarTools, java.awt.BorderLayout.NORTH);
-
-
+        
+        
         PanelStatus.setLayout(new java.awt.GridLayout(1, 1, 20, 0));
         PanelStatus.setPreferredSize(new java.awt.Dimension(400, 20));
         PanelStatus.setName("panelStatus");
         PanelStatus.setMinimumSize(new java.awt.Dimension(200, 20));
-
+        
         Status.setName("statusLine");
           Status.setText("StatusLine");
           PanelStatus.add(Status);
-
-
+          
+          
         getContentPane().add(PanelStatus, java.awt.BorderLayout.SOUTH);
-
-
-
+        
+        
+        
         getContentPane().add(jSeparator1, java.awt.BorderLayout.CENTER);
-
+        
         setJMenuBar(jMenuBar);
-
+        
     }//GEN-END:initComponents
 
   private void FileMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FileMenuActionPerformed
@@ -658,19 +658,19 @@ System.out.print("\nlaunching SMVTranslator ...");
           if (checkEx instanceof IStepException)
                 SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "No Istep Exception", JOptionPane.ERROR_MESSAGE);
-          if (checkEx instanceof DecListFailure)
+          else if(checkEx instanceof DecListFailure) 
                 SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "Error in the declaration list", JOptionPane.ERROR_MESSAGE);
 
-	  if (checkEx instanceof ActionFailure)
+          else if(checkEx instanceof ActionFailure) 
                 SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "Action Failure", JOptionPane.ERROR_MESSAGE);
 
-	  if (checkEx instanceof StepFailure)
+          else if(checkEx instanceof StepFailure)
                 SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "Step Failure", JOptionPane.ERROR_MESSAGE);
 
-	  if (checkEx instanceof TransitionFailure)
+          else if(checkEx instanceof TransitionFailure) 
                 SnotOptionPane.showMessageDialog(null, checkEx.getMessage(),
                                         "Transition Failure", JOptionPane.ERROR_MESSAGE);
 
@@ -1002,7 +1002,6 @@ System.out.print(ex.getClass());
    * Method to show the ProjektList.
    */
   private void showProjectList(){
-    System.out.println("\nThe Project-List should appear.");
     projectFrame = new JFrame("SFC - Browser");
     projectFrame.setResizable(true);
     projectFrame.setSize(250,200);
@@ -1090,8 +1089,9 @@ System.out.print(ex.getClass());
         session.disposeEditors();
 
 	//Terminates the ProjectListFrame if active
-	if(SFCBrowser.isSelected())
-		projectFrame.dispose();
+        if(SFCBrowser.isSelected()){
+                SFCBrowser.setState(false);
+                projectFrame.dispose();}
 
         enableSession(false);
         session = null;
@@ -1102,7 +1102,7 @@ System.out.print("\nSession is closed!");
     private Session openSession(File file) {
         Session newSession = null;
         Vector v = null;
-
+        
         try {
             Utilities.validateFile(file, SessionFileExtension);
         }
@@ -1198,7 +1198,8 @@ System.out.print("\n ... opening new session from file \""+file+"\": name: "+fil
         }
 
 
-        closeSession();
+        closeSession
+        ();
         System.exit(0);
         return true; // weil sonst der Compiler jammert ...
     }
