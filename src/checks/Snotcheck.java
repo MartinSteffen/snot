@@ -10,7 +10,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.51 2001-07-18 13:37:24 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.52 2001-07-20 08:56:05 swprakt Exp $
  *
  */
 
@@ -32,12 +32,12 @@ public class Snotcheck{
 
 	//pruefen der linken expression:
 	String className = (lExpr.getClass()).getName();
-	if (className == "absynt.B_expr"){
+	if (lExpr instanceof B_expr){
 	    B_expr lBExpr = (B_expr) lExpr;
 	    allesOk = isBExprOk(lBExpr);
 	    if (allesOk == false){return false;}
 	}
-	if (className == "absynt.U_expr"){
+	if (lExpr instanceof U_expr){
 	    U_expr lUExpr = (U_expr) lExpr;
 	    allesOk = isUExprOk(lUExpr);
 	    if (allesOk == false){return false;}
@@ -45,16 +45,16 @@ public class Snotcheck{
 //	if (className == "absynt.Constval"){
 	if (lExpr instanceof Constval){
 	    String nameOfConstvalClass = (((Constval) lExpr).val.getClass()).getName();
-	    if (nameOfConstvalClass == "Boolean"){
+	    if (((Constval) lExpr).val instanceof Boolean){
 		lExpr.type = new BoolType();
 	    } else {
 		lExpr.type = new IntType();
 	    }
 	}
 
-	if (className == "absynt.Variable"){
+	if (lExpr instanceof Variable){
 	    String nameOfVariableType = (((Variable) lExpr).type.getClass()).getName();
-	    if (nameOfVariableType == "Boolean"){
+	    if (((Variable) lExpr).type instanceof BoolType){
 		lExpr.type = new BoolType();
 	    } else {
 		lExpr.type = new IntType();
@@ -64,28 +64,28 @@ public class Snotcheck{
 
 	//pruefen der rechten expression:
 	className = (rExpr.getClass()).getName();
-	if (className == "absynt.B_expr"){
+	if (rExpr instanceof B_expr){
 	    B_expr rBExpr = (B_expr) rExpr;
 	    allesOk = isBExprOk(rBExpr);
 	    if (allesOk == false){return false;}
 	}
-	if (className == "absynt.U_expr"){
+	if (rExpr instanceof U_expr){
 	    U_expr rUExpr = (U_expr) rExpr;
 	    allesOk = isUExprOk(rUExpr);
 	    if (allesOk == false){return false;}
 	}
-	if (className == "absynt.Constval"){
+	if (rExpr instanceof Constval){
 	    String nameOfConstvalClass = (((Constval) rExpr).val.getClass()).getName();
-	    if (nameOfConstvalClass == "Boolean"){
+	    if (((Constval) rExpr).val instanceof Boolean){
 		rExpr.type = new BoolType();
 	    } else {
 		rExpr.type = new IntType();
 	    }
 	}
 
-	if (className == "absynt.Variable"){
+	if (rExpr instanceof Variable){
 	    String nameOfVariableType = (((Variable) rExpr).type.getClass()).getName();
-	    if (nameOfVariableType == "Boolean"){
+	    if (((Variable) rExpr).type instanceof BoolType){
 		rExpr.type = new BoolType();
 	    } else {
 		rExpr.type = new IntType();
@@ -105,7 +105,7 @@ public class Snotcheck{
 
 	if ((aBExpr.op == aBExpr.AND)||(aBExpr.op == aBExpr.OR)){
 	    //AND und OR sind nur auf boolschen Werten definiert:
-	    if (typeName == "BoolType"){
+	    if (lExpr.type instanceof BoolType){
 		aBExpr.type = new BoolType();
 		return true;
 	    } else {
@@ -116,7 +116,7 @@ public class Snotcheck{
 
 	if ((aBExpr.op == aBExpr.DIV)||(aBExpr.op == aBExpr.MINUS)||(aBExpr.op == aBExpr.PLUS)||(aBExpr.op == aBExpr.TIMES)){
 	    //DIV MINUS PLUS und TIMES sind Operationen, die nur auf Integers erlaubt sind:
-	    if (typeName == "IntType"){
+	    if (lExpr.type instanceof IntType){
 		aBExpr.type = new IntType();
 		return true;
 	    } else {
@@ -127,7 +127,7 @@ public class Snotcheck{
 
 	if((aBExpr.op == aBExpr.GREATER)||(aBExpr.op == aBExpr.GEQ)||(aBExpr.op == aBExpr.LESS)||(aBExpr.op == aBExpr.LEQ)){
 	    //GREATER GEQ LESS und LEQ sind auch Operationen, die nur auf Integers erlaubt sind:
-	    if (typeName == "IntType"){
+	    if (lExpr.type instanceof IntType){
 		aBExpr.type = new IntType();
 		return true;
 	    } else {
@@ -137,7 +137,7 @@ public class Snotcheck{
 
 	if (aBExpr.op == aBExpr.EQ){
 	    //EQ ist sowohl fuer boolsche Variablen als auch fuer integer Variablen definiert
-	    if (typeName == "IntType"){
+	    if (lExpr.type instanceof IntType){
 		//bei Operation auf Integers:
 		aBExpr.type = new IntType();
 		return true;
@@ -435,8 +435,8 @@ public class Snotcheck{
 		if (stmt1 == null){throw new ActionFailure(action, "Statement is missing (nullpointer).");}
 		class1 = stmt1.getClass();
 		class1Name = class1.getName();
-		if (class1Name == "absynt.Assign" || class1Name == "absynt.Skip"){
-		    if (class1Name == "Assign"){             //wenn das statement eine Zuweisung ist, dann muessen noch einige Dinge geprueft werden, naehmlich:
+		if ((stmt1 instanceof Assign) || (stmt1 instanceof Skip)){
+		    if (stmt1 instanceof Assign){             //wenn das statement eine Zuweisung ist, dann muessen noch einige Dinge geprueft werden, naehmlich:
 			// - sind val und var ungleich null
 			// - ist val eine gueltige Expression
 			// - ist val ein gueltiger Wert fuer var (richtiger Typ?)
@@ -453,30 +453,30 @@ public class Snotcheck{
 			//pruefen, ob val eine gueltige Expression ist, und setzen des Typs von val:
 			String nameOfValClass = ((ass.val).getClass()).getName();
 			boolean allesOk;
-			if (nameOfValClass == "B_expr"){
+			if (ass.val instanceof B_expr){
 			    B_expr bExpr = (B_expr) ass.val;
 			    allesOk = isBExprOk(bExpr);
 			    if (allesOk == false){throw new ActionFailure(action, "This val is no correct expression.");}
 			}
-			if (nameOfValClass == "U_expr"){
+			if (ass.val instanceof U_expr){
 			    U_expr uExpr = (U_expr) ass.val;
 			    allesOk = isUExprOk(uExpr);
 			    if (allesOk == false){throw new ActionFailure(action, "This val is no correct expression.");} 
 			}
-			if (nameOfValClass == "Constval"){
+			if (ass.val instanceof Constval){
 			    //wenn val ein konstanter Wert ist, dann muss erstmal nur der Typ von val geaendert werden
 			    Constval constant = (Constval) ass.val;
 			    String nameOfConstvalClass = (constant.val.getClass()).getName();  //name des Typs der Konstanten
-			    if (nameOfConstvalClass == "Boolean"){
+			    if (constant.val instanceof Boolean){
 				ass.val.type = new BoolType();
 			    } else {
 				ass.val.type = new IntType();
 			    }
 			}
-			if (nameOfValClass == "Variable"){
+			if (ass.val instanceof Variable){
 			    //wenn val eine Variable ist, dann muss erstmal nur der Typ von val geaendert werden
 			    String nameOfVariableType = (((Variable) ass.val).type.getClass()).getName();
-			    if (nameOfVariableType == "Boolean"){
+			    if (((Variable) ass.val).type instanceof BoolType){
 				ass.val.type = new BoolType();
 			    } else {
 				ass.val.type = new IntType();
@@ -626,7 +626,7 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 	    decl = (Declaration)decList.get(i);
 	    typeClass = decl.type.getClass();
 	    nameOfClass = typeClass.getName();
-	    if(nameOfClass != "BoolType"){
+	    if(!(decl.type instanceof BoolType)){
 		nurBool = false;
 		i = decList.size();
 	    }
@@ -669,9 +669,12 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.51 2001-07-18 13:37:24 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.52 2001-07-20 08:56:05 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.51  2001/07/18 13:37:24  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.50  2001/07/18 13:37:00  swprakt
 //	*** empty log message ***
 //	
