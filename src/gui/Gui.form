@@ -6,9 +6,14 @@
       <SubComponents>
         <Menu class="javax.swing.JMenu" name="FileMenu">
           <Properties>
+            <Property name="name" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="Session"/>
             <Property name="actionCommand" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="null"/>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="File"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="Session"/>
           </Properties>
+
+          <Events>
+            <EventHandler event="actionPerformed" handler="FileMenuActionPerformed"/>
+          </Events>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="OpenSession">
               <Properties>
@@ -22,7 +27,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="NewSession">
               <Properties>
-                <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value=" New Session"/>
+                <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="New Session"/>
                 <Property name="name" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="newSession"/>
               </Properties>
 
@@ -80,8 +85,13 @@
         <Menu class="javax.swing.JMenu" name="Edit">
           <Properties>
             <Property name="label" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="Edit"/>
-            <Property name="name" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="Edit"/>
+            <Property name="name" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="SFC"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.beaninfo.editors.StringEditor" value="SFC"/>
           </Properties>
+
+          <Events>
+            <EventHandler event="actionPerformed" handler="EditActionPerformed"/>
+          </Events>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="NewSFC">
               <Properties>
