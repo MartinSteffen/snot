@@ -9,7 +9,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.29 2001-06-19 14:34:55 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.30 2001-06-19 15:04:39 swprakt Exp $
  *
  */
 
@@ -28,6 +28,16 @@ public class Snotcheck{
 	//   -Operator darf nur sein:PLUS, MINUS, TIMES, DIV, LESS, GREATER, LEQ, GEQ, EQ
 
 	int i=anExpr.AND;
+
+
+	//1. Schritt: feststellen, was fuer eine Expression vorliegt:
+	String nameOfExprClass;
+	Class exprClass;
+	
+	if (anExpr == null){return false;}
+
+	exprClass = anExpr.getClass();
+	nameOfExprClass = exprClass.getName();
 
 	return true;
 
@@ -346,9 +356,12 @@ private static boolean isAllStepOk(SFC aSFCObject) throws StepFailure {
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.29 2001-06-19 14:34:55 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.30 2001-06-19 15:04:39 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.29  2001/06/19 14:34:55  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.28  2001/06/19 13:30:35  swprakt
 //	nix
 //	
