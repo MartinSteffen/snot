@@ -64,7 +64,7 @@
 
 
 \unitlength1.8mm%
-\begin{picture}(44.5,75)(-27,-15)
+\begin{picture}(44.5,75)(-32,-15)
   \put(  0, 55){\put(  0,-2.5){\LINE(0,-1){6}}
     \put(  0,-5.5){\GUARD{\INGUARD{true}}}
     \put(-12,-8.5){\LINE(1,0){24}}
@@ -72,12 +72,12 @@
     \put(-12,-8.5){\LINE(0,-1){4}}
     \put( 12,-8.5){\LINE(0,-1){4}}
     \put( 2,0){\LINE(1,0){2}}
-    \STEPinitial[$s_1$]{\INSTEP{x\,:=\,false}}
+    \STEPinitial[$s_1$]{\INSTEP{act1}}
     }
   \put(-12, 40){\put(  0,-2.5){\LINE(0,-1){25}}
     \put(  0,-14.5){\GUARD{\INGUARD{x and y}}}
     \put( 2,0){\LINE(1,0){2}}
-    \STEP[$s_2$]{\INSTEP{y\,:=\,x}}
+    \STEP[$s_2$]{\INSTEP{act2}}
     }
   % oberster im rechten zweig
   \put( 12, 40){\put(  0,-2.5){\LINE(0,-1){4}}
@@ -87,7 +87,7 @@
     \put(  5,-6.5){\LINE(0,-1){6}}
     \put(  5,-9.5){\GUARD{\INGUARD{not y}}}
     \put( 2,0){\LINE(1,0){2}}
-    \STEP[$s_3$]{\INSTEP{x\,:=\,not x; y:=x}}
+    \STEP[$s_3$]{\INSTEP{act3}}
     }
   % splitten im rechten zweig
   \put( 7, 25){\put(  0,-2.5){\LINE(0,-1){6}}
@@ -122,6 +122,24 @@
     \put(-20,-8.5){\LINE(0,1){68.5}}
     \put(-20,60  ){\VECTOR(1,0){17.5}}
     \STEP[$s_8$]{}
+    }
+  \put(-50,48){%
+    \parbox{4cm}{\noindent\textbf{Deklarationen} \\[1ex]
+      \begin{tabular}{|l|l|l|} \hline
+        \texttt{x} & \texttt{bool} & \texttt{false} \\
+        \texttt{y} & \texttt{bool} & \texttt{false} \\
+        \texttt{z} & \texttt{bool} & \texttt{false} \\ \hline
+      \end{tabular}
+      }
+    }
+  \put(-50,25){%
+    \parbox{4cm}{\noindent\textbf{Aktionen} \\[1ex]
+      \begin{tabular}{|l|l|} \hline
+        \texttt{act1} & \texttt{x\,:=\,false} \\
+        \texttt{act2} & \texttt{y\,:=\,x} \\
+        \texttt{act3} & \texttt{x\,:=\,not x; y\,:=\,x} \\ \hline
+      \end{tabular}
+      }
     }
 \end{picture}
 
