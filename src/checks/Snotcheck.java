@@ -9,7 +9,7 @@ import absynt.*;
  *Diese Klasse macht eine ganze Menge, n"amlich zum Beispiel:
  *checken von SFCs
  *@author Dimitri Schultheis, Tobias Pugatschov
- *@version: $Id: Snotcheck.java,v 1.19 2001-06-07 12:04:25 swprakt Exp $
+ *@version: $Id: Snotcheck.java,v 1.20 2001-06-08 08:56:17 swprakt Exp $
  *
  */
 
@@ -67,8 +67,12 @@ public class Snotcheck{
 	    for (int i=1; i < decList.size(); i++){
 		decl = (Declaration)decList.get(i);
 		var = decl.var;
+		typeClass1 = decl.type.getClass();
+		className1 = typeClass1.getName();
 		if (var != null){
-		    if (decl.type != var.type){
+		    typeClass2 = var.type.getClass();
+		    className2 = typeClass2.getName();
+		    if (className1 != className2){
 			throw new DecListFailure(decl, "Type Error!");}   //Der Typ der Variable stimmt nicht mit dem Typ der Deklaration "uberein
 		}
 	    }
@@ -221,9 +225,12 @@ public class Snotcheck{
 //	package checks for Snot programs
 //	------------------------------------
 //
-//	$Id: Snotcheck.java,v 1.19 2001-06-07 12:04:25 swprakt Exp $
+//	$Id: Snotcheck.java,v 1.20 2001-06-08 08:56:17 swprakt Exp $
 //
 //	$Log: not supported by cvs2svn $
+//	Revision 1.19  2001/06/07 12:04:25  swprakt
+//	*** empty log message ***
+//	
 //	Revision 1.18  2001/06/07 11:24:00  swprakt
 //	*** empty log message ***
 //	
