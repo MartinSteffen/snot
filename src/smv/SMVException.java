@@ -10,8 +10,8 @@ import java.lang.Exception;
 
 /**
  *
- * @author  Kevin Köser / Tobias Kloss
- * @version 0.1
+ * @author  Kevin Koeser / Tobias Kloss
+ * @version 0.2
  */
 public class SMVException extends Exception {
     
@@ -20,7 +20,7 @@ public class SMVException extends Exception {
      * Creates new SMVException 
      *
      */
-    public SMVException() {
-	super("Fehler beim Übersetzen des SFCs nach SMV");
+    public SMVException(String s) {
+	super(s);
     }
 }
