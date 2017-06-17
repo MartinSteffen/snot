@@ -1,0 +1,43 @@
+
+
+** Abstract
+
+
+The repository collects the /sources/ of the ``Snot'' project (/Sequential
+Function Chart Modelling Tool/), in the software programming lab course
+``Programming in the Many'', summer semester 2001, at the University Kiel.
+
+For the webpages of the course, see [[http://heim.ifi.uio.no/msteffen/teaching/softtech/ss01/pitm-snot/snot/][here]]
+
+
+** Structure
+This is the root of the Slime-project from the summer term 2002.  The
+package contains the following files and subdirectories:
+
+  
+
+    - [[,/Readme.org]]:        this file
+    - [[./doc]]:               staging area for generated documentation (not
+                            under versioning, hence mostly empty)
+    - [[./web]]:               some extra web-pages (resp. latex sources thereof)
+    - [[./Baselines]]:         short description about major
+                           development steps
+    - [[./pflichtenheft/]]     requirement specification
+    - [[./web/]]               web-site material for coordination,
+                           tracking the progress etc.
+    - [[./src/]]               the sources
+    - [[./tex/]]               common LaTeX-macros 
+
+
+** Historical notes
+
+The repository has been resurrected by migrating from ~cvs~ via svn (using
+~cvs2svn~) and from there to ~git~. Caveats concerning missing branches
+apply. Also the /Snapshots/ or baselines (original svn revision tags) seem
+not to be preserved as git labels in the final repository (see the
+[[./Baselines]]-file).  Also, original /authors/ have not been preserved, as
+the original development was done all via a common login ~swprakt~; in
+general, the contributors were the different students in the course plus
+the course teachers.
+
+
