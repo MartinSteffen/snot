@@ -11,7 +11,7 @@ For the webpages of the course, see [[http://heim.ifi.uio.no/msteffen/teaching/s
 
 
 ** Structure
-This is the root of the Slime-project from the summer term 2002.  The
+This is the root of the Snot-project from the summer term 2001.  The
 package contains the following files and subdirectories:
 
   
