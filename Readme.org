@@ -10,13 +10,15 @@ Function Chart Modelling Tool/), in the software programming lab course
 For the webpages of the course, see [[https://martinsteffen.github.io/teachingkiel/softtech/ss01/pitm-snot/][here]], resp. the [[https://martinsteffen.github.io/teachingkiel/softtech/ss01/pitm-snot/snot][specification]]
 
 
+
 ** Structure
+
 This is the root of the Snot-project from the summer term 2001.  The
-package contains the following files and subdirectories:
+package contains the following files and sub-directories:
 
   
 
-    - [[,/Readme.org]]:        this file
+    - [[./Readme.org]]:        this file
     - [[./doc]]:               staging area for generated documentation (not
                             under versioning, hence mostly empty)
     - [[./web]]:               some extra web-pages (resp. latex sources thereof)
@@ -37,7 +39,7 @@ apply. Also the /Snapshots/ or baselines (original svn revision tags) seem
 not to be preserved as git labels in the final repository (see the
 [[./Baselines]]-file).  Also, original /authors/ have not been preserved, as
 the original development was done all via a common login ~swprakt~; in
-general, the contributors were the different students in the course plus
-the course teachers.
+general, the contributors were the various *students* in the course plus
+the *course teachers*.
 
 
