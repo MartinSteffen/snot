@@ -7,7 +7,7 @@ The repository collects the /sources/ of the ``Snot'' project (/Sequential
 Function Chart Modelling Tool/), in the software programming lab course
 ``Programming in the Many'', summer semester 2001, at the University Kiel.
 
-For the webpages of the course, see [[https://martinsteffen.github.io/teaching/softtech/ss01/pitm-snot/][here]], resp. the [[https://martinsteffen.github.io/teaching/softtech/ss01/pitm-snot/snot][specification]].
+For the webpages of the course, see [[https://martinsteffen.github.io/teachingkiel/softtech/ss01/pitm-snot/][here]], resp. the [[https://martinsteffen.github.io/teachingkiel/softtech/ss01/pitm-snot/snot][specification]]
 
 
 ** Structure
